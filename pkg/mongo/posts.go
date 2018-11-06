@@ -6,7 +6,7 @@ import (
 )
 
 type PostModel struct {
-	Id    string `json:"_id"`
+	Id bson.ObjectId `json:"_id" bson:"_id"`
 	Title string `json:"title"`
 }
 
