@@ -6,9 +6,9 @@ import (
 )
 
 type UserModel struct {
-	Id bson.ObjectId `json:"_id" bson:"_id"`
-	Name  string `json:"name"`
-	Phone string `json:"phone"`
+	Id    bson.ObjectId `json:"_id" bson:"_id"`
+	Name  string        `json:"name"`
+	Phone string        `json:"phone"`
 }
 
 func GetUserById(Id string) UserModel {

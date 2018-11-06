@@ -6,8 +6,8 @@ import (
 )
 
 type PostModel struct {
-	Id bson.ObjectId `json:"_id" bson:"_id"`
-	Title string `json:"title"`
+	Id    bson.ObjectId `json:"_id" bson:"_id"`
+	Title string        `json:"title"`
 }
 
 func GetPostById(Id string) PostModel {
