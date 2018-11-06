@@ -6,8 +6,9 @@ import (
 )
 
 type NotificationModel struct {
-	Id   bson.ObjectId `json:"_id" bson:"_id"`
-	Type string
+	Id       bson.ObjectId `json:"_id" bson:"_id"`
+	Type     string        `json:"type" bson:"type"`
+	Resource bson.ObjectId `json:"resource_id" bson:"resource_id"`
 }
 
 func CreateNotification(n NotificationModel) error {

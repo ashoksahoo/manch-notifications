@@ -11,7 +11,7 @@ import (
 
 func CreateClient() (*messaging.Client, context.Context) {
 
-	opt := option.WithCredentialsFile("../../private/fcm.json")
+	opt := option.WithCredentialsFile("./private/fcm.json")
 	app, err := firebase.NewApp(context.Background(), nil, opt)
 	if err != nil {
 		log.Fatalf("error initializing app: %v\n", err)
@@ -28,20 +28,44 @@ func SendMessage(token string) {
 
 	// See documentation on defining a message payload.
 	message := &messaging.Message{
-		Data: map[string]string{
-			"score": "850",
-			"time":  "2:45",
+		Data:         nil,
+		Notification: nil,
+		Android: &messaging.AndroidConfig{
+			CollapseKey:           "",
+			Priority:              "high",
+			TTL:                   nil,
+			RestrictedPackageName: "",
+			Data:                  nil,
+			Notification: &messaging.AndroidNotification{
+				Title:        "Hello",
+				Body:         "Hello Pritam",
+				Icon:         "",
+				Color:        "",
+				Sound:        "",
+				Tag:          "",
+				ClickAction:  "",
+				BodyLocKey:   "",
+				BodyLocArgs:  nil,
+				TitleLocKey:  "",
+				TitleLocArgs: nil,
+			},
 		},
-		Token: token,
+		Webpush:   nil,
+		APNS:      nil,
+		Token:     token,
+		Topic:     "",
+		Condition: "",
 	}
 
 	// Send a message to the device corresponding to the provided
 	// registration token.
 	response, err := client.Send(ctx, message)
 	if err != nil {
-		log.Fatalln(err)
+		//log.Fatalln(err)
+		fmt.Println("Error:", err)
+	} else {
+		// Response is a message ID string.
+		fmt.Println("Successfully sent message:", response, token)
 	}
-	// Response is a message ID string.
-	fmt.Println("Successfully sent message:", response)
 
 }
