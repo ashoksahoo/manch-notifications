@@ -1,7 +1,6 @@
 package mongo
 
 import (
-	"fmt"
 	"github.com/globalsign/mgo/bson"
 )
 
@@ -16,7 +15,6 @@ func GetTokensByQuery(Query bson.M) []TokenModel {
 	posts := session.DB("manch").C("fcm_tokens")
 	var tokens []TokenModel
 	posts.Find(Query).All(&tokens)
-	fmt.Printf("Mongo Query return for Post %+v\n", tokens)
 	return tokens
 }
 

@@ -19,9 +19,16 @@ func main() {
 	c, _ := nats.NewEncodedConn(nc, nats.JSON_ENCODER)
 
 	subscribers.PostSubscriber(c, func(subj, reply string, p *subscribers.Post) {
-		fmt.Printf("Received a post on subject %s! with Post ID %s\n", subj, p)
+		fmt.Printf("Received a post on subject %s! with Post ID %s\n", subj, p.Id)
 		newPost := mongo.GetPostById(p.Id)
 		fmt.Printf("Mongo Query return for Post %+v\n", newPost)
+
+	})
+
+	subscribers.CommentSubscriber(c, func(subj, reply string, cmt *subscribers.Comment) {
+		fmt.Printf("Received a comment on subject %s! with Comment ID %s\n", subj, cmt.Id)
+		comment := mongo.GetCommentById(cmt.Id)
+		fmt.Printf("Mongo Query return for comment %+v\n", comment)
 
 	})
 
