@@ -7,6 +7,7 @@ import (
 	"golang.org/x/net/context"
 	"google.golang.org/api/option"
 	"log"
+	"notification-service/pkg/mongo"
 )
 
 func CreateClient() (*messaging.Client, context.Context) {
@@ -38,7 +39,7 @@ func SendMessage(token string) {
 			Data:                  nil,
 			Notification: &messaging.AndroidNotification{
 				Title:        "Hello",
-				Body:         "Hello Pritam",
+				Body:         "Hello World",
 				Icon:         "",
 				Color:        "",
 				Sound:        "",
@@ -62,7 +63,8 @@ func SendMessage(token string) {
 	response, err := client.Send(ctx, message)
 	if err != nil {
 		//log.Fatalln(err)
-		fmt.Println("Error:", err)
+		fmt.Println("Error:", err, token)
+		mongo.DeleteToken(token)
 	} else {
 		// Response is a message ID string.
 		fmt.Println("Successfully sent message:", response, token)

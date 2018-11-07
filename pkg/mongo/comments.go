@@ -8,7 +8,7 @@ type CommentModel struct {
 	Id      bson.ObjectId `json:"_id" bson:"_id"`
 	Content string        `json:"content"`
 	Post    bson.ObjectId `json:"post_id" bson:"post_id"`
-	Created Creator       `json:"created"`
+	Creator
 }
 
 func GetCommentById(Id string) CommentModel {
