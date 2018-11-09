@@ -59,7 +59,7 @@ func subject(s string) string {
 	if env == "" {
 		env = "development"
 	}
-	s = "manch-api:" + env + ":" + s
+	s = "manch-api." + env + "." + s
 	return s
 
 }
@@ -69,15 +69,24 @@ func queue() string {
 	if env == "" {
 		env = "development"
 	}
-	q := "manch-notification-service:" + env
+	q := "manch-notification-service." + env
 	return q
 }
+
 func PostSubscriber(callback func(subj, reply string, m *Post)) {
-	go c.QueueSubscribe(subject("post"), queue(), callback)
+	go c.QueueSubscribe(subject("post.new"), queue(), callback)
+}
+
+func PostUpdateSubscriber(callback func(subj, reply string, m *Post)) {
+	go c.QueueSubscribe(subject("post.update"), queue(), callback)
 }
 
 func CommentSubscriber(callback func(subj, reply string, m *Comment)) {
-	go c.QueueSubscribe(subject("comment"), queue(), callback)
+	go c.QueueSubscribe(subject("comment.new"), queue(), callback)
+}
+
+func CommentUpdateSubscriber(callback func(subj, reply string, m *Comment)) {
+	go c.QueueSubscribe(subject("comment.update"), queue(), callback)
 }
 
 func UserSubscriber(callback func(subj, reply string, m *User)) {
