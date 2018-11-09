@@ -13,10 +13,10 @@ import (
 var client *messaging.Client
 var ctx context.Context
 
-func SendMessage(token string) {
+func SendMessage(m messaging.AndroidNotification, token string) {
 	// See documentation on defining a message payload.
 	message := &messaging.Message{
-		Data:         nil,
+		Data:         MessageBuilder(),
 		Notification: nil,
 		Android: &messaging.AndroidConfig{
 			CollapseKey:           "",
@@ -57,6 +57,18 @@ func SendMessage(token string) {
 		fmt.Println("Successfully sent message:", response, token)
 	}
 
+}
+
+func MessageBuilder() map[string]string {
+
+	return map[string]string{
+		"mnc_ns":    "hello",
+		"mnc_nt":    "world",
+		"mnc_nm":    "jljsdkalj",
+		"mnc_ico":   "kjahdkasjd",
+		"mnc_dl":    "manch://posts/${data.post_id}",
+		"mnc_sound": "true",
+	}
 }
 
 func init() () {
