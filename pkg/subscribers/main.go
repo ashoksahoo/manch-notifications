@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/nats-io/go-nats"
 	"log"
+	"os"
 )
 
 var c *nats.EncodedConn
@@ -53,24 +54,40 @@ type Subscription struct {
 	New          bool   `json:"isNew"`
 }
 
+func subject(s string) string {
+	env := os.Getenv("env")
+	if env == "" {
+		env = "development"
+	}
+	return "manch-api:" + env + s
+
+}
+
+func queue() string {
+	env := os.Getenv("env")
+	if env == "" {
+		env = "development"
+	}
+	return "manch-notification-service:" + env
+}
 func PostSubscriber(callback func(subj, reply string, m *Post)) {
-	c.QueueSubscribe("manch-api:development:post", "manch-notification-service:development", callback)
+	c.QueueSubscribe(subject("post"), queue(), callback)
 }
 
 func CommentSubscriber(callback func(subj, reply string, m *Comment)) {
-	c.QueueSubscribe("manch-api:development:comment", "manch-notification-service:development", callback)
+	c.QueueSubscribe(subject("comment"), queue(), callback)
 }
 
 func UserSubscriber(callback func(subj, reply string, m *User)) {
-	c.QueueSubscribe("manch-api:development:user", "manch-notification-service:development", callback)
+	c.QueueSubscribe(subject("user"), queue(), callback)
 }
 
 func VoteSubscriber(callback func(subj, reply string, m *User)) {
-	c.QueueSubscribe("manch-api:development:vote", "manch-notification-service:development", callback)
+	c.QueueSubscribe(subject("vote"), queue(), callback)
 }
 
 func SubsSubscriber(callback func(subj, reply string, m *Subscription)) {
-	c.QueueSubscribe("manch-api:development:sub", "manch-notification-service:development", callback)
+	c.QueueSubscribe(subject("sub"), queue(), callback)
 }
 
 func init() {
