@@ -1,8 +1,14 @@
 package subscribers
 
 import (
+	"fmt"
 	"github.com/nats-io/go-nats"
+	"log"
 )
+
+var c *nats.EncodedConn
+var nc *nats.Conn
+var err error
 
 type Post struct {
 	Id        string   `json:"_id"`
@@ -47,22 +53,35 @@ type Subscription struct {
 	New          bool   `json:"isNew"`
 }
 
-func PostSubscriber(c *nats.EncodedConn, callback func(subj, reply string, m *Post)) {
+func PostSubscriber(callback func(subj, reply string, m *Post)) {
 	c.QueueSubscribe("manch-api:development:post", "manch-notification-service:development", callback)
 }
 
-func CommentSubscriber(c *nats.EncodedConn, callback func(subj, reply string, m *Comment)) {
+func CommentSubscriber(callback func(subj, reply string, m *Comment)) {
 	c.QueueSubscribe("manch-api:development:comment", "manch-notification-service:development", callback)
 }
 
-func UserSubscriber(c *nats.EncodedConn, callback func(subj, reply string, m *User)) {
+func UserSubscriber(callback func(subj, reply string, m *User)) {
 	c.QueueSubscribe("manch-api:development:user", "manch-notification-service:development", callback)
 }
 
-func VoteSubscriber(c *nats.EncodedConn, callback func(subj, reply string, m *User)) {
+func VoteSubscriber(callback func(subj, reply string, m *User)) {
 	c.QueueSubscribe("manch-api:development:vote", "manch-notification-service:development", callback)
 }
 
-func SubsSubscriber(c *nats.EncodedConn, callback func(subj, reply string, m *Subscription)) {
+func SubsSubscriber(callback func(subj, reply string, m *Subscription)) {
 	c.QueueSubscribe("manch-api:development:sub", "manch-notification-service:development", callback)
+}
+
+func init() {
+
+	if nc, err = nats.Connect(nats.DefaultURL); err != nil {
+		log.Fatal(err)
+	}
+	if c, err = nats.NewEncodedConn(nc, nats.JSON_ENCODER); err != nil {
+		log.Fatal(err)
+	} else {
+		fmt.Println("Initialized NATS Connection.")
+	}
+
 }

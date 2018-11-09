@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"github.com/go-chi/chi"
-	"github.com/nats-io/go-nats"
 	"net/http"
 	"notification-service/pkg/firebase"
 	"notification-service/pkg/mongo"
@@ -16,17 +15,14 @@ func main() {
 		w.Write([]byte("pong"))
 	})
 
-	nc, _ := nats.Connect(nats.DefaultURL)
-	c, _ := nats.NewEncodedConn(nc, nats.JSON_ENCODER)
-
-	subscribers.PostSubscriber(c, func(subj, reply string, p *subscribers.Post) {
+	subscribers.PostSubscriber(func(subj, reply string, p *subscribers.Post) {
 		fmt.Printf("Received a post on subject %s! with Post ID %s\n", subj, p.Id)
 		newPost := mongo.GetPostById(p.Id)
 		fmt.Printf("Mongo Query return for Post %+v\n", newPost)
 
 	})
 
-	subscribers.CommentSubscriber(c, func(subj, reply string, cmt *subscribers.Comment) {
+	subscribers.CommentSubscriber(func(subj, reply string, cmt *subscribers.Comment) {
 		fmt.Printf("Received a comment on subject %s! with Comment ID %s\n", subj, cmt.Id)
 		comment := mongo.GetCommentById(cmt.Id)
 		fmt.Printf("Mongo Query return for comment %+v\n", comment)
@@ -47,7 +43,6 @@ func main() {
 	firebase.SendMessage("eow3qWbmKlc:APA91bE_9vQzdZCViUk-6DS-1QEOIH64J78swU3VGihzOSz1pr7RUV_5sQW1ETyfFjOBR9OnIDrMf0pv4IOCnPCMxCyCBGxk7p8PMBQJ9GTR55vvPYdoFAXEwB_7FYyRznAjLwx35a9v")
 
 	http.ListenAndServe(":5000", r)
-	defer c.Close()
 }
 
 func init() {

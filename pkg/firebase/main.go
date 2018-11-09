@@ -10,23 +10,10 @@ import (
 	"notification-service/pkg/mongo"
 )
 
-func CreateClient() (*messaging.Client, context.Context) {
-
-	opt := option.WithCredentialsFile("./private/fcm.json")
-	app, err := firebase.NewApp(context.Background(), nil, opt)
-	if err != nil {
-		log.Fatalf("error initializing app: %v\n", err)
-	}
-
-	ctx := context.Background()
-	client, err := app.Messaging(ctx)
-	return client, ctx
-
-}
+var client *messaging.Client
+var ctx context.Context
 
 func SendMessage(token string) {
-	client, ctx := CreateClient()
-
 	// See documentation on defining a message payload.
 	message := &messaging.Message{
 		Data:         nil,
@@ -68,6 +55,23 @@ func SendMessage(token string) {
 	} else {
 		// Response is a message ID string.
 		fmt.Println("Successfully sent message:", response, token)
+	}
+
+}
+
+func init() () {
+
+	opt := option.WithCredentialsFile("./private/fcm.json")
+	app, err := firebase.NewApp(context.Background(), nil, opt)
+	if err != nil {
+		log.Fatalf("error initializing app: %v\n", err)
+	}
+
+	ctx = context.Background()
+	if client, err = app.Messaging(ctx); err != nil {
+		log.Fatalf("error initializing app: %v\n", err)
+	} else {
+		fmt.Println("Initialized GCM.")
 	}
 
 }

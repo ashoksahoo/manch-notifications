@@ -5,9 +5,9 @@ import (
 )
 
 type PostModel struct {
-	Id           bson.ObjectId   `json:"_id" bson:"_id"`
-	Title        string          `json:"title"`
-	Creator         `json:"created"`
+	Id           bson.ObjectId `json:"_id" bson:"_id"`
+	Title        string        `json:"title"`
+	Creator      `json:"created"`
 	CommunityIds []bson.ObjectId `json:"community_ids" bson:"community_ids"`
 	//Communities  []CommunityModel
 }

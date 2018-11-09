@@ -1,6 +1,7 @@
 package cache
 
 import (
+	"fmt"
 	"github.com/gomodule/redigo/redis"
 	"os"
 	"os/signal"
@@ -19,6 +20,7 @@ func init() {
 	}
 	Pool = newPool(redisHost)
 	cleanupHook()
+	fmt.Println("Initialized Redis.")
 }
 
 func newPool(server string) *redis.Pool {

@@ -17,7 +17,7 @@ func init() {
 	}
 	if session, err = mgo.Dial(url); err != nil {
 		log.Fatal(err)
-	}else {
-		fmt.Println("Mongo Connected")
+	} else {
+		fmt.Println("Initialized Mongo Connected")
 	}
 }
