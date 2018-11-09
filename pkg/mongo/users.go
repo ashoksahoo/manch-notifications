@@ -26,8 +26,9 @@ type UserModel struct {
 }
 
 func GetUserById(Id string) UserModel {
-	session := Session()
-	posts := session.DB("manch").C("users")
+	s := session.Clone()
+	defer s.Close()
+	posts := s.DB("manch").C("users")
 	user := UserModel{}
 	posts.Find(bson.M{"_id": bson.ObjectIdHex(Id)}).One(&user)
 	fmt.Printf("Mongo Query return for User %+v\n", user)

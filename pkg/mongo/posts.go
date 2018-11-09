@@ -13,9 +13,10 @@ type PostModel struct {
 }
 
 func GetPostById(Id string) PostModel {
-	session := Session()
+	s := session.Clone()
+	defer s.Close()
 	post := PostModel{}
-	posts := session.DB("manch").C("posts")
+	posts := s.DB("manch").C("posts")
 	posts.Find(bson.M{"_id": bson.ObjectIdHex(Id)}).One(&post)
 	//post.Communities = GetCommunityByQuery(bson.M{"profile_id": bson.M{"$in": post.CommunityIds}, "deleted": false})
 	return post

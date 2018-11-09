@@ -13,8 +13,9 @@ type TokenModel struct {
 }
 
 func GetTokensByQuery(q *bson.M) []TokenModel {
-	session := Session()
-	T := session.DB("manch").C("fcm_tokens")
+	s := session.Clone()
+	defer s.Close()
+	T := s.DB("manch").C("fcm_tokens")
 	var tokens []TokenModel
 	count, _ := T.Find(q).Count()
 	T.Find(q).All(&tokens)
@@ -41,8 +42,10 @@ func GetTokensByProfiles(profiles []string) []TokenModel {
 }
 
 func DeleteToken(token string) {
-	session := Session()
-	T := session.DB("manch").C("fcm_tokens")
+	s := session.Clone()
+	defer s.Close()
+	T := s.DB("manch").C("fcm_tokens")
 	T.Update(bson.M{"fcm_token": token}, bson.M{"$set": bson.M{"deleted": true}})
+	fmt.Printf("deleted token")
 
 }

@@ -12,8 +12,9 @@ type NotificationModel struct {
 }
 
 func CreateNotification(n NotificationModel) error {
-	session := Session()
-	N := session.DB("manch").C("notifications")
+	s := session.Clone()
+	defer s.Close()
+	N := s.DB("manch").C("notifications")
 	count, err := N.Find(bson.M{"_id": n.Id}).Limit(1).Count()
 	if err != nil {
 		return err
@@ -26,8 +27,9 @@ func CreateNotification(n NotificationModel) error {
 }
 
 func GetNotificationByResource(Id string) NotificationModel {
-	session := Session()
-	N := session.DB("manch").C("notifications")
+	s := session.Clone()
+	defer s.Close()
+	N := s.DB("manch").C("notifications")
 	notif := NotificationModel{}
 	N.Find(bson.M{"_id": bson.ObjectIdHex(Id)}).One(&notif)
 	return notif

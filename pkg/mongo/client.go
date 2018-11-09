@@ -1,16 +1,23 @@
 package mongo
 
 import (
+	"fmt"
 	"github.com/globalsign/mgo"
+	"log"
+	"os"
 )
 
-func Session() *mgo.Session {
+var url = os.Getenv("MONGO_DB")
+var session *mgo.Session
 
-	//mgo.SetDebug(true)
-	//var aLogger *log.Logger
-	//aLogger = log.New(os.Stderr, "", log.LstdFlags)
-	//mgo.SetLogger(aLogger)
-
-	session, _ := mgo.Dial("mongodb://localhost:27017/")
-	return session
+func init() {
+	var err error
+	if url == "" {
+		url = "mongodb://localhost:27017/"
+	}
+	if session, err = mgo.Dial(url); err != nil {
+		log.Fatal(err)
+	}else {
+		fmt.Println("Mongo Connected")
+	}
 }

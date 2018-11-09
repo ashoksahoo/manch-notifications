@@ -12,16 +12,18 @@ type CommunityModel struct {
 }
 
 func GetCommunityById(Id string) CommunityModel {
-	session := Session()
-	posts := session.DB("manch").C("communities")
+	s := session.Clone()
+	defer s.Close()
+	posts := s.DB("manch").C("communities")
 	community := CommunityModel{}
 	posts.Find(bson.M{"_id": bson.ObjectIdHex(Id)}).One(&community)
 	return community
 }
 
 func GetCommunityByQuery(q bson.M) []CommunityModel {
-	session := Session()
-	posts := session.DB("manch").C("communities")
+	s := session.Clone()
+	defer s.Close()
+	posts := s.DB("manch").C("communities")
 	var communities []CommunityModel
 	posts.Find(q).One(&communities)
 	return communities
