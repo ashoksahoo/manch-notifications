@@ -17,27 +17,18 @@ func GetTokensByQuery(q *bson.M) []TokenModel {
 	defer s.Close()
 	T := s.DB("manch").C("fcm_tokens")
 	var tokens []TokenModel
-	count, _ := T.Find(q).Count()
 	T.Find(q).All(&tokens)
-	fmt.Printf("Count %+v\n", count)
-	fmt.Printf("QUERY %+v\n", q)
-	fmt.Printf("Tokens %+v\n", tokens)
 	if tokens != nil {
 		return tokens
 	}
 	return nil
 }
 
-func GetTokensByProfiles(profiles []string) []TokenModel {
-	profileIds := make([]bson.ObjectId, len(profiles)-1)
-	for _, profile := range profiles {
-		profileIds = append(profileIds, bson.ObjectIdHex(profile))
-	}
+func GetTokensByProfiles(profiles []bson.ObjectId) []TokenModel {
 	query := bson.M{
-		"profile_id": profileIds[0],
-		"deleted":    false,
+		"profile_id": profiles[0],
+		//"deleted":    false,
 	}
-	fmt.Printf("ProfileIds %s\n", profileIds)
 	return GetTokensByQuery(&query)
 }
 
