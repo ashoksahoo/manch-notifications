@@ -8,15 +8,16 @@ import (
 	"google.golang.org/api/option"
 	"log"
 	"notification-service/pkg/mongo"
+	"os"
 )
 
 var client *messaging.Client
 var ctx context.Context
 
-func SendMessage(m messaging.AndroidNotification, token string) {
+func SendMessage(m messaging.AndroidNotification, token string, id string) {
 	// See documentation on defining a message payload.
 	message := &messaging.Message{
-		Data:         MessageBuilder(),
+		Data:         MessageBuilder(m, id),
 		Notification: nil,
 		Android: &messaging.AndroidConfig{
 			CollapseKey:           "",
@@ -24,7 +25,7 @@ func SendMessage(m messaging.AndroidNotification, token string) {
 			TTL:                   nil,
 			RestrictedPackageName: "",
 			Data:                  nil,
-			Notification: &m,
+			Notification:          &m,
 		},
 		Webpush:   nil,
 		APNS:      nil,
@@ -47,21 +48,30 @@ func SendMessage(m messaging.AndroidNotification, token string) {
 
 }
 
-func MessageBuilder() map[string]string {
+func MessageBuilder(m messaging.AndroidNotification, id string) map[string]string {
 
 	return map[string]string{
-		"mnc_ns":    "hello",
-		"mnc_nt":    "world",
-		"mnc_nm":    "jljsdkalj",
-		"mnc_ico":   "kjahdkasjd",
-		"mnc_dl":    "manch://posts/${data.post_id}",
+		"mnc_ns":    "manch:N",
+		"mnc_nt":    m.Title,
+		"mnc_nm":    m.Body,
+		"mnc_ico":   m.Icon,
+		"mnc_dl":    "manch://posts/" + id,
 		"mnc_sound": "true",
 	}
 }
 
 func init() () {
-
-	opt := option.WithCredentialsFile("./private/fcm.json")
+	var filename string
+	switch os.Getenv("env") {
+	case "staging":
+		filename = "./private/fcm_staging.json"
+		break
+	case "development":
+	case "production":
+	default:
+		filename = "./private/fcm.json"
+	}
+	opt := option.WithCredentialsFile(filename)
 	app, err := firebase.NewApp(context.Background(), nil, opt)
 	if err != nil {
 		log.Fatalf("error initializing app: %v\n", err)
