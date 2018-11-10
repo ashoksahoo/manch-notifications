@@ -39,6 +39,7 @@ func main() {
 		} else {
 			msgStr = comment.Created.Name + " commented on Your Post"
 		}
+		print(uniqueCommentator)
 		msg := firebase.ManchMessage{
 			Namespace:  "manch:N",
 			Title:      "New Comment",
