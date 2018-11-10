@@ -5,10 +5,11 @@ import (
 )
 
 type PostModel struct {
-	Id    bson.ObjectId `json:"_id" bson:"_id"`
-	Title string        `json:"title"`
-	Created Creator `json:"created" bson:"created"`
+	Id           bson.ObjectId   `json:"_id" bson:"_id"`
+	Title        string          `json:"title"`
+	Created      Creator         `json:"created" bson:"created"`
 	CommunityIds []bson.ObjectId `json:"community_ids" bson:"community_ids"`
+	CommentCount int
 }
 
 func GetPostById(Id bson.ObjectId) PostModel {
@@ -17,5 +18,6 @@ func GetPostById(Id bson.ObjectId) PostModel {
 	post := PostModel{}
 	P := s.DB("manch").C("posts")
 	P.Find(bson.M{"_id": Id}).One(&post)
+	post.CommentCount = GetCommentCount(Id)
 	return post
 }

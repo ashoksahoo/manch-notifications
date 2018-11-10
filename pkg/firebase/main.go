@@ -1,6 +1,7 @@
 package firebase
 
 import (
+	"encoding/json"
 	"firebase.google.com/go"
 	"firebase.google.com/go/messaging"
 	"fmt"
@@ -14,10 +15,53 @@ import (
 var client *messaging.Client
 var ctx context.Context
 
-func SendMessage(m messaging.AndroidNotification, token string, id string) {
+/**
+String MSG_NOTIFICATION_ID = "mnc_nid";
+String MSG_SILENT = "mnc_sn";
+String MSG_NOTIFICATION_SOUND = "mnc_sound";
+String MSG_TITLE = "mnc_nt";
+String MSG_NOTIFICATION_MESSAGE = "mnc_nm";
+String MSG_NOTIFICATION_ICON_PATH = "mnc_ico";
+String MSG_BIG_PICTURE = "mnc_bp";
+String MSG_BADGE_ICON = "mnc_bi";
+String MSG_BADGE_COUNT = "mnc_bc";
+String MSG_CHANNEL_ID = "mnc_cid";
+String MSG_COLLAPSE_KEY = "mnc_ck";
+String MSG_PRIORITY = "mnc_pr";
+String MSG_ACTIONS = "mnc_acts";
+
+ */
+type ManchMessage struct {
+	Id          string `json:"mnc_id"`
+	Namespace   string `json:"mnc_ns"`
+	Title       string `json:"mnc_nt"`
+	Message     string `json:"mnc_nm"`
+	Icon        string `json:"mnc_ico"`
+	DeepLink    string `json:"mnc_dl"`
+	Sound       string `json:"mnc_sound"`
+	BigPicture  string `json:"mnc_bp"`
+	BadgeIcon   string `json:"mnc_bi"`
+	BadgeCount  string `json:"mnc_bc"`
+	ChannelId   string `json:"mnc_cid"`
+	CollapseKey string `json:"mnc_ck"`
+	Priority    string `json:"mnc_pr"`
+	Actions     string `json:"mnc_acts"`
+	Silent      string `json:"mns_sn"`
+}
+
+func MessageBuilder(m ManchMessage) map[string]string {
+
+	var inInterface map[string]string
+	inrec, _ := json.Marshal(m)
+	json.Unmarshal(inrec, &inInterface)
+	//fmt.Printf("Message. %+v", inInterface)
+	return inInterface
+}
+
+func SendMessage(m ManchMessage, token string) {
 	// See documentation on defining a message payload.
 	message := &messaging.Message{
-		Data:         MessageBuilder(m, id),
+		Data:         MessageBuilder(m),
 		Notification: nil,
 		Android: &messaging.AndroidConfig{
 			CollapseKey:           "",
@@ -48,26 +92,15 @@ func SendMessage(m messaging.AndroidNotification, token string, id string) {
 
 }
 
-func MessageBuilder(m messaging.AndroidNotification, id string) map[string]string {
-
-	return map[string]string{
-		"mnc_ns":    "manch:N",
-		"mnc_nt":    m.Title,
-		"mnc_nm":    m.Body,
-		"mnc_ico":   m.Icon,
-		"mnc_dl":    "manch://posts/" + id,
-		"mnc_sound": "true",
-	}
-}
-
 func init() () {
 	var filename string
 	switch os.Getenv("env") {
 	case "staging":
 		filename = "./private/fcm_staging.json"
-		break
 	case "development":
+		filename = "./private/fcm.json"
 	case "production":
+		filename = "./private/fcm.json"
 	default:
 		filename = "./private/fcm.json"
 	}
