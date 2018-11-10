@@ -25,7 +25,7 @@ func SendMessage(m messaging.AndroidNotification, token string, id string) {
 			TTL:                   nil,
 			RestrictedPackageName: "",
 			Data:                  nil,
-			Notification:          &m,
+			Notification:          nil,
 		},
 		Webpush:   nil,
 		APNS:      nil,
