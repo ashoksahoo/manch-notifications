@@ -27,7 +27,7 @@ func main() {
 		comment := mongo.GetCommentById(cmt.Id)
 		fmt.Printf("Created By %+v\n", comment.Created)
 
-		profiles := []bson.ObjectId{comment.Created.ProfileId}
+		profiles := []bson.ObjectId{comment.Post.Created.ProfileId}
 		tokens := mongo.GetTokensByProfiles(profiles)
 		msg := messaging.AndroidNotification{
 			Title:        "New Comment",
