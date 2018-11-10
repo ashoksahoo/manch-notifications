@@ -27,7 +27,7 @@ func GetTokensByQuery(q *bson.M) []TokenModel {
 func GetTokensByProfiles(profiles []bson.ObjectId) []TokenModel {
 	query := bson.M{
 		"profile_id": profiles[0],
-		//"deleted":    false,
+		"deleted":    false,
 	}
 	return GetTokensByQuery(&query)
 }
