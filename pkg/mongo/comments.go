@@ -37,6 +37,9 @@ func GetCommentatorCount(postId bson.ObjectId, opId bson.ObjectId) int {
 	defer s.Close()
 	C := s.DB("manch").C("comments")
 	var result []bson.ObjectId
-	C.Find(bson.M{"post_id": postId, "$ne": opId}).Distinct("created.profile_id", &result)
+	C.Find(bson.M{"post_id": postId, "created.profile_id": bson.M{"$ne": opId}}).Distinct("created.profile_id", &result)
+	//fmt.Printf("R %+v", result)
+	//fmt.Printf("P %+v", postId)
+	//fmt.Printf("OP %+v", opId)
 	return len(result)
 }
