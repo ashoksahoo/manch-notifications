@@ -12,24 +12,24 @@ type CommentModel struct {
 	Created Creator `json:"created" bson:"created"`
 }
 
-func GetCommentById(Id string) (CommentModel, int) {
+func GetFullCommentById(Id string) (CommentModel, int) {
 	s := session.Clone()
 	defer s.Close()
 	C := s.DB("manch").C("comments")
 	c := CommentModel{}
 	C.Find(bson.M{"_id": bson.ObjectIdHex(Id)}).One(&c)
 	var uniqCommentator int
-	c.Post, uniqCommentator = GetPostById(c.PostId)
+	c.Post = GetPostById(c.PostId)
+	uniqCommentator = GetCommentatorCount(c.PostId)
 	return c, uniqCommentator
 }
 
-func GetCommentCount(postId bson.ObjectId) (int, int) {
+func GetCommentCount(postId bson.ObjectId) (int) {
 	s := session.Clone()
 	defer s.Close()
 	C := s.DB("manch").C("comments")
 	count, _ := C.Find(bson.M{"post_id": postId}).Count()
-	uniqueCommentator := GetCommentatorCount(postId)
-	return count, uniqueCommentator
+	return count
 }
 
 func GetCommentatorCount(postId bson.ObjectId) int {
@@ -37,6 +37,6 @@ func GetCommentatorCount(postId bson.ObjectId) int {
 	defer s.Close()
 	C := s.DB("manch").C("comments")
 	var result []bson.ObjectId
-	C.Find(bson.M{"post_id": postId}).Distinct("post_id", &result)
+	C.Find(bson.M{"post_id": postId}).Distinct("created.profile_id", &result)
 	return len(result)
 }

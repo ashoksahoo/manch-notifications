@@ -19,20 +19,23 @@ func main() {
 
 	subscribers.PostSubscriber(func(subj, reply string, p *subscribers.Post) {
 		fmt.Printf("Received a post on subject %s! with Post ID %s\n", subj, p.Id)
-		newPost, _ := mongo.GetPostById(bson.ObjectIdHex(p.Id))
+		newPost := mongo.GetPostById(bson.ObjectIdHex(p.Id))
 		fmt.Printf("Mongo return for Post %+v\n", newPost)
 
 	})
 	subscribers.CommentSubscriber(func(subj, reply string, cmt *subscribers.Comment) {
-		comment, uniqueCommentator := mongo.GetCommentById(cmt.Id)
+		comment, uniqueCommentator := mongo.GetFullCommentById(cmt.Id)
+		if comment.Post.Created.ProfileId == comment.Created.ProfileId {
+			//Self comment
+			return
+		}
 		profiles := []bson.ObjectId{comment.Post.Created.ProfileId}
 		tokens := mongo.GetTokensByProfiles(profiles)
 		var msgStr string
 		if uniqueCommentator > 1 {
 			msgStr = comment.Created.Name + " & " + strconv.Itoa(uniqueCommentator-1) + " others commented on Your Post"
-		} else {
-
-			msgStr = comment.Created.Name + " commented on Your Post"
+		} else if uniqueCommentator == 2 {
+			msgStr = comment.Created.Name + " & " + "one other commented on Your Post"
 		}
 		msg := firebase.ManchMessage{
 			Namespace:  "manch:N",
