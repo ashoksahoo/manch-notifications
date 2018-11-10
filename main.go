@@ -32,10 +32,12 @@ func main() {
 		profiles := []bson.ObjectId{comment.Post.Created.ProfileId}
 		tokens := mongo.GetTokensByProfiles(profiles)
 		var msgStr string
-		if uniqueCommentator > 1 {
+		if uniqueCommentator > 2 {
 			msgStr = comment.Created.Name + " & " + strconv.Itoa(uniqueCommentator-1) + " others commented on Your Post"
 		} else if uniqueCommentator == 2 {
 			msgStr = comment.Created.Name + " & " + "one other commented on Your Post"
+		} else {
+			msgStr = comment.Created.Name + " commented on Your Post"
 		}
 		msg := firebase.ManchMessage{
 			Namespace:  "manch:N",
