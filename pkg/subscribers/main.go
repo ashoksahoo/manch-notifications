@@ -10,6 +10,7 @@ import (
 var c *nats.EncodedConn
 var nc *nats.Conn
 var err error
+var url = os.Getenv("NATS")
 
 type Post struct {
 	Id        string   `json:"_id"`
@@ -102,8 +103,10 @@ func SubsSubscriber(callback func(subj, reply string, m *Subscription)) {
 }
 
 func init() {
-
-	if nc, err = nats.Connect(nats.DefaultURL); err != nil {
+	if url == "" {
+		url = nats.DefaultURL
+	}
+	if nc, err = nats.Connect(url); err != nil {
 		log.Fatal(err)
 	}
 	if c, err = nats.NewEncodedConn(nc, nats.JSON_ENCODER); err != nil {
