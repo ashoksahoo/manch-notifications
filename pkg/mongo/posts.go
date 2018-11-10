@@ -12,12 +12,13 @@ type PostModel struct {
 	CommentCount int
 }
 
-func GetPostById(Id bson.ObjectId) PostModel {
+func GetPostById(Id bson.ObjectId) (PostModel, int) {
 	s := session.Clone()
 	defer s.Close()
 	post := PostModel{}
 	P := s.DB("manch").C("posts")
 	P.Find(bson.M{"_id": Id}).One(&post)
-	post.CommentCount = GetCommentCount(Id)
-	return post
+	var commentatorCount int
+	post.CommentCount, commentatorCount = GetCommentCount(Id)
+	return post, commentatorCount
 }
