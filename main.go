@@ -40,17 +40,16 @@ func main() {
 			msgStr = comment.Created.Name + " commented on Your Post"
 		}
 		msg := firebase.ManchMessage{
-			Namespace:  "manch:N",
 			Title:      "New Comment",
 			Message:    msgStr,
 			Icon:       comment.Created.Avatar,
 			DeepLink:   "manch://posts/" + comment.PostId.Hex(),
-			Sound:      "true",
 			BadgeCount: strconv.Itoa(comment.Post.CommentCount),
 			Id:         comment.PostId.Hex() + "_comment",
 		}
+		fmt.Printf("\n Avatar: %+v", comment.Created)
 		fmt.Printf("\n Message: %+v", msg)
-		//firebase.SendMessage(msg, "c3H8bqZDN2M:APA91bGR8azrCNJwgygmVKb42kC_4_PlVq28IeI5i5217vHEKNIWd3AMfYojERdgvkHvQxTU3VGfPmpJoM4e7u_HXEUyf6fB0Nfc1Ey-he20uVrOyzv4cefIVjbeC02co3zM4FUFaKUj")
+		firebase.SendMessage(msg, "frgp37gfvFg:APA91bHbnbfoX-bp3M_3k-ceD7E4fZ73fcmVL4b5DGB5cQn-fFEvfbj3aAI9g0wXozyApIb-6wGsJauf67auK1p3Ins5Ff7IXCN161fb5JJ5pfBnTZ4LEcRUatO6wimsbiS7EANoGDr4")
 		if tokens != nil {
 			for _, token := range tokens {
 				go firebase.SendMessage(msg, token.Token)

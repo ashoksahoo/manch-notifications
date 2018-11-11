@@ -32,34 +32,37 @@ String MSG_ACTIONS = "mnc_acts";
 
  */
 type ManchMessage struct {
-	Id          string `json:"mnc_id"`
-	Namespace   string `json:"mnc_ns"`
-	Title       string `json:"mnc_nt"`
-	Message     string `json:"mnc_nm"`
-	Icon        string `json:"mnc_ico"`
-	DeepLink    string `json:"mnc_dl"`
-	Sound       string `json:"mnc_sound"`
-	BigPicture  string `json:"mnc_bp"`
-	BadgeIcon   string `json:"mnc_bi"`
-	BadgeCount  string `json:"mnc_bc"`
-	ChannelId   string `json:"mnc_cid"`
-	CollapseKey string `json:"mnc_ck"`
-	Priority    string `json:"mnc_pr"`
-	Actions     string `json:"mnc_acts"`
-	Silent      string `json:"mns_sn"`
+	Id          string `json:"mnc_id,omitempty"`
+	Namespace   string `json:"mnc_ns,omitempty"`
+	Title       string `json:"mnc_nt,omitempty"`
+	Message     string `json:"mnc_nm,omitempty"`
+	Icon        string `json:"mnc_ico,omitempty"`
+	DeepLink    string `json:"mnc_dl,omitempty"`
+	Sound       string `json:"mnc_sound,omitempty"`
+	BigPicture  string `json:"mnc_bp,omitempty"`
+	BadgeIcon   string `json:"mnc_bi,omitempty"`
+	BadgeCount  string `json:"mnc_bc,omitempty"`
+	ChannelId   string `json:"mnc_cid,omitempty"`
+	CollapseKey string `json:"mnc_ck,omitempty"`
+	Priority    string `json:"mnc_pr,omitempty"`
+	Actions     string `json:"mnc_acts,omitempty"`
+	Silent      string `json:"mns_sn,omitempty"`
+	MessageType string `json:"manch_message_type,omitempty"`
 }
 
 func MessageBuilder(m ManchMessage) map[string]string {
-
 	var inInterface map[string]string
 	inrec, _ := json.Marshal(m)
 	json.Unmarshal(inrec, &inInterface)
-	//fmt.Printf("Message. %+v", inInterface)
 	return inInterface
 }
 
 func SendMessage(m ManchMessage, token string) {
 	// See documentation on defining a message payload.
+	m.Namespace = "manch:N"
+	if m.Icon == "" {
+		m.Icon = "https://manch.app/img/logo.png"
+	}
 	message := &messaging.Message{
 		Data:         MessageBuilder(m),
 		Notification: nil,
