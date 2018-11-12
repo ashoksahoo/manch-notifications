@@ -6,6 +6,7 @@ import (
 	"github.com/go-chi/chi"
 	"net/http"
 	"notification-service/pkg/firebase"
+	"notification-service/pkg/i18n"
 	"notification-service/pkg/mongo"
 	"notification-service/pkg/subscribers"
 	"strconv"
@@ -24,30 +25,40 @@ func main() {
 
 	})
 	subscribers.CommentSubscriber(func(subj, reply string, cmt *subscribers.Comment) {
+		defer func() {
+			if r := recover(); r != nil {
+				fmt.Println("Recovered in f", r)
+			}
+		}()
 		comment, uniqueCommentator := mongo.GetFullCommentById(cmt.Id)
 		if comment.Post.Created.ProfileId == comment.Created.ProfileId {
 			//Self comment
 			return
 		}
+		userProfile := mongo.GetProfileById(comment.Post.Created.ProfileId)
 		profiles := []bson.ObjectId{comment.Post.Created.ProfileId}
 		tokens := mongo.GetTokensByProfiles(profiles)
+		data := i18n.DataModel{
+			Name:  comment.Created.Name,
+			Count: uniqueCommentator - 1,
+		}
 		var msgStr string
-		if uniqueCommentator > 2 {
-			msgStr = comment.Created.Name + " & " + strconv.Itoa(uniqueCommentator-1) + " others commented on Your Post"
-		} else if uniqueCommentator == 2 {
-			msgStr = comment.Created.Name + " & " + "one other commented on Your Post"
+
+		if uniqueCommentator > 1 {
+			msgStr = i18n.GetString(userProfile.Language, "comment_multi", data)
 		} else {
-			msgStr = comment.Created.Name + " commented on Your Post"
+			msgStr = i18n.GetString(userProfile.Language, "comment_one", data)
 		}
 		msg := firebase.ManchMessage{
-			Title:      "New Comment",
+			Title:      "Manch",
 			Message:    msgStr,
 			Icon:       comment.Created.Avatar,
 			DeepLink:   "manch://posts/" + comment.PostId.Hex(),
 			BadgeCount: strconv.Itoa(comment.Post.CommentCount),
 			Id:         comment.PostId.Hex() + "_comment",
 		}
-		//firebase.SendMessage(msg, "frgp37gfvFg:APA91bHbnbfoX-bp3M_3k-ceD7E4fZ73fcmVL4b5DGB5cQn-fFEvfbj3aAI9g0wXozyApIb-6wGsJauf67auK1p3Ins5Ff7IXCN161fb5JJ5pfBnTZ4LEcRUatO6wimsbiS7EANoGDr4")
+		fmt.Printf("\nMessage %+v", msg)
+		firebase.SendMessage(msg, "frgp37gfvFg:APA91bHbnbfoX-bp3M_3k-ceD7E4fZ73fcmVL4b5DGB5cQn-fFEvfbj3aAI9g0wXozyApIb-6wGsJauf67auK1p3Ins5Ff7IXCN161fb5JJ5pfBnTZ4LEcRUatO6wimsbiS7EANoGDr4")
 		if tokens != nil {
 			for _, token := range tokens {
 				go firebase.SendMessage(msg, token.Token)

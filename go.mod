@@ -6,6 +6,7 @@ require (
 	github.com/globalsign/mgo v0.0.0-20181015135952-eeefdecb41b8
 	github.com/go-chi/chi v3.3.3+incompatible
 	github.com/gomodule/redigo v2.0.0+incompatible
+	github.com/google/logger v0.0.0-20180208223940-54b4ae679a63
 	github.com/google/martian v2.1.0+incompatible // indirect
 	github.com/googleapis/gax-go v2.0.0+incompatible // indirect
 	github.com/kr/pretty v0.1.0 // indirect
