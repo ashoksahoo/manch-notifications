@@ -6,7 +6,7 @@ import (
 
 type PostModel struct {
 	Id           bson.ObjectId   `json:"_id" bson:"_id"`
-	Title        string          `json:"title"`
+	Title        string          `json:"title" bson:"title"`
 	Created      Creator         `json:"created" bson:"created"`
 	CommunityIds []bson.ObjectId `json:"community_ids" bson:"community_ids"`
 	CommentCount int

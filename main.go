@@ -41,6 +41,7 @@ func main() {
 		data := i18n.DataModel{
 			Name:  comment.Created.Name,
 			Count: uniqueCommentator - 1,
+			Post:  comment.Post.Title,
 		}
 		var msgStr string
 
@@ -58,7 +59,7 @@ func main() {
 			Id:         comment.PostId.Hex() + "_comment",
 		}
 		fmt.Printf("\nMessage %+v", msg)
-		firebase.SendMessage(msg, "frgp37gfvFg:APA91bHbnbfoX-bp3M_3k-ceD7E4fZ73fcmVL4b5DGB5cQn-fFEvfbj3aAI9g0wXozyApIb-6wGsJauf67auK1p3Ins5Ff7IXCN161fb5JJ5pfBnTZ4LEcRUatO6wimsbiS7EANoGDr4")
+		//firebase.SendMessage(msg, "frgp37gfvFg:APA91bHbnbfoX-bp3M_3k-ceD7E4fZ73fcmVL4b5DGB5cQn-fFEvfbj3aAI9g0wXozyApIb-6wGsJauf67auK1p3Ins5Ff7IXCN161fb5JJ5pfBnTZ4LEcRUatO6wimsbiS7EANoGDr4")
 		if tokens != nil {
 			for _, token := range tokens {
 				go firebase.SendMessage(msg, token.Token)
