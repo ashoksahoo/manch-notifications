@@ -1,36 +1,44 @@
 package mongo
 
 import (
-	"fmt"
 	"github.com/globalsign/mgo/bson"
 )
 
 type NotificationModel struct {
-	Id       bson.ObjectId `json:"_id" bson:"_id"`
-	Type     string        `json:"type" bson:"type"`
-	Resource bson.ObjectId `json:"resource_id" bson:"resource_id"`
+	Id           bson.ObjectId   `json:"_id,omitempty" bson:"_id,omitempty"`
+	Type         string          `json:"type" bson:"type"`
+	ResourceType string          `json:"resource_type" bson:"resource_type"`
+	Resource     bson.ObjectId   `json:"resource_id" bson:"resource_id"`
+	UniqueUsers  []bson.ObjectId `json:"profile_ids" bson:"profile_ids"`
 }
 
-func CreateNotification(n NotificationModel) error {
+func CreateNotification(rId bson.ObjectId, t string, rT string, u bson.ObjectId) NotificationModel {
 	s := session.Clone()
 	defer s.Close()
 	N := s.DB("manch").C("notifications")
-	count, err := N.Find(bson.M{"_id": n.Id}).Limit(1).Count()
-	if err != nil {
-		return err
+	n := NotificationModel{
+		Resource:     rId,
+		Type:         t,
+		ResourceType: rT,
+		UniqueUsers:  []bson.ObjectId{u},
 	}
+	count, _ := N.Find(bson.M{"resource_id": rId}).Limit(1).Count()
+	print(count)
 	if count > 0 {
-		return fmt.Errorf("resource %s already exists", n.Id)
+		N.Upsert(bson.M{"resource_id": rId, "type": t}, bson.M{
+			"$addToSet": bson.M{"profile_ids": u},
+		})
 	}
-	return N.Insert(n)
+	N.Insert(n)
+	return GetNotificationByResource(rId, t)
 
 }
 
-func GetNotificationByResource(Id string) NotificationModel {
+func GetNotificationByResource(rId bson.ObjectId, t string) NotificationModel {
 	s := session.Clone()
 	defer s.Close()
 	N := s.DB("manch").C("notifications")
 	notif := NotificationModel{}
-	N.Find(bson.M{"_id": bson.ObjectIdHex(Id)}).One(&notif)
+	N.Find(bson.M{"resource_id": rId, "type": t}).One(&notif)
 	return notif
 }

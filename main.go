@@ -35,9 +35,10 @@ func main() {
 			//Self comment
 			return
 		}
-		userProfile := mongo.GetProfileById(comment.Post.Created.ProfileId)
-		profiles := []bson.ObjectId{comment.Post.Created.ProfileId}
-		tokens := mongo.GetTokensByProfiles(profiles)
+		postCreator := mongo.GetProfileById(comment.Post.Created.ProfileId)
+		tokens := mongo.GetTokensByProfiles([]bson.ObjectId{comment.Post.Created.ProfileId})
+		mongo.CreateNotification(comment.PostId, "comment", "post",comment.Post.Created.ProfileId)
+
 		data := i18n.DataModel{
 			Name:  comment.Created.Name,
 			Count: uniqueCommentator - 1,
@@ -46,9 +47,9 @@ func main() {
 		var msgStr string
 
 		if uniqueCommentator > 1 {
-			msgStr = i18n.GetString(userProfile.Language, "comment_multi", data)
+			msgStr = i18n.GetString(postCreator.Language, "comment_multi", data)
 		} else {
-			msgStr = i18n.GetString(userProfile.Language, "comment_one", data)
+			msgStr = i18n.GetString(postCreator.Language, "comment_one", data)
 		}
 		msg := firebase.ManchMessage{
 			Title:      "Manch",

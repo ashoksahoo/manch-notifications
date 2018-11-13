@@ -37,7 +37,6 @@ func GetUserById(Id string) UserModel {
 }
 
 func GetProfileById(Id bson.ObjectId) Profile {
-	print(Id.Hex())
 	s := session.Clone()
 	defer s.Close()
 	posts := s.DB("manch").C("users")
