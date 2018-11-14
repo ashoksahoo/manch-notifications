@@ -24,8 +24,21 @@ func main() {
 		fmt.Printf("Mongo return for Post %+v\n", newPost)
 
 	})
+	/**
+		This processes Comments from Posts
+		1) Get Comment Details and Unique commentator count
+		2) Validate self comment
+		3) Get Who created the post -> He gets the notification and we need his current lang
+		4) Get tokens from the above profile (Supports multiple device tokens.)
+		5) Create/Update Notification Table which has the meta info for the notificaiotn
+		6) Construct Data for i18n template
+		7) Generate template using template data and String Formatter
+		8) Create push notification
+		9) Fire the notifications in routines.
+
+	 */
 	subscribers.CommentSubscriber(func(subj, reply string, c *subscribers.Comment) {
-		fmt.Printf("\nNats MSG %+v", c)
+		//fmt.Printf("\nNats MSG %+v", c)
 		defer func() {
 			if r := recover(); r != nil {
 				fmt.Println("Recovered in subscribers.CommentSubscriber", r)
@@ -69,6 +82,19 @@ func main() {
 			fmt.Printf("No token")
 		}
 	})
+	/**
+		This processes Upvotes from Posts
+		1) Get Voting Details
+		2) Validate only upvote & self vote
+		3) Get Who created the post -> He gets the notification and we need his current lang
+		4) Get tokens from the above profile (Supports multiple device tokens.)
+		5) Create/Update Notification Table which has the meta info for the notificaiotn
+		6) Construct Data for i18n template
+		7) Generate template using template data and String Formatter
+		8) Create push notification
+		9) Fire the notifications in routines.
+
+	 */
 	subscribers.VoteSubscriberPost(func(subj, reply string, v *subscribers.Vote) {
 		//fmt.Printf("\nNats MSG %+v", v)
 		defer func() {
@@ -77,8 +103,7 @@ func main() {
 			}
 		}()
 		dir, err := strconv.Atoi(v.Direction)
-		if err == nil || dir < 1 {
-			print(dir)
+		if err != nil || dir < 1 {
 			//Do not process downvotes and unvote
 			return
 		}
@@ -125,18 +150,22 @@ func main() {
 			}
 		}()
 		dir, err := strconv.Atoi(v.Direction)
-		if err == nil || dir < 1 {
+		if err != nil || dir < 1 {
 			//Do not process downvotes and unvote
 			return
 		}
 		comment := mongo.GetCommentById(v.Resource)
 		vote := comment.GetVote(v.Id)
+		if vote.Created.ProfileId == comment.Created.ProfileId {
+			//Self Vote
+			return
+		}
 		commentCreator := mongo.GetProfileById(comment.Created.ProfileId)
 		notification := mongo.CreateNotification(comment.Id, "vote", "comment", vote.Created.ProfileId)
 		tokens := mongo.GetTokensByProfiles([]bson.ObjectId{comment.Created.ProfileId})
 		data := i18n.DataModel{
 			Name: vote.Created.Name,
-			Post: comment.Content,
+			Comment: comment.Content,
 		}
 		var msgStr string
 
