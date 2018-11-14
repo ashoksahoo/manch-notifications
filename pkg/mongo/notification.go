@@ -23,7 +23,6 @@ func CreateNotification(rId bson.ObjectId, t string, rT string, u bson.ObjectId)
 		UniqueUsers:  []bson.ObjectId{u},
 	}
 	count, _ := N.Find(bson.M{"resource_id": rId}).Limit(1).Count()
-	print(count)
 	if count > 0 {
 		N.Upsert(bson.M{"resource_id": rId, "type": t}, bson.M{
 			"$addToSet": bson.M{"profile_ids": u},

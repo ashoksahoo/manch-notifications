@@ -19,7 +19,7 @@ func GetFullCommentById(Id string) (CommentModel, int) {
 	c := CommentModel{}
 	C.Find(bson.M{"_id": bson.ObjectIdHex(Id)}).One(&c)
 	var uniqCommentator int
-	c.Post = GetPostById(c.PostId)
+	c.Post = GetPost(c.PostId)
 	uniqCommentator = GetCommentatorCount(c.PostId, c.Post.Created.ProfileId)
 	return c, uniqCommentator
 }
@@ -42,4 +42,13 @@ func GetCommentatorCount(postId bson.ObjectId, opId bson.ObjectId) int {
 	//fmt.Printf("P %+v", postId)
 	//fmt.Printf("OP %+v", opId)
 	return len(result)
+}
+
+func GetCommentById(Id string) (CommentModel) {
+	s := session.Clone()
+	defer s.Close()
+	C := s.DB("manch").C("comments")
+	c := CommentModel{}
+	C.Find(bson.M{"_id": bson.ObjectIdHex(Id)}).One(&c)
+	return c
 }

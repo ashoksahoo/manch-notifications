@@ -32,7 +32,7 @@ String MSG_ACTIONS = "mnc_acts";
 
  */
 type ManchMessage struct {
-	Id          string `json:"mnc_id,omitempty"`
+	Id          string `json:"mnc_nid,omitempty"`
 	Namespace   string `json:"mnc_ns,omitempty"`
 	Title       string `json:"mnc_nt,omitempty"`
 	Message     string `json:"mnc_nm,omitempty"`

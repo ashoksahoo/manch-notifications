@@ -13,10 +13,10 @@ var Strings = map[string]map[string]string{
 		"comment_one":   "{{.Name}} commented on Your Post {{.Post}}",
 
 
-		"like_multi": "{{.Name}} & {{.Count}} others liked Your Post {{.Post}}",
-		"like_three": "{{.Name}}, {{.Name2}} & {{.Name3}} liked Your Post {{.Post}}",
-		"like_two":   "{{.Name}} & {{.Name2}} liked Your Post {{.Post}}",
-		"like_one":   "{{.Name}} liked Your Post {{.Post}}",
+		"post_like_multi": "{{.Name}} & {{.Count}} others liked Your Post {{.Post}}",
+		"post_like_three": "{{.Name}}, {{.Name2}} & {{.Name3}} liked Your Post {{.Post}}",
+		"post_like_two":   "{{.Name}} & {{.Name2}} liked Your Post {{.Post}}",
+		"post_like_one":   "{{.Name}} liked Your Post {{.Post}}",
 
 		"comment_like_multi": "{{.Name}} & {{.Count}} others liked Your Comment {{.Comment}}",
 		"comment_like_three": "{{.Name}}, {{.Name2}} & {{.Name3}} liked Your Comment {{.Comment}}",

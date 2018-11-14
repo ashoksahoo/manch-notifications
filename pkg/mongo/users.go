@@ -1,7 +1,6 @@
 package mongo
 
 import (
-	"fmt"
 	"github.com/globalsign/mgo/bson"
 )
 
@@ -32,7 +31,7 @@ func GetUserById(Id string) UserModel {
 	posts := s.DB("manch").C("users")
 	user := UserModel{}
 	posts.Find(bson.M{"_id": bson.ObjectIdHex(Id)}).One(&user)
-	fmt.Printf("Mongo Query return for User %+v\n", user)
+	//fmt.Printf("Mongo Query return for User %+v\n", user)
 	return user
 }
 
@@ -42,6 +41,6 @@ func GetProfileById(Id bson.ObjectId) Profile {
 	posts := s.DB("manch").C("users")
 	user := UserModel{}
 	posts.Find(bson.M{"profiles._id": Id}).Select(bson.M{"email": 1, "profiles.$": 1}).One(&user)
-	fmt.Printf("Mongo Query return for Profile %+v\n", user.Profiles)
+	//fmt.Printf("Mongo Query return for Profile %+v\n", user.Profiles)
 	return user.Profiles[0]
 }

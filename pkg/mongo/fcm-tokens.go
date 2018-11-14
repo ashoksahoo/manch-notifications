@@ -9,7 +9,6 @@ type TokenModel struct {
 	Id        bson.ObjectId `json:"_id" bson:"_id"`
 	ProfileId bson.ObjectId `json:"profile_id" bson:"profile_id"`
 	Token     string        `json:"fcm_token" bson:"fcm_token"`
-	Creator
 }
 
 func GetTokensByQuery(q *bson.M) []TokenModel {

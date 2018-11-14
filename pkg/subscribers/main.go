@@ -94,8 +94,12 @@ func UserSubscriber(callback func(subj, reply string, m *User)) {
 	go c.QueueSubscribe(subject("user"), queue(), callback)
 }
 
-func VoteSubscriber(callback func(subj, reply string, m *User)) {
-	go c.QueueSubscribe(subject("vote"), queue(), callback)
+func VoteSubscriberPost(callback func(subj, reply string, m *Vote)) {
+	go c.QueueSubscribe(subject("vote.post"), queue(), callback)
+}
+
+func VoteSubscriberComment(callback func(subj, reply string, m *Vote)) {
+	go c.QueueSubscribe(subject("vote.comment"), queue(), callback)
 }
 
 func SubsSubscriber(callback func(subj, reply string, m *Subscription)) {
