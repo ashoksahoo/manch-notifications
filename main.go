@@ -24,13 +24,14 @@ func main() {
 		fmt.Printf("Mongo return for Post %+v\n", newPost)
 
 	})
-	subscribers.CommentSubscriber(func(subj, reply string, cmt *subscribers.Comment) {
+	subscribers.CommentSubscriber(func(subj, reply string, c *subscribers.Comment) {
+		fmt.Printf("\nNats MSG %+v", c)
 		defer func() {
 			if r := recover(); r != nil {
 				fmt.Println("Recovered in subscribers.CommentSubscriber", r)
 			}
 		}()
-		comment, uniqueCommentator := mongo.GetFullCommentById(cmt.Id)
+		comment, uniqueCommentator := mongo.GetFullCommentById(c.Id)
 		if comment.Post.Created.ProfileId == comment.Created.ProfileId {
 			//Self comment
 			return
@@ -69,11 +70,18 @@ func main() {
 		}
 	})
 	subscribers.VoteSubscriberPost(func(subj, reply string, v *subscribers.Vote) {
+		//fmt.Printf("\nNats MSG %+v", v)
 		defer func() {
 			if r := recover(); r != nil {
 				fmt.Println("Recovered in subscribers.VoteSubscriberPost", r)
 			}
 		}()
+		dir, err := strconv.Atoi(v.Direction)
+		if err == nil || dir < 1 {
+			print(dir)
+			//Do not process downvotes and unvote
+			return
+		}
 		post := mongo.GetPostById(v.Resource)
 		vote := post.GetVote(v.Id)
 		if vote.Created.ProfileId == post.Created.ProfileId {
@@ -110,11 +118,17 @@ func main() {
 
 	})
 	subscribers.VoteSubscriberComment(func(subj, reply string, v *subscribers.Vote) {
+		//fmt.Printf("\nNats MSG %+v", v)
 		defer func() {
 			if r := recover(); r != nil {
 				fmt.Println("Recovered in subscribers.VoteSubscriberComment", r)
 			}
 		}()
+		dir, err := strconv.Atoi(v.Direction)
+		if err == nil || dir < 1 {
+			//Do not process downvotes and unvote
+			return
+		}
 		comment := mongo.GetCommentById(v.Resource)
 		vote := comment.GetVote(v.Id)
 		commentCreator := mongo.GetProfileById(comment.Created.ProfileId)

@@ -44,6 +44,7 @@ type Vote struct {
 	GUID         string `json:"guid"`
 	Resource     string `json:"resource"`
 	ResourceType string `json:"resource_type"`
+	Direction    string `json:"vote"`
 	New          bool   `json:"isNew"`
 }
 
