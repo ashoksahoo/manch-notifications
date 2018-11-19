@@ -9,7 +9,11 @@ type PostModel struct {
 	Title        string          `json:"title" bson:"title"`
 	Created      Creator         `json:"created" bson:"created"`
 	CommunityIds []bson.ObjectId `json:"community_ids" bson:"community_ids"`
-	CommentCount int
+	CommentCount int             `json:"no_of_comments" bson:"no_of_comments"`
+	UpVotes      int             `json:"up_votes" bson:"up_vote"`
+	DownVotes    int             `json:"down_votes" bson:"down_vote"`
+	Views        int             `json:"no_of_views"bson:"no_of_views"`
+	Impressions  int             `json:"no_of_impressions"bson:"no_of_impressions"`
 }
 
 func GetPost(Id bson.ObjectId) (PostModel) {
@@ -18,7 +22,8 @@ func GetPost(Id bson.ObjectId) (PostModel) {
 	post := PostModel{}
 	P := s.DB("manch").C("posts")
 	P.Find(bson.M{"_id": Id}).One(&post)
-	post.CommentCount = GetCommentCount(Id)
+	//FIXME: Do we need to get all the comments from there or its available of the post itself.
+	//post.CommentCount = GetCommentCount(Id)
 	return post
 }
 

@@ -12,7 +12,6 @@ var nc *nats.Conn
 var err error
 var url = os.Getenv("NATS")
 
-
 func subject(s string) string {
 	env := os.Getenv("env")
 	if env == "" {
@@ -52,11 +51,11 @@ func UserSubscriber(callback func(subj, reply string, m *User)) {
 	go c.QueueSubscribe(subject("user"), queue(), callback)
 }
 
-func VoteSubscriberPost(callback func(subj, reply string, m *Vote)) {
+func VotePostSubscriber(callback func(subj, reply string, m *Vote)) {
 	go c.QueueSubscribe(subject("vote.post"), queue(), callback)
 }
 
-func VoteSubscriberComment(callback func(subj, reply string, m *Vote)) {
+func VoteCommentSubscriber(callback func(subj, reply string, m *Vote)) {
 	go c.QueueSubscribe(subject("vote.comment"), queue(), callback)
 }
 

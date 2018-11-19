@@ -5,11 +5,13 @@ import (
 )
 
 type CommentModel struct {
-	Id      bson.ObjectId `json:"_id" bson:"_id"`
-	Content string        `json:"content"`
-	PostId  bson.ObjectId `json:"post_id" bson:"post_id"`
-	Post    PostModel
-	Created Creator `json:"created" bson:"created"`
+	Id          bson.ObjectId `json:"_id" bson:"_id"`
+	Content     string        `json:"content"`
+	PostId      bson.ObjectId `json:"post_id" bson:"post_id"`
+	Post        PostModel
+	Created     Creator `json:"created" bson:"created"`
+	UpVotes     int     `json:"up_votes" bson:"up_vote"`
+	DownVotes   int     `json:"down_votes" bson:"down_vote"`
 }
 
 func GetFullCommentById(Id string) (CommentModel, int) {

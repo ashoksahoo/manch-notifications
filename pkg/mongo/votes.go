@@ -9,8 +9,9 @@ type VoteModelPost struct {
 	Id           bson.ObjectId `json:"_id" bson:"_id"`
 	ResourceType string        `json:"resource_type" bson:"resource_type"`
 	Resource     PostModel
-	Created      Creator `json:"created" bson:"created"`
-	Value        int     `json:"vote" bson:"vote"`
+	ResourceId   bson.ObjectId `json:"resource_id" bson:"resource_id"`
+	Created      Creator       `json:"created" bson:"created"`
+	Value        int           `json:"vote" bson:"vote"`
 }
 
 type VoteModelComment struct {

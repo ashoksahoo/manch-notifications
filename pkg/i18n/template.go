@@ -5,7 +5,6 @@ import (
 )
 import "text/template"
 
-
 type DataModel struct {
 	Name    string
 	Name2   string

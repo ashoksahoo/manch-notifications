@@ -95,11 +95,11 @@ func main() {
 		9) Fire the notifications in routines.
 
 	 */
-	subscribers.VoteSubscriberPost(func(subj, reply string, v *subscribers.Vote) {
+	subscribers.VotePostSubscriber(func(subj, reply string, v *subscribers.Vote) {
 		//fmt.Printf("\nNats MSG %+v", v)
 		defer func() {
 			if r := recover(); r != nil {
-				fmt.Println("Recovered in subscribers.VoteSubscriberPost", r)
+				fmt.Println("Recovered in subscribers.VotePostSubscriber", r)
 			}
 		}()
 		dir, err := strconv.Atoi(v.Direction)
@@ -115,15 +115,19 @@ func main() {
 		}
 		postCreator := mongo.GetProfileById(post.Created.ProfileId)
 		tokens := mongo.GetTokensByProfiles([]bson.ObjectId{post.Created.ProfileId})
-		print(tokens)
 		notification := mongo.CreateNotification(post.Id, "vote", "post", vote.Created.ProfileId)
-
+		//fmt.Printf("\nPost %+v", post)
 		data := i18n.DataModel{
-			Name: vote.Created.Name,
-			Post: post.Title,
+			Name:  vote.Created.Name,
+			Post:  post.Title,
+			Count: post.UpVotes,
 		}
 		var msgStr string
-		msgStr = i18n.GetString(postCreator.Language, "post_like_one", data)
+		if post.UpVotes > 1 {
+			msgStr = i18n.GetString(postCreator.Language, "post_like_multi", data)
+		} else {
+			msgStr = i18n.GetString(postCreator.Language, "post_like_one", data)
+		}
 		msg := firebase.ManchMessage{
 			Title:    "Manch",
 			Message:  msgStr,
@@ -142,11 +146,11 @@ func main() {
 		}
 
 	})
-	subscribers.VoteSubscriberComment(func(subj, reply string, v *subscribers.Vote) {
+	subscribers.VoteCommentSubscriber(func(subj, reply string, v *subscribers.Vote) {
 		//fmt.Printf("\nNats MSG %+v", v)
 		defer func() {
 			if r := recover(); r != nil {
-				fmt.Println("Recovered in subscribers.VoteSubscriberComment", r)
+				fmt.Println("Recovered in subscribers.VoteCommentSubscriber", r)
 			}
 		}()
 		dir, err := strconv.Atoi(v.Direction)
@@ -164,12 +168,16 @@ func main() {
 		notification := mongo.CreateNotification(comment.Id, "vote", "comment", vote.Created.ProfileId)
 		tokens := mongo.GetTokensByProfiles([]bson.ObjectId{comment.Created.ProfileId})
 		data := i18n.DataModel{
-			Name: vote.Created.Name,
+			Name:    vote.Created.Name,
 			Comment: comment.Content,
+			Count:   comment.UpVotes,
 		}
 		var msgStr string
-
-		msgStr = i18n.GetString(commentCreator.Language, "comment_like_one", data)
+		if comment.UpVotes > 1 {
+			msgStr = i18n.GetString(commentCreator.Language, "comment_like_multi", data)
+		} else {
+			msgStr = i18n.GetString(commentCreator.Language, "comment_like_one", data)
+		}
 		msg := firebase.ManchMessage{
 			Title:    "Manch",
 			Message:  msgStr,
