@@ -2,6 +2,7 @@ package mongo
 
 import (
 	"github.com/globalsign/mgo/bson"
+	"strconv"
 )
 
 type NotificationModel struct {
@@ -10,6 +11,20 @@ type NotificationModel struct {
 	ResourceType string          `json:"resource_type" bson:"resource_type"`
 	Resource     bson.ObjectId   `json:"resource_id" bson:"resource_id"`
 	UniqueUsers  []bson.ObjectId `json:"profile_ids" bson:"profile_ids"`
+	Identifier   string          `json:"identifier" bson:"identifier"`
+}
+
+func GenerateIdentifier(Id bson.ObjectId, t string) string {
+	ts := Id.Time().Unix()
+	ts2018 := ts - 1514764800
+	var identifier string
+	switch t {
+	case "like":
+		identifier = "1"
+	case "comment":
+		identifier = "2"
+	}
+	return strconv.FormatInt(ts2018, 10) + identifier
 }
 
 func CreateNotification(rId bson.ObjectId, t string, rT string, u bson.ObjectId) NotificationModel {
@@ -21,14 +36,17 @@ func CreateNotification(rId bson.ObjectId, t string, rT string, u bson.ObjectId)
 		Type:         t,
 		ResourceType: rT,
 		UniqueUsers:  []bson.ObjectId{u},
+		Identifier:   GenerateIdentifier(rId, t),
 	}
-	count, _ := N.Find(bson.M{"resource_id": rId}).Limit(1).Count()
+	count, _ := N.Find(bson.M{"resource_id": rId, "type": t}).Count()
+	print(count)
 	if count > 0 {
 		N.Upsert(bson.M{"resource_id": rId, "type": t}, bson.M{
 			"$addToSet": bson.M{"profile_ids": u},
 		})
+	} else {
+		N.Insert(n)
 	}
-	N.Insert(n)
 	return GetNotificationByResource(rId, t)
 
 }

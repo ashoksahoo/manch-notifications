@@ -31,11 +31,13 @@ var Strings = map[string]map[string]string{
 
 
 		"post_like_multi": "{{.Name}} और {{.Count}} लोगों ने आपकी पोस्ट {{.Post}} को पसंद किया है",
-		"post_like_three": "{{.Name}}, {{.Name2}} और {{.Name3}} ने आपकी पोस्ट {{.Post}}को पसंद किया है",
-		"post_like_two":   "{{.Name}} और {{.Name2}} ने आपकी पोस्ट {{.Post}}को पसंद किया है",
-		"post_like_one":   "{{.Name}} ने आपकी पोस्ट {{.Post}}को पसंद किया है",
+		"post_like_three": "{{.Name}}, {{.Name2}} और {{.Name3}} ने आपकी पोस्ट {{.Post}} को पसंद किया है",
+		"post_like_two":   "{{.Name}} और {{.Name2}} ने आपकी पोस्ट {{.Post}} को पसंद किया है",
+		"post_like_one":   "{{.Name}} ने आपकी पोस्ट {{.Post}} को पसंद किया है",
 
 		"comment_like_multi": "आपके कमेंट को {{.Count}} लोगों ने पसंद किया है",
+		"comment_like_three": "{{.Name}}, {{.Name2}} और {{.Name3}} ने आपकी कमेंट {{.Post}} को पसंद किया है",
+		"comment_like_two":   "{{.Name}} और {{.Name2}} ने आपकी कमेंट {{.Post}} को पसंद किया है",
 		"comment_like_one":   "आपके कमेंट को {{.Name}} ने पसंद किया है",
 
 		"share_multi": "{{.Name}} और {{.Count}} लोगों ने आपकी पोस्ट {{.Post}} को शेयर किया है",

@@ -71,7 +71,7 @@ func main() {
 			Icon:       comment.Created.Avatar,
 			DeepLink:   "manch://posts/" + comment.PostId.Hex(),
 			BadgeCount: strconv.Itoa(comment.Post.CommentCount),
-			Id:         notification.Id.Hex(),
+			Id:         notification.Identifier,
 		}
 		//firebase.SendMessage(msg, "frgp37gfvFg:APA91bHbnbfoX-bp3M_3k-ceD7E4fZ73fcmVL4b5DGB5cQn-fFEvfbj3aAI9g0wXozyApIb-6wGsJauf67auK1p3Ins5Ff7IXCN161fb5JJ5pfBnTZ4LEcRUatO6wimsbiS7EANoGDr4")
 		if tokens != nil {
@@ -115,8 +115,7 @@ func main() {
 		}
 		postCreator := mongo.GetProfileById(post.Created.ProfileId)
 		tokens := mongo.GetTokensByProfiles([]bson.ObjectId{post.Created.ProfileId})
-		notification := mongo.CreateNotification(post.Id, "vote", "post", vote.Created.ProfileId)
-		//fmt.Printf("\nPost %+v", post)
+		notification := mongo.CreateNotification(post.Id, "like", "post", vote.Created.ProfileId)
 		data := i18n.DataModel{
 			Name:  vote.Created.Name,
 			Post:  post.Title,
@@ -133,10 +132,11 @@ func main() {
 			Message:  msgStr,
 			Icon:     vote.Created.Avatar,
 			DeepLink: "manch://posts/" + post.Id.Hex(),
-			Id:       notification.Id.Hex(),
+			Id:       notification.Identifier,
 		}
 
-		fmt.Printf("\nMessage %+v", msg)
+		fmt.Printf("\nGCM Message %+v", msg)
+		firebase.SendMessage(msg, "frgp37gfvFg:APA91bHbnbfoX-bp3M_3k-ceD7E4fZ73fcmVL4b5DGB5cQn-fFEvfbj3aAI9g0wXozyApIb-6wGsJauf67auK1p3Ins5Ff7IXCN161fb5JJ5pfBnTZ4LEcRUatO6wimsbiS7EANoGDr4")
 		if tokens != nil {
 			for _, token := range tokens {
 				go firebase.SendMessage(msg, token.Token)
@@ -147,7 +147,7 @@ func main() {
 
 	})
 	subscribers.VoteCommentSubscriber(func(subj, reply string, v *subscribers.Vote) {
-		//fmt.Printf("\nNats MSG %+v", v)
+		fmt.Printf("\nNats MSG %+v", v)
 		defer func() {
 			if r := recover(); r != nil {
 				fmt.Println("Recovered in subscribers.VoteCommentSubscriber", r)
@@ -165,7 +165,7 @@ func main() {
 			return
 		}
 		commentCreator := mongo.GetProfileById(comment.Created.ProfileId)
-		notification := mongo.CreateNotification(comment.Id, "vote", "comment", vote.Created.ProfileId)
+		notification := mongo.CreateNotification(comment.Id, "like", "comment", vote.Created.ProfileId)
 		tokens := mongo.GetTokensByProfiles([]bson.ObjectId{comment.Created.ProfileId})
 		data := i18n.DataModel{
 			Name:    vote.Created.Name,
@@ -183,10 +183,11 @@ func main() {
 			Message:  msgStr,
 			Icon:     vote.Created.Avatar,
 			DeepLink: "manch://posts/" + comment.PostId.Hex(),
-			Id:       notification.Id.Hex(),
+			Id:       notification.Identifier,
 		}
 
-		fmt.Printf("\nMessage %+v", msg)
+		fmt.Printf("\nGCM Message %+v", msg)
+		firebase.SendMessage(msg, "frgp37gfvFg:APA91bHbnbfoX-bp3M_3k-ceD7E4fZ73fcmVL4b5DGB5cQn-fFEvfbj3aAI9g0wXozyApIb-6wGsJauf67auK1p3Ins5Ff7IXCN161fb5JJ5pfBnTZ4LEcRUatO6wimsbiS7EANoGDr4")
 		if tokens != nil {
 			for _, token := range tokens {
 				go firebase.SendMessage(msg, token.Token)
