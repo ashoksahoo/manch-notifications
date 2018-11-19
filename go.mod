@@ -13,6 +13,7 @@ require (
 	github.com/nats-io/gnatsd v1.3.0 // indirect
 	github.com/nats-io/go-nats v1.6.0
 	github.com/nats-io/nuid v1.0.0 // indirect
+	github.com/newrelic/go-agent v2.1.0+incompatible
 	go.opencensus.io v0.18.0 // indirect
 	golang.org/x/crypto v0.0.0-20181030102418-4d3f4d9ffa16 // indirect
 	golang.org/x/net v0.0.0-20181029044818-c44066c5c816
