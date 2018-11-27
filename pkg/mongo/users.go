@@ -16,6 +16,7 @@ type Creator struct {
 	ProfileId bson.ObjectId `json:"profile_id" bson:"profile_id"`
 	Name      string        `json:"name" bson:"name"`
 	Avatar    string        `json:"avatar" bson:"avatar"`
+	UserType  string        `json:"type" bson:"type"`
 }
 
 type UserModel struct {

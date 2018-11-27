@@ -7,7 +7,7 @@ import (
 	"github.com/google/logger"
 )
 
-const logPath = "/var/log/notificaation-service.log"
+const logPath = "/var/log/notification-service.log"
 
 var verbose = flag.Bool("verbose", false, "print info level logs to stdout")
 
