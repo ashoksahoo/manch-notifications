@@ -39,8 +39,7 @@ func GetTokensByProfiles(profiles []bson.ObjectId) (tokens []TokenModel) {
 		"deleted":    false,
 	}
 	tokens = GetTokensByQuery(&query)
-	botTokens := botFilter(tokens)
-	return botTokens
+	return tokens
 }
 
 func DeleteToken(token string) {
