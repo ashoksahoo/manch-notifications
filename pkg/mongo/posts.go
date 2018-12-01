@@ -4,6 +4,10 @@ import (
 	"github.com/globalsign/mgo/bson"
 )
 
+type Media struct {
+	Url       string `json:"url"bson:"url"`
+	Thumbnail string `json:"thumbnail"bson:"thumbnail"`
+}
 type PostModel struct {
 	Id           bson.ObjectId   `json:"_id" bson:"_id"`
 	Title        string          `json:"title" bson:"title"`
@@ -14,6 +18,7 @@ type PostModel struct {
 	DownVotes    int             `json:"down_votes" bson:"down_vote"`
 	Views        int             `json:"no_of_views"bson:"no_of_views"`
 	Impressions  int             `json:"no_of_impressions"bson:"no_of_impressions"`
+	MediaUrls    []Media         `json:"media_urls"bson:"media_urls"`
 }
 
 func GetPost(Id bson.ObjectId) (PostModel) {
@@ -34,4 +39,11 @@ func GetPostById(Id string) (PostModel) {
 	P := s.DB("manch").C("posts")
 	P.Find(bson.M{"_id": bson.ObjectIdHex(Id)}).One(&post)
 	return post
+}
+
+func ExtractThumbNailFromPost(post PostModel) (thumb string) {
+	if len(post.MediaUrls) > 0 {
+		return post.MediaUrls[0].Thumbnail
+	}
+	return
 }

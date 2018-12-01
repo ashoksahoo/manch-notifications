@@ -68,7 +68,7 @@ func main() {
 		msg := firebase.ManchMessage{
 			Title:      "Manch",
 			Message:    msgStr,
-			Icon:       comment.Created.Avatar,
+			Icon:       mongo.ExtractThumbNailFromPost(comment.Post),
 			DeepLink:   "manch://posts/" + comment.PostId.Hex(),
 			BadgeCount: strconv.Itoa(comment.Post.CommentCount),
 			Id:         notification.Identifier,
@@ -130,7 +130,7 @@ func main() {
 		msg := firebase.ManchMessage{
 			Title:    "Manch",
 			Message:  msgStr,
-			Icon:     vote.Created.Avatar,
+			Icon:     mongo.ExtractThumbNailFromPost(post),
 			DeepLink: "manch://posts/" + post.Id.Hex(),
 			Id:       notification.Identifier,
 		}
@@ -163,6 +163,7 @@ func main() {
 			//Self Vote
 			return
 		}
+		post := mongo.GetPostById(comment.PostId.Hex())
 		commentCreator := mongo.GetProfileById(comment.Created.ProfileId)
 		notification := mongo.CreateNotification(comment.Id, "like", "comment", vote.Created.ProfileId)
 		tokens := mongo.GetTokensByProfiles([]bson.ObjectId{comment.Created.ProfileId})
@@ -180,7 +181,7 @@ func main() {
 		msg := firebase.ManchMessage{
 			Title:    "Manch",
 			Message:  msgStr,
-			Icon:     vote.Created.Avatar,
+			Icon:     mongo.ExtractThumbNailFromPost(post),
 			DeepLink: "manch://posts/" + comment.PostId.Hex(),
 			Id:       notification.Identifier,
 		}
