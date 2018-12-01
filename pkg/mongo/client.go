@@ -16,7 +16,7 @@ func init() {
 		url = "mongodb://localhost:27017/"
 	}
 	if session, err = mgo.Dial(url); err != nil {
-		log.Fatal(err)
+		log.Fatal("Mongo Error:" , err)
 	} else {
 		fmt.Println("Initialized Mongo Connected")
 	}
