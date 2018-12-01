@@ -43,7 +43,7 @@ func GetPostById(Id string) (PostModel) {
 
 func ExtractThumbNailFromPost(post PostModel) (thumb string) {
 	if len(post.MediaUrls) > 0 {
-		return post.MediaUrls[0].Thumbnail
+		thumb = post.MediaUrls[0].Thumbnail
 	}
 	return
 }
