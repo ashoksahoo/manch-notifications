@@ -47,6 +47,7 @@ func main() {
 		comment, uniqueCommentator := mongo.GetFullCommentById(c.Id)
 		if comment.Post.Created.ProfileId == comment.Created.ProfileId {
 			//Self comment
+			fmt.Println("Self Comment")
 			return
 		}
 		postCreator := mongo.GetProfileById(comment.Post.Created.ProfileId)
@@ -104,6 +105,7 @@ func main() {
 		}()
 		dir, err := strconv.Atoi(v.Direction)
 		if err != nil || dir < 1 {
+			fmt.Println("Invalid Vote")
 			//Do not process downvotes and unvote
 			return
 		}
@@ -111,6 +113,7 @@ func main() {
 		vote := post.GetVote(v.Id)
 		if vote.Created.ProfileId == post.Created.ProfileId {
 			//Self Vote
+			fmt.Println("Self Vote")
 			return
 		}
 		postCreator := mongo.GetProfileById(post.Created.ProfileId)
@@ -154,6 +157,7 @@ func main() {
 		}()
 		dir, err := strconv.Atoi(v.Direction)
 		if err != nil || dir < 1 {
+			fmt.Println("Invalid Vote")
 			//Do not process downvotes and unvote
 			return
 		}
@@ -161,6 +165,7 @@ func main() {
 		vote := comment.GetVote(v.Id)
 		if vote.Created.ProfileId == comment.Created.ProfileId {
 			//Self Vote
+			fmt.Println("Self Vote")
 			return
 		}
 		post := mongo.GetPostById(comment.PostId.Hex())
