@@ -73,7 +73,7 @@ func init() {
 	if c, err = nats.NewEncodedConn(nc, nats.JSON_ENCODER); err != nil {
 		log.Fatal(err)
 	} else {
-		fmt.Println("Initialized NATS Connection.")
+		fmt.Println("Initialized NATS Connection to " + url)
 	}
 
 }
