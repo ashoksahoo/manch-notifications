@@ -10,6 +10,7 @@ import (
 	"notification-service/pkg/mongo"
 	"notification-service/pkg/subscribers"
 	"strconv"
+	"strings"
 )
 
 func main() {
@@ -54,10 +55,12 @@ func main() {
 		tokens := mongo.GetTokensByProfiles([]bson.ObjectId{comment.Post.Created.ProfileId})
 		notification := mongo.CreateNotification(comment.PostId, "comment", "post", comment.Post.Created.ProfileId)
 
+		postTitle := strings.Join(strings.Split(comment.Post.Title, " ")[:4], " ")
+
 		data := i18n.DataModel{
 			Name:  comment.Created.Name,
 			Count: uniqueCommentator - 1,
-			Post:  comment.Post.Title,
+			Post:  postTitle,
 		}
 		var msgStr string
 
@@ -119,9 +122,12 @@ func main() {
 		postCreator := mongo.GetProfileById(post.Created.ProfileId)
 		tokens := mongo.GetTokensByProfiles([]bson.ObjectId{post.Created.ProfileId})
 		notification := mongo.CreateNotification(post.Id, "like", "post", vote.Created.ProfileId)
+		
+		postTitle := strings.Join(strings.Split(post.Title, " ")[:4], " ")
+
 		data := i18n.DataModel{
 			Name:  vote.Created.Name,
-			Post:  post.Title,
+			Post:  postTitle,
 			Count: post.UpVotes,
 		}
 		var msgStr string
