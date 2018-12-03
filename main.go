@@ -55,7 +55,14 @@ func main() {
 		tokens := mongo.GetTokensByProfiles([]bson.ObjectId{comment.Post.Created.ProfileId})
 		notification := mongo.CreateNotification(comment.PostId, "comment", "post", comment.Post.Created.ProfileId)
 
-		postTitle := strings.Join(strings.Split(comment.Post.Title, " ")[:4], " ")
+		var postTitle string
+		postTitleWords := strings.Split(comment.Post.Title, " ")
+		if len(postTitleWords) > 4 {
+			postTitle = strings.Join(postTitleWords[:4], " ")
+			postTitle = postTitle + "..."
+		} else {
+			postTitle = comment.Post.Title
+		}
 
 		data := i18n.DataModel{
 			Name:  comment.Created.Name,
@@ -69,8 +76,9 @@ func main() {
 		} else {
 			msgStr = i18n.GetString(postCreator.Language, "comment_one", data)
 		}
+		title := i18n.GetAppTitle(postCreator.Language)
 		msg := firebase.ManchMessage{
-			Title:      "Manch",
+			Title:      title,
 			Message:    msgStr,
 			Icon:       mongo.ExtractThumbNailFromPost(comment.Post),
 			DeepLink:   "manch://posts/" + comment.PostId.Hex(),
@@ -123,7 +131,14 @@ func main() {
 		tokens := mongo.GetTokensByProfiles([]bson.ObjectId{post.Created.ProfileId})
 		notification := mongo.CreateNotification(post.Id, "like", "post", vote.Created.ProfileId)
 		
-		postTitle := strings.Join(strings.Split(post.Title, " ")[:4], " ")
+		var postTitle string
+		postTitleWords := strings.Split(post.Title, " ")
+		if len(postTitleWords) > 4 {
+			postTitle = strings.Join(postTitleWords[:4], " ")
+			postTitle = postTitle + "..."
+		} else {
+			postTitle = post.Title
+		}
 
 		data := i18n.DataModel{
 			Name:  vote.Created.Name,
@@ -136,8 +151,9 @@ func main() {
 		} else {
 			msgStr = i18n.GetString(postCreator.Language, "post_like_one", data)
 		}
+		title := i18n.GetAppTitle(postCreator.Language)
 		msg := firebase.ManchMessage{
-			Title:    "Manch",
+			Title:    title,
 			Message:  msgStr,
 			Icon:     mongo.ExtractThumbNailFromPost(post),
 			DeepLink: "manch://posts/" + post.Id.Hex(),
@@ -178,9 +194,19 @@ func main() {
 		commentCreator := mongo.GetProfileById(comment.Created.ProfileId)
 		notification := mongo.CreateNotification(comment.Id, "like", "comment", vote.Created.ProfileId)
 		tokens := mongo.GetTokensByProfiles([]bson.ObjectId{comment.Created.ProfileId})
+		
+		var commentTitle string
+		commentTitleWords := strings.Split(comment.Content, " ")
+		if len(commentTitleWords) > 4 {
+			commentTitle = strings.Join(commentTitleWords[:4], " ")
+			commentTitle = commentTitle + "..."
+		} else {
+			commentTitle = comment.Content
+		}
+
 		data := i18n.DataModel{
 			Name:    vote.Created.Name,
-			Comment: comment.Content,
+			Comment: commentTitle,
 			Count:   comment.UpVotes,
 		}
 		var msgStr string
@@ -189,8 +215,9 @@ func main() {
 		} else {
 			msgStr = i18n.GetString(commentCreator.Language, "comment_like_one", data)
 		}
+		title := i18n.GetAppTitle(commentCreator.Language)
 		msg := firebase.ManchMessage{
-			Title:    "Manch",
+			Title:    title,
 			Message:  msgStr,
 			Icon:     mongo.ExtractThumbNailFromPost(post),
 			DeepLink: "manch://posts/" + comment.PostId.Hex(),
