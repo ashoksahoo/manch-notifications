@@ -10,7 +10,7 @@ import (
 	"notification-service/pkg/mongo"
 	"notification-service/pkg/subscribers"
 	"strconv"
-	"strings"
+	"notification-service/pkg/utils"
 )
 
 func main() {
@@ -55,15 +55,7 @@ func main() {
 		tokens := mongo.GetTokensByProfiles([]bson.ObjectId{comment.Post.Created.ProfileId})
 		notification := mongo.CreateNotification(comment.PostId, "comment", "post", comment.Post.Created.ProfileId)
 
-		var postTitle string
-		postTitleWords := strings.Split(comment.Post.Title, " ")
-		if len(postTitleWords) > 4 {
-			postTitle = strings.Join(postTitleWords[:4], " ")
-			postTitle = postTitle + "..."
-		} else {
-			postTitle = comment.Post.Title
-		}
-
+		postTitle := utils.TruncateTitle(comment.Post.Title, 4)
 		data := i18n.DataModel{
 			Name:  comment.Created.Name,
 			Count: uniqueCommentator - 1,
@@ -131,15 +123,7 @@ func main() {
 		tokens := mongo.GetTokensByProfiles([]bson.ObjectId{post.Created.ProfileId})
 		notification := mongo.CreateNotification(post.Id, "like", "post", vote.Created.ProfileId)
 		
-		var postTitle string
-		postTitleWords := strings.Split(post.Title, " ")
-		if len(postTitleWords) > 4 {
-			postTitle = strings.Join(postTitleWords[:4], " ")
-			postTitle = postTitle + "..."
-		} else {
-			postTitle = post.Title
-		}
-
+		postTitle := utils.TruncateTitle(post.Title, 4)
 		data := i18n.DataModel{
 			Name:  vote.Created.Name,
 			Post:  postTitle,
@@ -194,15 +178,8 @@ func main() {
 		commentCreator := mongo.GetProfileById(comment.Created.ProfileId)
 		notification := mongo.CreateNotification(comment.Id, "like", "comment", vote.Created.ProfileId)
 		tokens := mongo.GetTokensByProfiles([]bson.ObjectId{comment.Created.ProfileId})
-		
-		var commentTitle string
-		commentTitleWords := strings.Split(comment.Content, " ")
-		if len(commentTitleWords) > 4 {
-			commentTitle = strings.Join(commentTitleWords[:4], " ")
-			commentTitle = commentTitle + "..."
-		} else {
-			commentTitle = comment.Content
-		}
+
+		commentTitle := utils.TruncateTitle(comment.Content, 4)
 
 		data := i18n.DataModel{
 			Name:    vote.Created.Name,
