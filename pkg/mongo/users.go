@@ -2,6 +2,7 @@ package mongo
 
 import (
 	"github.com/globalsign/mgo/bson"
+	"fmt"
 )
 
 type Profile struct {
@@ -36,12 +37,18 @@ func GetUserById(Id string) UserModel {
 	return user
 }
 
+// func GetProfile(profileId string) Profile {
+// 	s := session.Clone()
+// 	defer s.Close()
+// 	users := s.DB("manch").C("users")
+// }
+
 func GetProfileById(Id bson.ObjectId) Profile {
 	s := session.Clone()
 	defer s.Close()
 	posts := s.DB("manch").C("users")
 	user := UserModel{}
 	posts.Find(bson.M{"profiles._id": Id}).Select(bson.M{"email": 1, "profiles.$": 1}).One(&user)
-	//fmt.Printf("Mongo Query return for Profile %+v\n", user.Profiles)
+	fmt.Printf("Mongo Query return for Profile %+v\n", user.Profiles)
 	return user.Profiles[0]
 }

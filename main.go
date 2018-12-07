@@ -2,15 +2,16 @@ package main
 
 import (
 	"fmt"
-	"github.com/globalsign/mgo/bson"
-	"github.com/go-chi/chi"
 	"net/http"
 	"notification-service/pkg/firebase"
 	"notification-service/pkg/i18n"
 	"notification-service/pkg/mongo"
 	"notification-service/pkg/subscribers"
-	"strconv"
 	"notification-service/pkg/utils"
+	"strconv"
+
+	"github.com/globalsign/mgo/bson"
+	"github.com/go-chi/chi"
 )
 
 func main() {
@@ -26,18 +27,18 @@ func main() {
 
 	})
 	/**
-		This processes Comments from Posts
-		1) Get Comment Details and Unique commentator count
-		2) Validate self comment
-		3) Get Who created the post -> He gets the notification and we need his current lang
-		4) Get tokens from the above profile (Supports multiple device tokens.)
-		5) Create/Update Notification Table which has the meta info for the notificaiotn
-		6) Construct Data for i18n template
-		7) Generate template using template data and String Formatter
-		8) Create push notification
-		9) Fire the notifications in routines.
+	This processes Comments from Posts
+	1) Get Comment Details and Unique commentator count
+	2) Validate self comment
+	3) Get Who created the post -> He gets the notification and we need his current lang
+	4) Get tokens from the above profile (Supports multiple device tokens.)
+	5) Create/Update Notification Table which has the meta info for the notificaiotn
+	6) Construct Data for i18n template
+	7) Generate template using template data and String Formatter
+	8) Create push notification
+	9) Fire the notifications in routines.
 
-	 */
+	*/
 	subscribers.CommentSubscriber(func(subj, reply string, c *subscribers.Comment) {
 		//fmt.Printf("\nNats MSG %+v", c)
 		defer func() {
@@ -87,18 +88,18 @@ func main() {
 		}
 	})
 	/**
-		This processes Upvotes from Posts
-		1) Get Voting Details
-		2) Validate only upvote & self vote
-		3) Get Who created the post -> He gets the notification and we need his current lang
-		4) Get tokens from the above profile (Supports multiple device tokens.)
-		5) Create/Update Notification Table which has the meta info for the notificaiotn
-		6) Construct Data for i18n template
-		7) Generate template using template data and String Formatter
-		8) Create push notification
-		9) Fire the notifications in routines.
+	This processes Upvotes from Posts
+	1) Get Voting Details
+	2) Validate only upvote & self vote
+	3) Get Who created the post -> He gets the notification and we need his current lang
+	4) Get tokens from the above profile (Supports multiple device tokens.)
+	5) Create/Update Notification Table which has the meta info for the notificaiotn
+	6) Construct Data for i18n template
+	7) Generate template using template data and String Formatter
+	8) Create push notification
+	9) Fire the notifications in routines.
 
-	 */
+	*/
 	subscribers.VotePostSubscriber(func(subj, reply string, v *subscribers.Vote) {
 		//fmt.Printf("\nNats MSG %+v", v)
 		defer func() {
@@ -122,7 +123,7 @@ func main() {
 		postCreator := mongo.GetProfileById(post.Created.ProfileId)
 		tokens := mongo.GetTokensByProfiles([]bson.ObjectId{post.Created.ProfileId})
 		notification := mongo.CreateNotification(post.Id, "like", "post", vote.Created.ProfileId)
-		
+
 		postTitle := utils.TruncateTitle(post.Title, 4)
 		data := i18n.DataModel{
 			Name:  vote.Created.Name,
@@ -210,6 +211,52 @@ func main() {
 			fmt.Printf("No token")
 		}
 
+	})
+
+	// TODO: add multi user follow support
+	subscribers.UserFollowSubscriber(func(subj, reply string, uf *subscribers.Subscription) {
+		fmt.Printf("\nNats MSG %+v", uf)
+		defer func() {
+			if r := recover(); r != nil {
+				fmt.Println("Recovered in subscribers.UserFollowSubscriber", uf)
+			}
+		}()
+		
+		if uf.ResourceType != "user" {
+			fmt.Println("Not a user resource follows")
+			return;
+		}
+
+		userFollow := mongo.GetUserFollowById(uf.Id)
+		// fmt.Printf("\nuser follow %+v\n", userFollow)
+		follower := mongo.GetProfileById(userFollow.Created.ProfileId)
+		// fmt.Printf("\nfollower %+v\n", follower)
+		followsTo := mongo.GetProfileById(userFollow.ResourceId)
+		// fmt.Printf("\nfollowsTo %+v\n", followsTo)
+		tokens := mongo.GetTokensByProfiles([]bson.ObjectId{userFollow.ResourceId})
+		notification := mongo.CreateNotification(follower.Id, "follows", "user", followsTo.Id)
+
+		data := i18n.DataModel{
+			Name:  follower.Name,
+		}
+		var msgStr string
+
+		msgStr = i18n.GetString(followsTo.Language, "follow_user_one", data)
+		title := i18n.GetAppTitle(followsTo.Language)
+		msg := firebase.ManchMessage{
+			Title:      title,
+			Message:    msgStr,
+			DeepLink:   "https://go.manch.app/my_profile",
+			Id:         notification.Identifier,
+		}
+		//firebase.SendMessage(msg, "frgp37gfvFg:APA91bHbnbfoX-bp3M_3k-ceD7E4fZ73fcmVL4b5DGB5cQn-fFEvfbj3aAI9g0wXozyApIb-6wGsJauf67auK1p3Ins5Ff7IXCN161fb5JJ5pfBnTZ4LEcRUatO6wimsbiS7EANoGDr4")
+		if tokens != nil {
+			for _, token := range tokens {
+				go firebase.SendMessage(msg, token.Token)
+			}
+		} else {
+			fmt.Printf("No token\n")
+		}
 	})
 
 	http.ListenAndServe(":5000", r)
