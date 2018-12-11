@@ -27,7 +27,12 @@ func AddFollowSchedule(document UserFollowScheduleModel) {
 	F := s.DB("manch").C("user_follows_scheduleds")
 	// fmt.Println("inserting document:", document)
 	err := F.Insert(document)
-	fmt.Println("err", err)
+	// fmt.Println("err", err)
+	if err == nil {
+		fmt.Println("profile added successfully:", document.ProfileId.Hex())
+	} else {
+		fmt.Println("unable to add profile:", document.ProfileId.Hex())
+	}
 }
 
 
