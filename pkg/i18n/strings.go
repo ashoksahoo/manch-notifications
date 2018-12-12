@@ -52,7 +52,7 @@ var Strings = map[string]map[string]string{
 		"post_like_multi": "{{.Name}} +{{.Count}} వ్యక్తులు మీ పోస్ట్ \"{{.Post}}\" ని లైక్ చేసారు.",
 		"post_like_three": "{{.Name}}, {{.Name2}} & {{.Name3}} మీ పోస్ట్ \"{{.Post}}\" ని లైక్ చేసారు.",
 		"post_like_two":   "{{.Name}} & {{.Name2}} మీ పోస్ట్ \"{{.Post}}\" ని లైక్ చేసారు.",
-		"post_like_one":   "{{.Name}} మీ {{.Post}} మీ పోస్ట్ \"{{.Post}}\" ని లైక్ చేసారు.",
+		"post_like_one":   "{{.Name}} మీ పోస్ట్ \"{{.Post}}\" ని లైక్ చేసారు.",
 
 		"comment_like_multi": "{{.Name}} & {{.Count}} వ్యక్తులు మీ కామెంట్ \"{{.Comment}}\" ని లైక్ చేసారు.",
 		"comment_like_three": "{{.Name}}, {{.Name2}} & {{.Name3}} మీ కామెంట్ \"{{.Comment}}\" ని లైక్ చేసారు.",
