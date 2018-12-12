@@ -29,15 +29,25 @@ func AddFollowSchedule(document UserFollowScheduleModel) {
 	err := F.Insert(document)
 	// fmt.Println("err", err)
 	if err == nil {
-		fmt.Println("profile added successfully:", document.ProfileId.Hex())
+		// fmt.Println("profile added successfully:", document.ProfileId.Hex())
+		fmt.Println("inserted: ", document)
 	} else {
 		fmt.Println("unable to add profile:", document.ProfileId.Hex())
 	}
 }
 
 
-func CreateFollowSchedule(scheduleTime time.Time, pId, rId bson.ObjectId, c Creator) UserFollowScheduleModel {
+func CreateFollowSchedule(scheduleTime time.Time, pId, rId bson.ObjectId) UserFollowScheduleModel {
 	
+	user := GetUserByProfileId(pId.Hex())
+	//creator
+	c := Creator {
+		Id:        bson.NewObjectId(),
+		ProfileId: pId,
+		Name:      user.Name,
+		UserType:  user.UserType,
+	}
+
 	s := Schedule {
 		Id:           bson.NewObjectId(),
 		Scheduletime: scheduleTime,

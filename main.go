@@ -220,7 +220,6 @@ func main() {
 		
 		// get all bot users
 		botUsers := mongo.GetBotUsers()
-		
 		var resourceId bson.ObjectId
 
 		// array of bot profiles ids
@@ -255,15 +254,6 @@ func main() {
 		// set user to resource 
 		resourceId = userProfileId
 
-		//creator 
-		c := mongo.Creator{
-			Id:        bson.NewObjectId(),
-			ProfileId: userProfileId,
-			Name:      user.Name,
-			UserType:  user.UserType,
-		}
-
-
 		current := time.Now()
 		fmt.Println("current time:", current)
 
@@ -274,7 +264,7 @@ func main() {
 		j := 0
 		followers := 5
 		for ; j < followers; j++ {
-			doc := mongo.CreateFollowSchedule(t, bson.ObjectIdHex(botProfilesIds[j]), resourceId, c)
+			doc := mongo.CreateFollowSchedule(t, bson.ObjectIdHex(botProfilesIds[j]), resourceId)
 			// fmt.Printf("saving doc:%+v\n", doc)
 			mongo.AddFollowSchedule(doc)
 		}
@@ -284,7 +274,7 @@ func main() {
 		rMinute = utils.Random(5, 60)
 		t = current.Add(time.Duration(rMinute) * time.Minute)
 		for ; j < followers; j++ {
-			doc := mongo.CreateFollowSchedule(t, bson.ObjectIdHex(botProfilesIds[j]), resourceId, c)
+			doc := mongo.CreateFollowSchedule(t, bson.ObjectIdHex(botProfilesIds[j]), resourceId)
 			// fmt.Printf("saving doc:%+v\n", doc)
 			mongo.AddFollowSchedule(doc)
 		}
@@ -294,7 +284,7 @@ func main() {
 		rHour := utils.Random(1, 6)
 		t = current.Add(time.Duration(rHour) * time.Hour)
 		for ; j < followers; j++ {
-			doc := mongo.CreateFollowSchedule(t, bson.ObjectIdHex(botProfilesIds[j]), resourceId, c)
+			doc := mongo.CreateFollowSchedule(t, bson.ObjectIdHex(botProfilesIds[j]), resourceId)
 			fmt.Printf("saving doc:%+v\n", doc)
 			mongo.AddFollowSchedule(doc)
 		}
@@ -304,7 +294,7 @@ func main() {
 		rHour = utils.Random(6, 24)
 		t = current.Add(time.Duration(rHour) * time.Hour)
 		for ; j < followers; j++ {
-			doc := mongo.CreateFollowSchedule(t, bson.ObjectIdHex(botProfilesIds[j]), resourceId, c)
+			doc := mongo.CreateFollowSchedule(t, bson.ObjectIdHex(botProfilesIds[j]), resourceId)
 			// fmt.Printf("saving doc:%+v\n", doc)
 			mongo.AddFollowSchedule(doc)
 		}
@@ -314,7 +304,7 @@ func main() {
 		rDay := utils.Random(1, 3)
 		t = current.AddDate(0, 0, rDay)
 		for ; j < followers; j++ {
-			doc := mongo.CreateFollowSchedule(t, bson.ObjectIdHex(botProfilesIds[j]), resourceId, c)
+			doc := mongo.CreateFollowSchedule(t, bson.ObjectIdHex(botProfilesIds[j]), resourceId)
 			mongo.AddFollowSchedule(doc)
 		}
 
@@ -323,7 +313,7 @@ func main() {
 		rDay = utils.Random(3, 7)
 		t = current.AddDate(0, 0, rDay)
 		for ; j < followers; j++ {
-			doc := mongo.CreateFollowSchedule(t, bson.ObjectIdHex(botProfilesIds[j]), resourceId, c)
+			doc := mongo.CreateFollowSchedule(t, bson.ObjectIdHex(botProfilesIds[j]), resourceId)
 			mongo.AddFollowSchedule(doc)
 		}
 	})

@@ -38,6 +38,15 @@ func GetUserById(Id string) UserModel {
 	return user
 }
 
+func GetUserByProfileId(ProfileId string) UserModel {
+	s := session.Clone()
+	defer s.Close()
+	users := s.DB("manch").C("users")
+	user := UserModel{}
+	users.Find(bson.M{"profiles._id": bson.ObjectIdHex(ProfileId)}).One(&user)
+	return user
+}
+
 func GetBotUsers() []UserModel {
 	s := session.Clone()
 	defer s.Close()
