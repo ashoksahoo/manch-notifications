@@ -1,24 +1,25 @@
 package mongo
 
 import (
-	"github.com/globalsign/mgo/bson"
 	"fmt"
 	"time"
+
+	"github.com/globalsign/mgo/bson"
 )
 
 type Schedule struct {
-	Id bson.ObjectId `json:"_id" bson:"_id"`
-	Scheduletime time.Time `json:"schedule_time" bson:"schedule_time"`
-	Created      Creator         `json:"created" bson:"created"`
+	Id           bson.ObjectId `json:"_id" bson:"_id"`
+	Scheduletime time.Time     `json:"schedule_time" bson:"schedule_time"`
+	Created      Creator       `json:"created" bson:"created"`
 }
 
 type UserFollowScheduleModel struct {
-	Id bson.ObjectId `json:"_id" bson:"_id"`
-	ProfileId bson.ObjectId `json:"profile_id" bson:"profile_id"`
-	ResourceId     bson.ObjectId `json:"resource_id" bson:"resource_id"`
-	ResourceType string `json:"resource_type" bson:"resource_type"`
-	Created Creator `json:"created" bson:"created"`
-	Schedule Schedule `json:"schedule" bson:"schedule"`
+	Id           bson.ObjectId `json:"_id" bson:"_id"`
+	ProfileId    bson.ObjectId `json:"profile_id" bson:"profile_id"`
+	ResourceId   bson.ObjectId `json:"resource_id" bson:"resource_id"`
+	ResourceType string        `json:"resource_type" bson:"resource_type"`
+	Created      Creator       `json:"created" bson:"created"`
+	Schedule     Schedule      `json:"schedule" bson:"schedule"`
 }
 
 func AddFollowSchedule(document UserFollowScheduleModel) {
@@ -36,30 +37,30 @@ func AddFollowSchedule(document UserFollowScheduleModel) {
 	}
 }
 
-
 func CreateFollowSchedule(scheduleTime time.Time, pId, rId bson.ObjectId) UserFollowScheduleModel {
-	
+
 	user := GetUserByProfileId(pId.Hex())
 	//creator
-	c := Creator {
+	c := Creator{
 		Id:        bson.NewObjectId(),
 		ProfileId: pId,
 		Name:      user.Name,
+		Avatar:    user.Profiles[0].Avatar,
 		UserType:  user.UserType,
 	}
 
-	s := Schedule {
+	s := Schedule{
 		Id:           bson.NewObjectId(),
 		Scheduletime: scheduleTime,
 		Created:      c,
 	}
-	
+
 	return UserFollowScheduleModel{
 		Id:           bson.NewObjectId(),
 		ProfileId:    pId,
 		ResourceId:   rId,
 		ResourceType: "user",
-		Created: c,
+		Created:      c,
 		Schedule:     s,
 	}
 }

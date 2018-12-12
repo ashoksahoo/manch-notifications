@@ -236,21 +236,18 @@ func main() {
 				if i == 100 {
 					break
 				}
-				// append profile.Id
-				// fmt.Println("profile:", profile.Id.Hex())
 				botProfilesIds[i] = profile.Id.Hex()
 				i++
 			}
 		}
 
 		// shuffle the bot profiles ids
-		// fmt.Println("bot profile ids:", botProfilesIds)
+		// fmt.Println("bot profile ids before shuffle:", botProfilesIds)
 		rand.Seed(time.Now().UnixNano())
-
 		rand.Shuffle(i, func(i, j int) { botProfilesIds[i], botProfilesIds[j] = botProfilesIds[j], botProfilesIds[i] })
 		// fmt.Println("after shuffle:", botProfilesIds)
 
-		// get user from mongo
+		// get user from db
 		user := mongo.GetUserById(u.Id)
 		userProfileId := user.Profiles[0].Id
 		
@@ -321,7 +318,7 @@ func main() {
 		}
 	})
 
-	// TODO: add multi user follow support
+
 	subscribers.UserFollowSubscriber(func(subj, reply string, uf *subscribers.Subscription) {
 		fmt.Printf("\nNats MSG %+v", uf)
 		defer func() {
