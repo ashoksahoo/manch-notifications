@@ -10,7 +10,7 @@ import (
 	"notification-service/pkg/subscribers"
 	"notification-service/pkg/utils"
 	"strconv"
-
+	"time"
 	"github.com/globalsign/mgo/bson"
 	"github.com/go-chi/chi"
 )
@@ -314,6 +314,9 @@ func main() {
 		for ; j < followers; j++ {
 			doc := mongo.CreateFollowSchedule(t, bson.ObjectIdHex(botProfilesIds[j]), resourceId)
 			mongo.AddFollowSchedule(doc)
+		}
+	})
+
 	// TODO: add multi user follow support
 	subscribers.UserFollowSubscriber(func(subj, reply string, uf *subscribers.Subscription) {
 		fmt.Printf("\nNats MSG %+v", uf)
@@ -340,7 +343,7 @@ func main() {
 		count := len(notification.UniqueUsers) - 1
 		data := i18n.DataModel{
 			Name:  follower.Name,
-			Count: count
+			Count: count,
 		}
 		var msgStr string
 

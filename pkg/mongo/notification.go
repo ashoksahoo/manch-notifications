@@ -27,7 +27,7 @@ func GenerateIdentifier(Id bson.ObjectId, t string) string {
 	return strconv.FormatInt(ts2018, 10) + identifier
 }
 
-func CreateNotification(rId bson.ObjectId, t string, rT string, `u` bson.ObjectId) NotificationModel {
+func CreateNotification(rId bson.ObjectId, t string, rT string, u bson.ObjectId) NotificationModel {
 	s := session.Clone()
 	defer s.Close()
 	N := s.DB("manch").C("notifications")

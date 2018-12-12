@@ -39,7 +39,6 @@ func GetUserById(Id string) UserModel {
 	return user
 }
 
-<<<<<<< HEAD
 func GetUserByProfileId(ProfileId string) UserModel {
 	s := session.Clone()
 	defer s.Close()
@@ -58,13 +57,11 @@ func GetBotUsers() []UserModel {
 	// fmt.Println("allusers: ", allUsers)
 	return allUsers
 }
-=======
 // func GetProfile(profileId string) Profile {
 // 	s := session.Clone()
 // 	defer s.Close()
 // 	users := s.DB("manch").C("users")
 // }
->>>>>>> origin/feature/follow-notification-service
 
 func GetProfileById(Id bson.ObjectId) Profile {
 	s := session.Clone()
