@@ -70,12 +70,12 @@ var Strings = map[string]map[string]string{
 		"comment_like_two":   "{{.Name}} & {{.Name2}} మీ కామెంట్ \"{{.Comment}}\" ని లైక్ చేసారు.",
 		"comment_like_one":   "{{.Name}} మీ కామెంట్ \"{{.Comment}}\" ని లైక్ చేసారు",
 
-		"share_multi": "{{.Name}} &మరియు ఇంకో {{.Count}} వ్యక్తులు మీ పోస్ట్ \"{{.Post}}\" ని షేర్ చేసారు.",
+		"share_multi": "{{.Name}} & {{.Count}} వ్యక్తులు మీ పోస్ట్ \"{{.Post}}\" ని షేర్ చేసారు.",
 		"share_three": "{{.Name}}, {{.Name2}} & {{.Name3}} మీ పోస్ట్ \"{{.Post}}\" ని షేర్ చేసారు.",
 		"share_two":   "{{.Name}} & {{.Name2}} మీ పోస్ట్ \"{{.Post}}\" ని షేర్ చేసారు.",
 		"share_one":   "{{.Name}} మీ పోస్ట్ \"{{.Post}}\" ని షేర్ చేసారు.",
 
-		"follow_user_multi": "{{.Name}} और {{.Count}} మరో ఇద్దరు  మంచ్ లో మిమ్మల్ని ఫాలో చేస్తున్నారు",
+		"follow_user_multi": "{{.Name}} +{{.Count}} వ్యక్తులు మంచ్ లో మిమ్మల్ని ఫాలో చేస్తున్నారు",
 		"follow_user_three": "{{.Name}}, {{.Name2}} మరియు {{.Name3}} మంచ్ లో మిమ్మల్ని ఫాలో చేస్తున్నారు", 
 		"follow_user_two": "{{.Name}} మరియు {{.Name2}} మంచ్ లో మిమ్మల్ని ఫాలో చేస్తున్నారు",
 		"follow_user_one": "{{.Name}} మంచ్ లో మిమ్మల్ని ఫాలో చేస్తున్నారు",

@@ -13,6 +13,7 @@ import (
 	"time"
 	"github.com/globalsign/mgo/bson"
 	"github.com/go-chi/chi"
+	"strings"
 )
 
 func main() {
@@ -71,6 +72,7 @@ func main() {
 			msgStr = i18n.GetString(postCreator.Language, "comment_one", data)
 		}
 		title := i18n.GetAppTitle(postCreator.Language)
+		msgStr = strings.Replace(msgStr, "\"\" ", "", 1)
 		msg := firebase.ManchMessage{
 			Title:      title,
 			Message:    msgStr,
@@ -138,6 +140,7 @@ func main() {
 			msgStr = i18n.GetString(postCreator.Language, "post_like_one", data)
 		}
 		title := i18n.GetAppTitle(postCreator.Language)
+		msgStr = strings.Replace(msgStr, "\"\" ", "", 1)
 		msg := firebase.ManchMessage{
 			Title:    title,
 			Message:  msgStr,
@@ -194,6 +197,7 @@ func main() {
 		} else {
 			msgStr = i18n.GetString(commentCreator.Language, "comment_like_one", data)
 		}
+		msgStr = strings.Replace(msgStr, "\"\" ", "", 1)
 		title := i18n.GetAppTitle(commentCreator.Language)
 		msg := firebase.ManchMessage{
 			Title:    title,
@@ -354,10 +358,11 @@ func main() {
 		}
 
 		title := i18n.GetAppTitle(followsTo.Language)
+		msgStr = strings.Replace(msgStr, "\"\" ", "", 1)
 		msg := firebase.ManchMessage{
 			Title:      title,
 			Message:    msgStr,
-			DeepLink:   "https://go.manch.app/my_profile",
+			DeepLink:   "manch://profile/" + followsTo.Id.Hex(),
 			Id:         notification.Identifier,
 		}
 		//firebase.SendMessage(msg, "frgp37gfvFg:APA91bHbnbfoX-bp3M_3k-ceD7E4fZ73fcmVL4b5DGB5cQn-fFEvfbj3aAI9g0wXozyApIb-6wGsJauf67auK1p3Ins5Ff7IXCN161fb5JJ5pfBnTZ4LEcRUatO6wimsbiS7EANoGDr4")
