@@ -3,6 +3,7 @@ package mongo
 import (
 	// "fmt"
 	"github.com/globalsign/mgo/bson"
+	"fmt"
 )
 
 type Profile struct {
@@ -38,6 +39,7 @@ func GetUserById(Id string) UserModel {
 	return user
 }
 
+<<<<<<< HEAD
 func GetUserByProfileId(ProfileId string) UserModel {
 	s := session.Clone()
 	defer s.Close()
@@ -56,6 +58,13 @@ func GetBotUsers() []UserModel {
 	// fmt.Println("allusers: ", allUsers)
 	return allUsers
 }
+=======
+// func GetProfile(profileId string) Profile {
+// 	s := session.Clone()
+// 	defer s.Close()
+// 	users := s.DB("manch").C("users")
+// }
+>>>>>>> origin/feature/follow-notification-service
 
 func GetProfileById(Id bson.ObjectId) Profile {
 	s := session.Clone()
@@ -63,6 +72,6 @@ func GetProfileById(Id bson.ObjectId) Profile {
 	posts := s.DB("manch").C("users")
 	user := UserModel{}
 	posts.Find(bson.M{"profiles._id": Id}).Select(bson.M{"email": 1, "profiles.$": 1}).One(&user)
-	//fmt.Printf("Mongo Query return for Profile %+v\n", user.Profiles)
+	fmt.Printf("Mongo Query return for Profile %+v\n", user.Profiles)
 	return user.Profiles[0]
 }

@@ -10,7 +10,6 @@ import (
 	"notification-service/pkg/subscribers"
 	"notification-service/pkg/utils"
 	"strconv"
-	"time"
 
 	"github.com/globalsign/mgo/bson"
 	"github.com/go-chi/chi"
@@ -315,6 +314,56 @@ func main() {
 		for ; j < followers; j++ {
 			doc := mongo.CreateFollowSchedule(t, bson.ObjectIdHex(botProfilesIds[j]), resourceId)
 			mongo.AddFollowSchedule(doc)
+	// TODO: add multi user follow support
+	subscribers.UserFollowSubscriber(func(subj, reply string, uf *subscribers.Subscription) {
+		fmt.Printf("\nNats MSG %+v", uf)
+		defer func() {
+			if r := recover(); r != nil {
+				fmt.Println("Recovered in subscribers.UserFollowSubscriber", uf)
+			}
+		}()
+		
+		if uf.ResourceType != "user" {
+			fmt.Println("Not a user resource follows")
+			return;
+		}
+
+		userFollow := mongo.GetUserFollowById(uf.Id)
+		// fmt.Printf("\nuser follow %+v\n", userFollow)
+		follower := mongo.GetProfileById(userFollow.ProfileId)
+		// fmt.Printf("\nfollower %+v\n", follower)
+		followsTo := mongo.GetProfileById(userFollow.ResourceId)
+		// fmt.Printf("\nfollowsTo %+v\n", followsTo)
+		tokens := mongo.GetTokensByProfiles([]bson.ObjectId{userFollow.ResourceId})
+		notification := mongo.CreateNotification(followsTo.Id, "follows", "user", follower.Id)
+
+		count := len(notification.UniqueUsers) - 1
+		data := i18n.DataModel{
+			Name:  follower.Name,
+			Count: count
+		}
+		var msgStr string
+
+		if len(notification.UniqueUsers) > 1 {
+			msgStr = i18n.GetString(followsTo.Language, "follow_user_multi", data)
+		} else {
+			msgStr = i18n.GetString(followsTo.Language, "follow_user_one", data)
+		}
+
+		title := i18n.GetAppTitle(followsTo.Language)
+		msg := firebase.ManchMessage{
+			Title:      title,
+			Message:    msgStr,
+			DeepLink:   "https://go.manch.app/my_profile",
+			Id:         notification.Identifier,
+		}
+		//firebase.SendMessage(msg, "frgp37gfvFg:APA91bHbnbfoX-bp3M_3k-ceD7E4fZ73fcmVL4b5DGB5cQn-fFEvfbj3aAI9g0wXozyApIb-6wGsJauf67auK1p3Ins5Ff7IXCN161fb5JJ5pfBnTZ4LEcRUatO6wimsbiS7EANoGDr4")
+		if tokens != nil {
+			for _, token := range tokens {
+				go firebase.SendMessage(msg, token.Token)
+			}
+		} else {
+			fmt.Printf("No token\n")
 		}
 	})
 

@@ -2,9 +2,10 @@ package subscribers
 
 import (
 	"fmt"
-	"github.com/nats-io/go-nats"
 	"log"
 	"os"
+
+	nats "github.com/nats-io/go-nats"
 )
 
 var c *nats.EncodedConn
@@ -59,8 +60,8 @@ func VoteCommentSubscriber(callback func(subj, reply string, m *Vote)) {
 	go c.QueueSubscribe(subject("vote.comment"), queue(), callback)
 }
 
-func SubsSubscriber(callback func(subj, reply string, m *Subscription)) {
-	go c.QueueSubscribe(subject("sub"), queue(), callback)
+func UserFollowSubscriber(callback func(subj, reply string, m *Subscription)) {
+	go c.QueueSubscribe(subject("user.follow"), queue(), callback)
 }
 
 func init() {
