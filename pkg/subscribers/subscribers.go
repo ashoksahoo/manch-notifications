@@ -49,7 +49,7 @@ func CommentUpdateSubscriber(callback func(subj, reply string, m *Comment)) {
 }
 
 func UserSubscriber(callback func(subj, reply string, m *User)) {
-	go c.QueueSubscribe(subject("user"), queue(), callback)
+	go c.QueueSubscribe(subject("user.new"), queue(), callback)
 }
 
 func VotePostSubscriber(callback func(subj, reply string, m *Vote)) {
