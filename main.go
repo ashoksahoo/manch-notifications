@@ -2,15 +2,18 @@ package main
 
 import (
 	"fmt"
-	"github.com/globalsign/mgo/bson"
-	"github.com/go-chi/chi"
+	"math/rand"
 	"net/http"
 	"notification-service/pkg/firebase"
 	"notification-service/pkg/i18n"
 	"notification-service/pkg/mongo"
 	"notification-service/pkg/subscribers"
-	"strconv"
 	"notification-service/pkg/utils"
+	"strconv"
+	"time"
+	"github.com/globalsign/mgo/bson"
+	"github.com/go-chi/chi"
+	"strings"
 )
 
 func main() {
@@ -26,18 +29,18 @@ func main() {
 
 	})
 	/**
-		This processes Comments from Posts
-		1) Get Comment Details and Unique commentator count
-		2) Validate self comment
-		3) Get Who created the post -> He gets the notification and we need his current lang
-		4) Get tokens from the above profile (Supports multiple device tokens.)
-		5) Create/Update Notification Table which has the meta info for the notificaiotn
-		6) Construct Data for i18n template
-		7) Generate template using template data and String Formatter
-		8) Create push notification
-		9) Fire the notifications in routines.
+	This processes Comments from Posts
+	1) Get Comment Details and Unique commentator count
+	2) Validate self comment
+	3) Get Who created the post -> He gets the notification and we need his current lang
+	4) Get tokens from the above profile (Supports multiple device tokens.)
+	5) Create/Update Notification Table which has the meta info for the notificaiotn
+	6) Construct Data for i18n template
+	7) Generate template using template data and String Formatter
+	8) Create push notification
+	9) Fire the notifications in routines.
 
-	 */
+	*/
 	subscribers.CommentSubscriber(func(subj, reply string, c *subscribers.Comment) {
 		//fmt.Printf("\nNats MSG %+v", c)
 		defer func() {
@@ -69,6 +72,7 @@ func main() {
 			msgStr = i18n.GetString(postCreator.Language, "comment_one", data)
 		}
 		title := i18n.GetAppTitle(postCreator.Language)
+		msgStr = strings.Replace(msgStr, "\"\" ", "", 1)
 		msg := firebase.ManchMessage{
 			Title:      title,
 			Message:    msgStr,
@@ -87,18 +91,18 @@ func main() {
 		}
 	})
 	/**
-		This processes Upvotes from Posts
-		1) Get Voting Details
-		2) Validate only upvote & self vote
-		3) Get Who created the post -> He gets the notification and we need his current lang
-		4) Get tokens from the above profile (Supports multiple device tokens.)
-		5) Create/Update Notification Table which has the meta info for the notificaiotn
-		6) Construct Data for i18n template
-		7) Generate template using template data and String Formatter
-		8) Create push notification
-		9) Fire the notifications in routines.
+	This processes Upvotes from Posts
+	1) Get Voting Details
+	2) Validate only upvote & self vote
+	3) Get Who created the post -> He gets the notification and we need his current lang
+	4) Get tokens from the above profile (Supports multiple device tokens.)
+	5) Create/Update Notification Table which has the meta info for the notificaiotn
+	6) Construct Data for i18n template
+	7) Generate template using template data and String Formatter
+	8) Create push notification
+	9) Fire the notifications in routines.
 
-	 */
+	*/
 	subscribers.VotePostSubscriber(func(subj, reply string, v *subscribers.Vote) {
 		//fmt.Printf("\nNats MSG %+v", v)
 		defer func() {
@@ -122,7 +126,7 @@ func main() {
 		postCreator := mongo.GetProfileById(post.Created.ProfileId)
 		tokens := mongo.GetTokensByProfiles([]bson.ObjectId{post.Created.ProfileId})
 		notification := mongo.CreateNotification(post.Id, "like", "post", vote.Created.ProfileId)
-		
+
 		postTitle := utils.TruncateTitle(post.Title, 4)
 		data := i18n.DataModel{
 			Name:  vote.Created.Name,
@@ -136,6 +140,7 @@ func main() {
 			msgStr = i18n.GetString(postCreator.Language, "post_like_one", data)
 		}
 		title := i18n.GetAppTitle(postCreator.Language)
+		msgStr = strings.Replace(msgStr, "\"\" ", "", 1)
 		msg := firebase.ManchMessage{
 			Title:    title,
 			Message:  msgStr,
@@ -192,6 +197,7 @@ func main() {
 		} else {
 			msgStr = i18n.GetString(commentCreator.Language, "comment_like_one", data)
 		}
+		msgStr = strings.Replace(msgStr, "\"\" ", "", 1)
 		title := i18n.GetAppTitle(commentCreator.Language)
 		msg := firebase.ManchMessage{
 			Title:    title,
@@ -210,6 +216,160 @@ func main() {
 			fmt.Printf("No token")
 		}
 
+	})
+
+	subscribers.UserSubscriber(func(subj, reply string, u *subscribers.User) {
+		// create follow schedule for this user
+		
+		// get all bot users
+		botUsers := mongo.GetBotUsers()
+		var resourceId bson.ObjectId
+
+		// array of bot profiles ids
+		var botProfilesIds [100]string
+		
+		// no. of profiles counter
+		i := 0
+		for _, botUser := range botUsers {
+			profiles := botUser.Profiles
+			for _, profile := range profiles {
+				if i == 100 {
+					break
+				}
+				botProfilesIds[i] = profile.Id.Hex()
+				i++
+			}
+		}
+
+		// shuffle the bot profiles ids
+		// fmt.Println("bot profile ids before shuffle:", botProfilesIds)
+		rand.Seed(time.Now().UnixNano())
+		rand.Shuffle(i, func(i, j int) { botProfilesIds[i], botProfilesIds[j] = botProfilesIds[j], botProfilesIds[i] })
+		// fmt.Println("after shuffle:", botProfilesIds)
+
+		// get user from db
+		user := mongo.GetUserById(u.Id)
+		userProfileId := user.Profiles[0].Id
+		
+		// set user to resource 
+		resourceId = userProfileId
+
+		current := time.Now()
+		fmt.Println("current time:", current)
+
+		// 0-5th minute - +5 followes
+		rMinute := utils.Random(1, 5)
+		// schedule time
+		t := current.Add(time.Duration(rMinute) * time.Minute)
+		j := 0
+		followers := 5
+		for ; j < followers; j++ {
+			doc := mongo.CreateFollowSchedule(t, bson.ObjectIdHex(botProfilesIds[j]), resourceId)
+			// fmt.Printf("saving doc:%+v\n", doc)
+			mongo.AddFollowSchedule(doc)
+		}
+
+		// 5 minuts to 1 hours - +5
+		followers += 5
+		rMinute = utils.Random(5, 60)
+		t = current.Add(time.Duration(rMinute) * time.Minute)
+		for ; j < followers; j++ {
+			doc := mongo.CreateFollowSchedule(t, bson.ObjectIdHex(botProfilesIds[j]), resourceId)
+			// fmt.Printf("saving doc:%+v\n", doc)
+			mongo.AddFollowSchedule(doc)
+		}
+
+		// 1 Hr to 6Hr +5 followers
+		followers += 5
+		rHour := utils.Random(1, 6)
+		t = current.Add(time.Duration(rHour) * time.Hour)
+		for ; j < followers; j++ {
+			doc := mongo.CreateFollowSchedule(t, bson.ObjectIdHex(botProfilesIds[j]), resourceId)
+			fmt.Printf("saving doc:%+v\n", doc)
+			mongo.AddFollowSchedule(doc)
+		}
+
+		// 6 Hr to 24 Hr +5 followers
+		followers += 5
+		rHour = utils.Random(6, 24)
+		t = current.Add(time.Duration(rHour) * time.Hour)
+		for ; j < followers; j++ {
+			doc := mongo.CreateFollowSchedule(t, bson.ObjectIdHex(botProfilesIds[j]), resourceId)
+			// fmt.Printf("saving doc:%+v\n", doc)
+			mongo.AddFollowSchedule(doc)
+		}
+
+		// 1st to 3rd day +10 followers
+		followers += 10
+		rDay := utils.Random(1, 3)
+		t = current.AddDate(0, 0, rDay)
+		for ; j < followers; j++ {
+			doc := mongo.CreateFollowSchedule(t, bson.ObjectIdHex(botProfilesIds[j]), resourceId)
+			mongo.AddFollowSchedule(doc)
+		}
+
+		// 3rd to 7th day +10 followers
+		followers += 5
+		rDay = utils.Random(3, 7)
+		t = current.AddDate(0, 0, rDay)
+		for ; j < followers; j++ {
+			doc := mongo.CreateFollowSchedule(t, bson.ObjectIdHex(botProfilesIds[j]), resourceId)
+			mongo.AddFollowSchedule(doc)
+		}
+	})
+
+
+	subscribers.UserFollowSubscriber(func(subj, reply string, uf *subscribers.Subscription) {
+		fmt.Printf("\nNats MSG %+v", uf)
+		defer func() {
+			if r := recover(); r != nil {
+				fmt.Println("Recovered in subscribers.UserFollowSubscriber", uf)
+			}
+		}()
+		
+		if uf.ResourceType != "user" {
+			fmt.Println("Not a user resource follows")
+			return;
+		}
+
+		userFollow := mongo.GetUserFollowById(uf.Id)
+		// fmt.Printf("\nuser follow %+v\n", userFollow)
+		follower := mongo.GetProfileById(userFollow.ProfileId)
+		// fmt.Printf("\nfollower %+v\n", follower)
+		followsTo := mongo.GetProfileById(userFollow.ResourceId)
+		// fmt.Printf("\nfollowsTo %+v\n", followsTo)
+		tokens := mongo.GetTokensByProfiles([]bson.ObjectId{userFollow.ResourceId})
+		notification := mongo.CreateNotification(followsTo.Id, "follows", "user", follower.Id)
+
+		count := len(notification.UniqueUsers) - 1
+		data := i18n.DataModel{
+			Name:  follower.Name,
+			Count: count,
+		}
+		var msgStr string
+
+		if len(notification.UniqueUsers) > 1 {
+			msgStr = i18n.GetString(followsTo.Language, "follow_user_multi", data)
+		} else {
+			msgStr = i18n.GetString(followsTo.Language, "follow_user_one", data)
+		}
+
+		title := i18n.GetAppTitle(followsTo.Language)
+		msgStr = strings.Replace(msgStr, "\"\" ", "", 1)
+		msg := firebase.ManchMessage{
+			Title:      title,
+			Message:    msgStr,
+			DeepLink:   "manch://profile/" + followsTo.Id.Hex(),
+			Id:         notification.Identifier,
+		}
+		//firebase.SendMessage(msg, "frgp37gfvFg:APA91bHbnbfoX-bp3M_3k-ceD7E4fZ73fcmVL4b5DGB5cQn-fFEvfbj3aAI9g0wXozyApIb-6wGsJauf67auK1p3Ins5Ff7IXCN161fb5JJ5pfBnTZ4LEcRUatO6wimsbiS7EANoGDr4")
+		if tokens != nil {
+			for _, token := range tokens {
+				go firebase.SendMessage(msg, token.Token)
+			}
+		} else {
+			fmt.Printf("No token\n")
+		}
 	})
 
 	http.ListenAndServe(":5000", r)

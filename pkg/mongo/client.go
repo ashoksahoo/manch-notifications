@@ -2,9 +2,10 @@ package mongo
 
 import (
 	"fmt"
-	"github.com/globalsign/mgo"
 	"log"
 	"os"
+
+	"github.com/globalsign/mgo"
 )
 
 var url = os.Getenv("MONGO_DB")
@@ -16,8 +17,9 @@ func init() {
 		url = "mongodb://localhost:27017/"
 	}
 	if session, err = mgo.Dial(url); err != nil {
-		log.Fatal("Mongo Error:" , err)
+		log.Fatal("Mongo Error:", err)
 	} else {
 		fmt.Println("Initialized Mongo Connected")
 	}
+	mgo.SetDebug(true)
 }
