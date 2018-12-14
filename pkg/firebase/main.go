@@ -61,8 +61,7 @@ func SendMessage(m ManchMessage, token string) {
 	// See documentation on defining a message payload.
 	m.Namespace = "manch:N"
 	if m.Icon == "" {
-		// FIXME: change the logo
-		m.Icon = "https://manch.app/img/logo.png"
+		m.Icon = "https://manch.app/img/new-logo.png"
 	}
 	message := &messaging.Message{
 		Data:         MessageBuilder(m),
