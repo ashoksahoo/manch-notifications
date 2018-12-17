@@ -24,9 +24,35 @@ func main() {
 
 	subscribers.PostSubscriber(func(subj, reply string, p *subscribers.Post) {
 		fmt.Printf("Received a post on subject %s! with Post ID %s\n", subj, p.Id)
-		newPost := mongo.GetPostById(p.Id)
-		fmt.Printf("Mongo return for Post %+v\n", newPost)
+		// get all bot users
+		botUsers := mongo.GetBotUsers()
 
+		// array of bot profiles ids
+		var botProfilesIds [100]string
+		
+		// no. of profiles counter
+		i := 0
+		for _, botUser := range botUsers {
+			profiles := botUser.Profiles
+			for _, profile := range profiles {
+				if i == 100 {
+					break
+				}
+				botProfilesIds[i] = profile.Id.Hex()
+				i++
+			}
+		}
+
+		rand.Seed(time.Now().UnixNano())
+		rand.Shuffle(i, func(i, j int) { botProfilesIds[i], botProfilesIds[j] = botProfilesIds[j], botProfilesIds[i] })
+
+		for i := 1; i <= 5; i++ {
+			rMinute := utils.Random(1, 30)
+			t := time.Now().Add(time.Duration(rMinute) * time.Minute)
+			fmt.Println(rMinute, t)
+			vote := mongo.CreateVotesSchedulePost(t, bson.ObjectIdHex(p.Id), bson.ObjectIdHex(botProfilesIds[i]))
+			mongo.AddVoteSchedule(vote)
+		}
 	})
 	/**
 	This processes Comments from Posts

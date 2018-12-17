@@ -1,11 +1,9 @@
 package utils
 
-import(
-    "math/rand"
-    "time"
+import (
+	"math/rand"
 )
 
 func Random(min, max int) int {
-    rand.Seed(time.Now().Unix())
-    return rand.Intn(max - min) + min
+	return rand.Intn(max-min) + min
 }
