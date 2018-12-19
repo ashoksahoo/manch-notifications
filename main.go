@@ -49,7 +49,6 @@ func main() {
 		for i := 1; i <= 5; i++ {
 			rMinute := utils.Random(1, 30)
 			t := time.Now().Add(time.Duration(rMinute) * time.Minute)
-			fmt.Println(rMinute, t)
 			vote := mongo.CreateVotesSchedulePost(t, bson.ObjectIdHex(p.Id), bson.ObjectIdHex(botProfilesIds[i]))
 			mongo.AddVoteSchedule(vote)
 		}

@@ -12,13 +12,18 @@ type VoteScheduleModelPost struct {
 	ResourceType string        `json:"resource_type" bson:"resource_type"`
 	Resource     bson.ObjectId `json:"resource_id" bson:"resource_id"`
 	Created      Creator       `json:"created" bson:"created"`
+	User         bson.ObjectId `json:"user" bson:"user"`
 	Value        int           `json:"vote" bson:"vote"`
 	Schedule     Schedule      `json:"schedule" bson:"schedule"`
+	CreatedAt    time.Time     `json:"createdAt" bson:"createdAt"`
+	UpdatedAt    time.Time     `json:"updatedAt" bson:"updatedAt"`
+	__v          int           `json:"__v" bson:"__v"`
 }
 
 func CreateVotesSchedulePost(scheduleTime time.Time, rId bson.ObjectId, userId bson.ObjectId) VoteScheduleModelPost {
 
 	user := GetUserByProfileId(userId.Hex())
+	currentTime := time.Now()
 	//creator
 	c := Creator{
 		Id:        bson.NewObjectId(),
@@ -41,6 +46,10 @@ func CreateVotesSchedulePost(scheduleTime time.Time, rId bson.ObjectId, userId b
 		Created:      c,
 		Schedule:     s,
 		Value:        1,
+		User:         user.Id,
+		CreatedAt:    currentTime,
+		UpdatedAt:    currentTime,
+		__v:          0,
 	}
 }
 
