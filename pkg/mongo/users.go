@@ -55,6 +55,7 @@ func GetBotUsers() []UserModel {
 	allUsers := []UserModel{}
 	users.Find(bson.M{"type": "bot"}).All(&allUsers)
 	// fmt.Println("allusers: ", allUsers)
+	fmt.Println("total bot users", len(allUsers))
 	return allUsers
 }
 // func GetProfile(profileId string) Profile {
