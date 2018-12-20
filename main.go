@@ -61,6 +61,7 @@ func main() {
 			rMinute := utils.Random(1, 30)
 			t := time.Now().Add(time.Duration(rMinute) * time.Minute)
 			vote := mongo.CreateVotesSchedulePost(t, bson.ObjectIdHex(p.Id), bson.ObjectIdHex(botProfilesIds[i]))
+			fmt.Println(vote)
 			mongo.AddVoteSchedule(vote)
 		}
 	})
@@ -268,8 +269,6 @@ func main() {
 		i := 0
 		for _, botUser := range botUsers {
 			profiles := botUser.Profiles
-			fmt.Println("profiles", len(profiles))
-			fmt.Println("userId", botUser.Id)
 			for _, profile := range profiles {
 				if i == 100 {
 					break
@@ -279,13 +278,11 @@ func main() {
 			}
 		}
 
-		fmt.Println("total bot users", i)
-
 		// shuffle the bot profiles ids
-		fmt.Println("bot profile ids before shuffle:", botProfilesIds)
+		// fmt.Println("bot profile ids before shuffle:", botProfilesIds)
 		rand.Seed(time.Now().UnixNano())
 		rand.Shuffle(i, func(i, j int) { botProfilesIds[i], botProfilesIds[j] = botProfilesIds[j], botProfilesIds[i] })
-		fmt.Println("after shuffle:", botProfilesIds)
+		// fmt.Println("after shuffle:", botProfilesIds)
 
 		// get user from db
 		user := mongo.GetUserById(u.Id)
