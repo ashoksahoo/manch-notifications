@@ -8,6 +8,7 @@ type Post struct {
 	Community []string `json:"community_ids"`
 	Language  string   `json:"language"`
 	New       bool     `json:"isNew"`
+	IsBot     bool     `json:"is_bot"`
 }
 
 type Comment struct {
