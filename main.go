@@ -52,15 +52,26 @@ func main() {
 		rand.Shuffle(i, func(i, j int) { botProfilesIds[i], botProfilesIds[j] = botProfilesIds[j], botProfilesIds[i] })
 		var no_of_votes int
 		if p.IsBot {
-			no_of_votes = utils.Random(20, 25)
+			no_of_votes = utils.Random(20, 30)
 		} else {
 			no_of_votes = utils.Random(5, 10)
 		}
+
+		j := 0
 		fmt.Println("no_of_votes: ", no_of_votes)
-		for i := 1; i <= no_of_votes; i++ {
-			rMinute := utils.Random(1, 30)
-			t := time.Now().Add(time.Duration(rMinute) * time.Minute)
-			vote := mongo.CreateVotesSchedulePost(t, bson.ObjectIdHex(p.Id), bson.ObjectIdHex(botProfilesIds[i]))
+		t := utils.SplitTimeInRange(1, 30, no_of_votes, time.Minute)
+		for k := 0; j <= no_of_votes; j, k = j+1, k+1 {
+			vote := mongo.CreateVotesSchedulePost(t[k], bson.ObjectIdHex(p.Id), bson.ObjectIdHex(botProfilesIds[j]))
+			fmt.Println(vote)
+			mongo.AddVoteSchedule(vote)
+		}
+
+		randomVotes := utils.Random(5, 20)
+		no_of_votes += randomVotes
+		fmt.Println("no_of_votes: ", no_of_votes)
+		t = utils.SplitTimeInRange(30,2*24*60, randomVotes, time.Minute)
+		for k := 0; j <= no_of_votes; j,k = j+1, k+1 {
+			vote := mongo.CreateVotesSchedulePost(t[k], bson.ObjectIdHex(p.Id), bson.ObjectIdHex(botProfilesIds[j]))
 			fmt.Println(vote)
 			mongo.AddVoteSchedule(vote)
 		}
@@ -293,7 +304,7 @@ func main() {
 
 		// 0-5th minute - +5 followes
 		j := 0
-		randomFollowers := utils.Random(5, 10)
+		randomFollowers := utils.Random(3, 10)
 		followers := randomFollowers
 		t := utils.SplitTimeInRange(1, 5, randomFollowers, time.Minute)
 		for k := 0; j < followers; j, k = j+1, k+1 {
@@ -333,7 +344,7 @@ func main() {
 		}
 
 		// 1st to 3rd day +10-15 followers
-		randomFollowers = utils.Random(10, 20)
+		randomFollowers = utils.Random(20, 30)
 		t = utils.SplitTimeInRange(24, 72, randomFollowers, time.Hour)
 		followers += randomFollowers
 		for k := 0; j < followers; j, k = j+1, k+1 {
@@ -342,7 +353,7 @@ func main() {
 		}
 
 		// 3rd to 7th day +10-20 followers
-		randomFollowers = utils.Random(10, 20)
+		randomFollowers = utils.Random(20, 30)
 		t = utils.SplitTimeInRange(72, 168, randomFollowers, time.Hour)
 		followers += randomFollowers
 		for k := 0; j < followers; j, k = j+1, k+1 {
