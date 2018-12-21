@@ -46,7 +46,7 @@ func CreateVotesSchedulePost(scheduleTime time.Time, rId bson.ObjectId, userProf
 		Created:      c,
 		Schedule:     s,
 		Value:        1,
-		User:         user.Id,
+		User:         userProfileId,
 		CreatedAt:    currentTime,
 		UpdatedAt:    currentTime,
 		__v:          0,
