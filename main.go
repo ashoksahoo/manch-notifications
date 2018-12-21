@@ -60,7 +60,7 @@ func main() {
 		j := 0
 		fmt.Println("no_of_votes: ", no_of_votes)
 		t := utils.SplitTimeInRange(1, 30, no_of_votes, time.Minute)
-		for k := 0; j <= no_of_votes; j, k = j+1, k+1 {
+		for k := 0; j < no_of_votes; j, k = j+1, k+1 {
 			vote := mongo.CreateVotesSchedulePost(t[k], bson.ObjectIdHex(p.Id), bson.ObjectIdHex(botProfilesIds[j]))
 			fmt.Println(vote)
 			mongo.AddVoteSchedule(vote)
@@ -70,7 +70,7 @@ func main() {
 		no_of_votes += randomVotes
 		fmt.Println("no_of_votes: ", no_of_votes)
 		t = utils.SplitTimeInRange(30,2*24*60, randomVotes, time.Minute)
-		for k := 0; j <= no_of_votes; j,k = j+1, k+1 {
+		for k := 0; j < no_of_votes; j,k = j+1, k+1 {
 			vote := mongo.CreateVotesSchedulePost(t[k], bson.ObjectIdHex(p.Id), bson.ObjectIdHex(botProfilesIds[j]))
 			fmt.Println(vote)
 			mongo.AddVoteSchedule(vote)
