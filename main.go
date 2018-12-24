@@ -52,7 +52,7 @@ func main() {
 		rand.Shuffle(i, func(i, j int) { botProfilesIds[i], botProfilesIds[j] = botProfilesIds[j], botProfilesIds[i] })
 		var no_of_votes int
 		if p.IsBot {
-			no_of_votes = utils.Random(20, 30)
+			no_of_votes = utils.Random(30, 45)
 		} else {
 			no_of_votes = utils.Random(5, 10)
 		}
