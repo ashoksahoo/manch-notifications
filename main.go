@@ -28,7 +28,7 @@ func main() {
 	})
 
 	subscribers.PostSubscriber(func(subj, reply string, p *subscribers.Post) {
-		fmt.Printf("Received a post on subject %s! with Post ID %s\n", subj, p.Id)
+		fmt.Printf("Received a post on subject %s! with Post %+v\n", subj, p)
 		// get all bot users
 		botUsers := mongo.GetBotUsers()
 
@@ -75,6 +75,7 @@ func main() {
 			fmt.Println(vote)
 			mongo.AddVoteSchedule(vote)
 		}
+		fmt.Printf("Processed a post on subject %s! with Post Id%s\n", subj, p.Id)
 	})
 	/**
 	This processes Comments from Posts
@@ -91,6 +92,7 @@ func main() {
 	*/
 	subscribers.CommentSubscriber(func(subj, reply string, c *subscribers.Comment) {
 		//fmt.Printf("\nNats MSG %+v", c)
+		fmt.Printf("Received a comment on subject %s! with Comment %+v\n", subj, c)
 		defer func() {
 			if r := recover(); r != nil {
 				fmt.Println("Recovered in subscribers.CommentSubscriber", r)
@@ -137,6 +139,8 @@ func main() {
 		} else {
 			fmt.Printf("No token")
 		}
+		fmt.Printf("Processed a comment on subject %s! with Comment %s\n", subj, c.Id)
+
 	})
 	/**
 	This processes Upvotes from Posts
@@ -153,6 +157,7 @@ func main() {
 	*/
 	subscribers.VotePostSubscriber(func(subj, reply string, v *subscribers.Vote) {
 		//fmt.Printf("\nNats MSG %+v", v)
+		fmt.Printf("Received a vote on subject %s! with vote %+v\n", subj, v)
 		defer func() {
 			if r := recover(); r != nil {
 				fmt.Println("Recovered in subscribers.VotePostSubscriber", r)
@@ -205,10 +210,13 @@ func main() {
 		} else {
 			fmt.Printf("No token")
 		}
+		fmt.Printf("Processed a vote on subject %s! with vote Id %s\n", subj, v.Id)
 
 	})
+
 	subscribers.VoteCommentSubscriber(func(subj, reply string, v *subscribers.Vote) {
-		fmt.Printf("\nNats MSG %+v", v)
+		fmt.Printf("Received a Vote on subject %s! with Vote %+v\n", subj, v)
+
 		defer func() {
 			if r := recover(); r != nil {
 				fmt.Println("Recovered in subscribers.VoteCommentSubscriber", r)
@@ -263,10 +271,13 @@ func main() {
 		} else {
 			fmt.Printf("No token")
 		}
+		fmt.Printf("Processed a Vote on subject %s! with Vote Id %s\n", subj, v.Id)
+
 
 	})
 
 	subscribers.UserSubscriber(func(subj, reply string, u *subscribers.User) {
+		fmt.Printf("Received a New User on subject %s! with User %+v\n", subj, u)
 		// create follow schedule for this user
 		
 		// get all bot users
@@ -361,11 +372,12 @@ func main() {
 			mongo.AddFollowSchedule(doc)
 		}
 		fmt.Println("total followers added:", followers)
+		fmt.Printf("Processed a New User on subject %s! with User Id %s\n", subj, u.Id)
 	})
 
 
 	subscribers.UserFollowSubscriber(func(subj, reply string, uf *subscribers.Subscription) {
-		fmt.Printf("\nNats MSG %+v", uf)
+		fmt.Printf("Received a User follow on subject %s! with user follow %+v\n", subj, uf)
 		defer func() {
 			if r := recover(); r != nil {
 				fmt.Println("Recovered in subscribers.UserFollowSubscriber", uf)
@@ -415,10 +427,13 @@ func main() {
 		} else {
 			fmt.Printf("No token\n")
 		}
+
+		fmt.Printf("Processed a User follow on subject %s! with user follow ID %s\n", subj, uf.Id)
+
 	})
 
 	subscribers.PostRemovedSubscriber(func(subj, reply string, p *subscribers.Post) {
-		fmt.Printf("Received a post on subject %s! with Post ID %s\n", subj, p.Id)
+		fmt.Printf("Received a post on subject %s! with Post %+v\n", subj, p)
 		post := mongo.GetPostById(p.Id)
 		
 		postCreator := mongo.GetProfileById(post.Created.ProfileId)
@@ -457,6 +472,8 @@ func main() {
 		} else {
 			fmt.Printf("No token")
 		}
+		fmt.Printf("Processed a post on subject %s! with Post ID %s\n", subj, p.Id)
+
 	})
 
 	http.ListenAndServe(":5000", r)
