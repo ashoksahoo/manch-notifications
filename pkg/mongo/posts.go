@@ -19,6 +19,8 @@ type PostModel struct {
 	Views        int             `json:"no_of_views"bson:"no_of_views"`
 	Impressions  int             `json:"no_of_impressions"bson:"no_of_impressions"`
 	MediaUrls    []Media         `json:"media_urls"bson:"media_urls"`
+	IgnoreFromFeed bool `json:"ignore_from_feed" bson:"ignore_from_feed"`
+	IgnoreReason string `json:"ignore_reason" bson:"ignore_reason"`
 }
 
 func GetPost(Id bson.ObjectId) (PostModel) {

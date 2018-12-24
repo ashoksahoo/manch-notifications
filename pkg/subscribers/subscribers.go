@@ -40,6 +40,10 @@ func PostUpdateSubscriber(callback func(subj, reply string, m *Post)) {
 	go c.QueueSubscribe(subject("post.update"), queue(), callback)
 }
 
+func PostRemovedSubscriber(callback func(subj, reply string, m *Post)) {
+	go c.QueueSubscribe(subject("post.ignore-from-feed"), queue(), callback)
+}
+
 func CommentSubscriber(callback func(subj, reply string, m *Comment)) {
 	go c.QueueSubscribe(subject("comment.new"), queue(), callback)
 }

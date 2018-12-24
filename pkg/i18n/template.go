@@ -12,6 +12,7 @@ type DataModel struct {
 	Count   int
 	Post    string
 	Comment string
+	DeleteReason string
 }
 
 func GetString(lang string, s string, d DataModel) string {
