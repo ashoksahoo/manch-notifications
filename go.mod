@@ -21,7 +21,7 @@ require (
 	golang.org/x/sys v0.0.0-20181031143558-9b800f95dbbc // indirect
 	google.golang.org/api v0.0.0-20181129220737-af4fc4062c26
 	google.golang.org/appengine v1.3.0 // indirect
-	google.golang.org/genproto v0.0.0-20181101192439-c830210a61df // indirect
+	google.golang.org/genproto v0.0.0-20181101192439-c830210a61df
 	google.golang.org/grpc v1.16.0 // indirect
 	gopkg.in/check.v1 v1.0.0-20180628173108-788fd7840127 // indirect
 )

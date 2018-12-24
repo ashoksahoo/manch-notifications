@@ -417,6 +417,50 @@ func main() {
 		}
 	})
 
+	subscribers.PostRemovedSubscriber(func(subj, reply string, p *subscribers.Post) {
+		fmt.Printf("Received a post on subject %s! with Post ID %s\n", subj, p.Id)
+		fmt.Printf("yaha aaya tha")
+		post := mongo.GetPostById(p.Id)
+		
+		fmt.Printf("post is %+v", post)
+		postCreator := mongo.GetProfileById(post.Created.ProfileId)
+
+		tokens := mongo.GetTokensByProfiles([]bson.ObjectId{post.Created.ProfileId})
+		notification := mongo.CreateNotification(post.Id, "delete", "post", postCreator.Id)
+
+		reason := post.IgnoreReason
+		language := postCreator.Language
+		deleteReason := i18n.DeleteReason[language][reason]
+
+		fmt.Println("delete reason", deleteReason)
+		data := i18n.DataModel{
+			Name:  postCreator.Name,
+			Post:  post.Title,
+			DeleteReason: deleteReason,
+		}
+		var msgStr string
+		msgStr = i18n.GetString(language, "post_removed", data)
+		fmt.Println(msgStr)
+		title := i18n.GetAppTitle(language)
+		msgStr = strings.Replace(msgStr, "\"\" ", "", 1)
+		msg := firebase.ManchMessage{
+			Title:    title,
+			Message:  msgStr,
+			Icon:     mongo.ExtractThumbNailFromPost(post),
+			DeepLink: "manch://profile/" + postCreator.Id.Hex(),
+			Id:       notification.Identifier,
+		}
+
+		fmt.Printf("\nGCM Message %+v", msg)
+		if tokens != nil {
+			for _, token := range tokens {
+				go firebase.SendMessage(msg, token.Token)
+			}
+		} else {
+			fmt.Printf("No token")
+		}
+	})
+
 	http.ListenAndServe(":5000", r)
 }
 
