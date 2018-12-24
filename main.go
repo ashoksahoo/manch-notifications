@@ -433,9 +433,10 @@ func main() {
 		deleteReason := i18n.DeleteReason[language][reason]
 
 		fmt.Println("delete reason", deleteReason)
+		postTitle := utils.TruncateTitle(post.Title, 4)
 		data := i18n.DataModel{
 			Name:  postCreator.Name,
-			Post:  post.Title,
+			Post:  postTitle,
 			DeleteReason: deleteReason,
 		}
 		var msgStr string

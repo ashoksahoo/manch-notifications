@@ -84,7 +84,7 @@ var Strings = map[string]map[string]string{
 		"follow_user_two": "{{.Name}} మరియు {{.Name2}} మంచ్ లో మిమ్మల్ని ఫాలో చేస్తున్నారు",
 		"follow_user_one": "{{.Name}} మంచ్ లో మిమ్మల్ని ఫాలో చేస్తున్నారు",
 
-		"post_removed": "{{.Name}} మీ పోస్టులో {{.DeleteReason}}  కలిగి ఉంది, అందుకే పాపులర్  ఫీడ్ లో కనిపించవు.",
+		"post_removed": "{{.Name}} మీ పోస్టు{{.Post}} లో{{.DeleteReason}}  కలిగి ఉంది, అందుకే పాపులర్  ఫీడ్ లో కనిపించవు.",
 	},
 }
 
