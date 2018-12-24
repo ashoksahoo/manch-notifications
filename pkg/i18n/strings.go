@@ -27,7 +27,7 @@ var Strings = map[string]map[string]string{
 		"follow_user_two": "{{.Name}} and {{.Name2}} have started following you on Manch",
 		"follow_user_one": "{{.Name}} has started following you on Manch",
 		
-		"post_removed": "Dear {{.Name}}, Your post {{.Post}} ",
+		"post_removed": "Dear {{.Name}}, Your post \"{{.Post}}\" ",
 
 	},
 	"hi": {
@@ -56,7 +56,7 @@ var Strings = map[string]map[string]string{
 		"follow_user_two": "{{.Name}} और {{.Name2}} अब आपको फॉलो कर रहे हैं",
 		"follow_user_one": "{{.Name}} अब आपको फॉलो कर रहे हैं",
 
-		"post_removed": "{{.Name}} जी आपके पोस्ट {{.Post}} में {{.DeleteReason}} होने के कारण, वह अब लोकप्रिय मंच पर नहीं दिखेगा",
+		"post_removed": "{{.Name}} जी आपके पोस्ट \"{{.Post}}\" में {{.DeleteReason}} होने के कारण, वह अब लोकप्रिय मंच पर नहीं दिखेगा",
 	},
 	"te": {
 		"comment_multi": "{{.Name}} +{{.Count}} వ్యక్తులు మీ పోస్ట్ \"{{.Post}}\" పైన కామెంట్ చేసారు.",
@@ -84,7 +84,7 @@ var Strings = map[string]map[string]string{
 		"follow_user_two": "{{.Name}} మరియు {{.Name2}} మంచ్ లో మిమ్మల్ని ఫాలో చేస్తున్నారు",
 		"follow_user_one": "{{.Name}} మంచ్ లో మిమ్మల్ని ఫాలో చేస్తున్నారు",
 
-		"post_removed": "{{.Name}} మీ పోస్టు{{.Post}} లో{{.DeleteReason}}  కలిగి ఉంది, అందుకే పాపులర్  ఫీడ్ లో కనిపించవు.",
+		"post_removed": "{{.Name}} మీ పోస్టు\"{{.Post}}\" లో{{.DeleteReason}}  కలిగి ఉంది, అందుకే పాపులర్  ఫీడ్ లో కనిపించవు.",
 	},
 }
 

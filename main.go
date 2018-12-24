@@ -419,10 +419,8 @@ func main() {
 
 	subscribers.PostRemovedSubscriber(func(subj, reply string, p *subscribers.Post) {
 		fmt.Printf("Received a post on subject %s! with Post ID %s\n", subj, p.Id)
-		fmt.Printf("yaha aaya tha")
 		post := mongo.GetPostById(p.Id)
 		
-		fmt.Printf("post is %+v", post)
 		postCreator := mongo.GetProfileById(post.Created.ProfileId)
 
 		tokens := mongo.GetTokensByProfiles([]bson.ObjectId{post.Created.ProfileId})
@@ -432,7 +430,6 @@ func main() {
 		language := postCreator.Language
 		deleteReason := i18n.DeleteReason[language][reason]
 
-		fmt.Println("delete reason", deleteReason)
 		postTitle := utils.TruncateTitle(post.Title, 4)
 		data := i18n.DataModel{
 			Name:  postCreator.Name,

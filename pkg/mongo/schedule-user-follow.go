@@ -31,7 +31,7 @@ func AddFollowSchedule(document UserFollowScheduleModel) {
 	// fmt.Println("err", err)
 	if err == nil {
 		// fmt.Println("profile added successfully:", document.ProfileId.Hex())
-		fmt.Println("inserted: ", document)
+		fmt.Printf("inserted follow schedule: %+v", document)
 	} else {
 		fmt.Println("unable to add profile:", document.ProfileId.Hex())
 	}
