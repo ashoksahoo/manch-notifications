@@ -23,7 +23,7 @@ func main() {
 	})
 
 	r.Get("/time", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Println(utils.SplitTimeInRange(72, 168, 10, time.Hour))
+		fmt.Println(utils.SplitTimeInRange(0, 5 * 60, 6, time.Second))
 		w.Write([]byte("pong"))
 	})
 
@@ -60,7 +60,7 @@ func main() {
 
 		j := 0
 		fmt.Println("no_of_votes: ", no_of_votes)
-		t := utils.SplitTimeInRange(1, 30, no_of_votes, time.Minute)
+		t := utils.SplitTimeInRange(1*60, 30*60, no_of_votes, time.Second)
 		for k := 0; j < no_of_votes; j, k = j+1, k+1 {
 			vote := mongo.CreateVotesSchedulePost(t[k], bson.ObjectIdHex(p.Id), bson.ObjectIdHex(botProfilesIds[j]))
 			mongo.AddVoteSchedule(vote)
