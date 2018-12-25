@@ -15,10 +15,12 @@ func Random(min, max int) int {
 
 func SplitTimeInRange(a int, b int, n int, duration time.Duration) []time.Time {
     times := make([]time.Time, n)
-    f := (b - a) / n
+    f := float32(float32((b - a)) / float32(n))
     currentTime := time.Now()
     for i := 0; i < n; i++ {
-        r := Random((a + (i * f)), (a + (i + 1) * f))
+        x := float32(a) + (float32(i) * f)
+        y := float32(a) + float32(i + 1) * f
+        r := Random(int(x), int(y))
         times[i] = currentTime.Add(time.Duration(r) * duration);
     }
     return times;
