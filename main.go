@@ -34,7 +34,6 @@ func main() {
 
 		// array of bot profiles ids
 		var botProfilesIds [100]string
-		
 		// no. of profiles counter
 		i := 0
 		for _, botUser := range botUsers {
@@ -51,8 +50,10 @@ func main() {
 		rand.Seed(time.Now().UnixNano())
 		rand.Shuffle(i, func(i, j int) { botProfilesIds[i], botProfilesIds[j] = botProfilesIds[j], botProfilesIds[i] })
 		var no_of_votes int
-		if p.IsBot {
+		if p.CreatorType == "bot" {
 			no_of_votes = utils.Random(30, 45)
+		} else if p.CreatorType == "super_level_1" {
+			no_of_votes = utils.Random(20, 25)
 		} else {
 			no_of_votes = utils.Random(5, 10)
 		}
@@ -62,7 +63,6 @@ func main() {
 		t := utils.SplitTimeInRange(1, 30, no_of_votes, time.Minute)
 		for k := 0; j < no_of_votes; j, k = j+1, k+1 {
 			vote := mongo.CreateVotesSchedulePost(t[k], bson.ObjectIdHex(p.Id), bson.ObjectIdHex(botProfilesIds[j]))
-			fmt.Println(vote)
 			mongo.AddVoteSchedule(vote)
 		}
 
@@ -72,7 +72,6 @@ func main() {
 		t = utils.SplitTimeInRange(30,2*24*60, randomVotes, time.Minute)
 		for k := 0; j < no_of_votes; j,k = j+1, k+1 {
 			vote := mongo.CreateVotesSchedulePost(t[k], bson.ObjectIdHex(p.Id), bson.ObjectIdHex(botProfilesIds[j]))
-			fmt.Println(vote)
 			mongo.AddVoteSchedule(vote)
 		}
 		fmt.Printf("Processed a post on subject %s! with Post Id%s\n", subj, p.Id)
@@ -202,7 +201,7 @@ func main() {
 			Id:       notification.Identifier,
 		}
 
-		fmt.Printf("\nGCM Message %+v", msg)
+		fmt.Printf("\nGCM Message %+v\n", msg)
 		if tokens != nil {
 			for _, token := range tokens {
 				go firebase.SendMessage(msg, token.Token)
@@ -263,13 +262,13 @@ func main() {
 			Id:       notification.Identifier,
 		}
 
-		fmt.Printf("\nGCM Message %+v", msg)
+		fmt.Printf("\nGCM Message %+v\n", msg)
 		if tokens != nil {
 			for _, token := range tokens {
 				go firebase.SendMessage(msg, token.Token)
 			}
 		} else {
-			fmt.Printf("No token")
+			fmt.Printf("No token\n")
 		}
 		fmt.Printf("Processed a Vote on subject %s! with Vote Id %s\n", subj, v.Id)
 
@@ -420,6 +419,7 @@ func main() {
 			Id:         notification.Identifier,
 		}
 		//firebase.SendMessage(msg, "frgp37gfvFg:APA91bHbnbfoX-bp3M_3k-ceD7E4fZ73fcmVL4b5DGB5cQn-fFEvfbj3aAI9g0wXozyApIb-6wGsJauf67auK1p3Ins5Ff7IXCN161fb5JJ5pfBnTZ4LEcRUatO6wimsbiS7EANoGDr4")
+		fmt.Printf("\nGCM Message %+v\n", msg)		
 		if tokens != nil {
 			for _, token := range tokens {
 				go firebase.SendMessage(msg, token.Token)
@@ -464,7 +464,7 @@ func main() {
 			Id:       notification.Identifier,
 		}
 
-		fmt.Printf("\nGCM Message %+v", msg)
+		fmt.Printf("\nGCM Message %+v\n", msg)
 		if tokens != nil {
 			for _, token := range tokens {
 				go firebase.SendMessage(msg, token.Token)

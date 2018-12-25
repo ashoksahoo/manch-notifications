@@ -9,6 +9,7 @@ type Post struct {
 	Language  string   `json:"language"`
 	New       bool     `json:"isNew"`
 	IsBot     bool     `json:"is_bot"`
+	CreatorType string `json:"creator_type"`
 }
 
 type Comment struct {
