@@ -10,10 +10,11 @@ import (
 	"notification-service/pkg/subscribers"
 	"notification-service/pkg/utils"
 	"strconv"
+	"strings"
 	"time"
+
 	"github.com/globalsign/mgo/bson"
 	"github.com/go-chi/chi"
-	"strings"
 )
 
 func main() {
@@ -23,7 +24,7 @@ func main() {
 	})
 
 	r.Get("/time", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Println(utils.SplitTimeInRange(0, 5 * 60, 6, time.Second))
+		fmt.Println(utils.SplitTimeInRange(0, 5*60, 6, time.Second))
 		w.Write([]byte("pong"))
 	})
 
@@ -69,8 +70,8 @@ func main() {
 		randomVotes := utils.Random(5, 20)
 		no_of_votes += randomVotes
 		fmt.Println("no_of_votes: ", no_of_votes)
-		t = utils.SplitTimeInRange(30,2*24*60, randomVotes, time.Minute)
-		for k := 0; j < no_of_votes; j,k = j+1, k+1 {
+		t = utils.SplitTimeInRange(30, 2*24*60, randomVotes, time.Minute)
+		for k := 0; j < no_of_votes; j, k = j+1, k+1 {
 			vote := mongo.CreateVotesSchedulePost(t[k], bson.ObjectIdHex(p.Id), bson.ObjectIdHex(botProfilesIds[j]))
 			mongo.AddVoteSchedule(vote)
 		}
@@ -106,6 +107,54 @@ func main() {
 		postCreator := mongo.GetProfileById(comment.Post.Created.ProfileId)
 		tokens := mongo.GetTokensByProfiles([]bson.ObjectId{comment.Post.Created.ProfileId})
 		notification := mongo.CreateNotification(comment.PostId, "comment", "post", comment.Post.Created.ProfileId)
+
+		// comment on comment
+		if len(comment.Parents) >= 2 {
+			fmt.Println("reply on comments")
+			// get comment id
+			commentId := comment.CommentId
+			replyOnComment := mongo.GetCommentById(commentId.Hex())
+			fmt.Printf("reply on comments %+v\n", replyOnComment)
+			// get replied on comment creator
+			replyOnCommentCreator := mongo.GetProfileById(replyOnComment.Created.ProfileId)
+			notification1 := mongo.CreateNotification(replyOnComment.Id, "comment", "comment", replyOnComment.Created.ProfileId)
+			tokens1 := mongo.GetTokensByProfiles([]bson.ObjectId{replyOnComment.Created.ProfileId})
+			// comment title
+			count := len(notification.UniqueUsers) - 1
+			fmt.Println("Comment count: ", count)
+			commentTitle := replyOnComment.Content
+			utils.TruncateTitle(commentTitle, 4)
+			data1 := i18n.DataModel{
+				Name:    comment.Created.Name,
+				Comment: commentTitle,
+				Count: count,
+			}
+			var msgStr1 string
+			if count > 0 {
+				msgStr1 = i18n.GetString(replyOnCommentCreator.Language, "comment_reply_multi", data1)				
+			} else {
+				msgStr1 = i18n.GetString(replyOnCommentCreator.Language, "comment_reply_one", data1)
+			}
+			fmt.Println("message string: ", msgStr1)
+			title := i18n.GetAppTitle(replyOnCommentCreator.Language)
+			msgStr1 = strings.Replace(msgStr1, "\"\" ", "", 1)
+			msg := firebase.ManchMessage{
+				Title:      title,
+				Message:    msgStr1,
+				Icon:       mongo.ExtractThumbNailFromPost(comment.Post),
+				DeepLink:   "manch://posts/" + comment.PostId.Hex(),
+				BadgeCount: strconv.Itoa(replyOnComment.CommentCount),
+				Id:         notification1.Identifier,
+			}
+			if tokens1 != nil {
+				for _, token := range tokens {
+					go firebase.SendMessage(msg, token.Token)
+				}
+			} else {
+				fmt.Printf("No token")
+			}
+			fmt.Println("end reply on comments")
+		}
 
 		postTitle := utils.TruncateTitle(comment.Post.Title, 4)
 		data := i18n.DataModel{
@@ -272,20 +321,19 @@ func main() {
 		}
 		fmt.Printf("Processed a Vote on subject %s! with Vote Id %s\n", subj, v.Id)
 
-
 	})
 
 	subscribers.UserSubscriber(func(subj, reply string, u *subscribers.User) {
 		fmt.Printf("Received a New User on subject %s! with User %+v\n", subj, u)
 		// create follow schedule for this user
-		
+
 		// get all bot users
 		botUsers := mongo.GetBotUsers()
 		var resourceId bson.ObjectId
 
 		// array of bot profiles ids
 		var botProfilesIds [100]string
-		
+
 		// no. of profiles counter
 		i := 0
 		for _, botUser := range botUsers {
@@ -308,8 +356,8 @@ func main() {
 		// get user from db
 		user := mongo.GetUserById(u.Id)
 		userProfileId := user.Profiles[0].Id
-		
-		// set user to resource 
+
+		// set user to resource
 		resourceId = userProfileId
 
 		// 0-5th minute - +5 followes
@@ -327,7 +375,7 @@ func main() {
 		randomFollowers = utils.Random(5, 10)
 		t = utils.SplitTimeInRange(5, 59, randomFollowers, time.Minute)
 		followers += randomFollowers
-		for k := 0 ; j < followers; j, k = j+1, k+1 {
+		for k := 0; j < followers; j, k = j+1, k+1 {
 			doc := mongo.CreateFollowSchedule(t[k], bson.ObjectIdHex(botProfilesIds[j]), resourceId)
 			// fmt.Printf("saving doc:%+v\n", doc)
 			mongo.AddFollowSchedule(doc)
@@ -337,7 +385,7 @@ func main() {
 		randomFollowers = utils.Random(5, 10)
 		t = utils.SplitTimeInRange(1, 6, randomFollowers, time.Hour)
 		followers += randomFollowers
-		for k :=0 ; j < followers; j, k = j+1, k+1 {
+		for k := 0; j < followers; j, k = j+1, k+1 {
 			doc := mongo.CreateFollowSchedule(t[k], bson.ObjectIdHex(botProfilesIds[j]), resourceId)
 			// fmt.Printf("saving doc:%+v\n", doc)
 			mongo.AddFollowSchedule(doc)
@@ -374,7 +422,6 @@ func main() {
 		fmt.Printf("Processed a New User on subject %s! with User Id %s\n", subj, u.Id)
 	})
 
-
 	subscribers.UserFollowSubscriber(func(subj, reply string, uf *subscribers.Subscription) {
 		fmt.Printf("Received a User follow on subject %s! with user follow %+v\n", subj, uf)
 		defer func() {
@@ -382,10 +429,10 @@ func main() {
 				fmt.Println("Recovered in subscribers.UserFollowSubscriber", uf)
 			}
 		}()
-		
+
 		if uf.ResourceType != "user" {
 			fmt.Println("Not a user resource follows")
-			return;
+			return
 		}
 
 		userFollow := mongo.GetUserFollowById(uf.Id)
@@ -413,13 +460,13 @@ func main() {
 		title := i18n.GetAppTitle(followsTo.Language)
 		msgStr = strings.Replace(msgStr, "\"\" ", "", 1)
 		msg := firebase.ManchMessage{
-			Title:      title,
-			Message:    msgStr,
-			DeepLink:   "manch://profile/" + followsTo.Id.Hex(),
-			Id:         notification.Identifier,
+			Title:    title,
+			Message:  msgStr,
+			DeepLink: "manch://profile/" + followsTo.Id.Hex(),
+			Id:       notification.Identifier,
 		}
 		//firebase.SendMessage(msg, "frgp37gfvFg:APA91bHbnbfoX-bp3M_3k-ceD7E4fZ73fcmVL4b5DGB5cQn-fFEvfbj3aAI9g0wXozyApIb-6wGsJauf67auK1p3Ins5Ff7IXCN161fb5JJ5pfBnTZ4LEcRUatO6wimsbiS7EANoGDr4")
-		fmt.Printf("\nGCM Message %+v\n", msg)		
+		fmt.Printf("\nGCM Message %+v\n", msg)
 		if tokens != nil {
 			for _, token := range tokens {
 				go firebase.SendMessage(msg, token.Token)
@@ -435,7 +482,7 @@ func main() {
 	subscribers.PostRemovedSubscriber(func(subj, reply string, p *subscribers.Post) {
 		fmt.Printf("Received a post on subject %s! with Post %+v\n", subj, p)
 		post := mongo.GetPostById(p.Id)
-		
+
 		postCreator := mongo.GetProfileById(post.Created.ProfileId)
 
 		tokens := mongo.GetTokensByProfiles([]bson.ObjectId{post.Created.ProfileId})
@@ -447,8 +494,8 @@ func main() {
 
 		postTitle := utils.TruncateTitle(post.Title, 4)
 		data := i18n.DataModel{
-			Name:  postCreator.Name,
-			Post:  postTitle,
+			Name:         postCreator.Name,
+			Post:         postTitle,
 			DeleteReason: deleteReason,
 		}
 		var msgStr string
