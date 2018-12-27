@@ -224,17 +224,23 @@ func main() {
 			}
 		}()
 		dir, err := strconv.Atoi(v.Direction)
-		if err != nil || dir < 1 {
-			fmt.Println("Invalid Vote")
-			//Do not process downvotes and unvote
-			return
+		
+		if err != nil {
+			fmt.Println("Invalid vote")
+			return;
 		}
+
 		post := mongo.GetPostById(v.Resource)
 		vote := post.GetVote(v.Id)
 		if vote.Created.ProfileId == post.Created.ProfileId {
 			//Self Vote
 			fmt.Println("Self Vote")
 			return
+		}
+		if dir < 1 {
+			mongo.RemoveNotificationUser(post.Id, "like", vote.Created.ProfileId)
+			//Do not process downvotes and unvote
+			return;
 		}
 		postCreator := mongo.GetProfileById(post.Created.ProfileId)
 		tokens := mongo.GetTokensByProfiles([]bson.ObjectId{post.Created.ProfileId})
@@ -283,7 +289,7 @@ func main() {
 			}
 		}()
 		dir, err := strconv.Atoi(v.Direction)
-		if err != nil || dir < 1 {
+		if err != nil {
 			fmt.Println("Invalid Vote")
 			//Do not process downvotes and unvote
 			return
@@ -295,6 +301,13 @@ func main() {
 			fmt.Println("Self Vote")
 			return
 		}
+
+		if dir < 1 {
+			mongo.RemoveNotificationUser(comment.Id, "like", vote.Created.ProfileId)
+			//Do not process downvotes and unvote
+			return;
+		}
+
 		post := mongo.GetPostById(comment.PostId.Hex())
 		commentCreator := mongo.GetProfileById(comment.Created.ProfileId)
 		notification := mongo.CreateNotification(comment.Id, "like", "comment", vote.Created.ProfileId)
@@ -549,13 +562,9 @@ func main() {
 			return
 		}
 
-
-		userFollow := mongo.GetUserFollowById(uf.Id)
-		// fmt.Printf("\nuser follow %+v\n", userFollow)
-		follower := mongo.GetProfileById(userFollow.ProfileId)
+		follower := mongo.GetProfileById(bson.ObjectIdHex(uf.ProfileId))
 		// fmt.Printf("\nfollower %+v\n", follower)
-		followsTo := mongo.GetProfileById(userFollow.ResourceId)
-
+		followsTo := mongo.GetProfileById(bson.ObjectIdHex(uf.Resource))
 		mongo.RemoveNotificationUser(followsTo.Id, "follows", follower.Id)
 	})
 
