@@ -99,22 +99,23 @@ func main() {
 			}
 		}()
 		comment, uniqueCommentator := mongo.GetFullCommentById(c.Id)
+		
+		// replied on Comment
+		replyOnCommentId := comment.CommentId
+		replyOnComment := mongo.GetCommentById(replyOnCommentId.Hex())
 
 		// comment on comment
-		if len(comment.Parents) >= 2 {
+		if len(comment.Parents) >= 2 && replyOnComment.Created.ProfileId != comment.Created.ProfileId {
 			fmt.Println("reply on comments")
-			// get comment id
-			commentId := comment.CommentId
-			replyOnComment := mongo.GetCommentById(commentId.Hex())
-			if replyOnComment.Created.ProfileId == comment.Created.ProfileId {
-				// Self Reply on comment
-				fmt.Println("Self reply on comments")
-				return;
-			}
+			// if replyOnComment.Created.ProfileId == comment.Created.ProfileId {
+			// 	// Self Reply on comment
+			// 	fmt.Println("Self reply on comments")
+			// 	return;
+			// }
 			fmt.Printf("reply on comments %+v\n", replyOnComment)
 			// get replied on comment creator
 			replyOnCommentCreator := mongo.GetProfileById(replyOnComment.Created.ProfileId)
-			notification1 := mongo.CreateNotification(replyOnComment.Id, "comment", "comment", replyOnComment.Created.ProfileId)
+			notification1 := mongo.CreateNotification(replyOnComment.Id, "comment", "comment", comment.Created.ProfileId)
 			tokens1 := mongo.GetTokensByProfiles([]bson.ObjectId{replyOnComment.Created.ProfileId})
 			// comment title
 			count := len(notification1.UniqueUsers) - 1
