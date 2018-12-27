@@ -99,14 +99,6 @@ func main() {
 			}
 		}()
 		comment, uniqueCommentator := mongo.GetFullCommentById(c.Id)
-		if comment.Post.Created.ProfileId == comment.Created.ProfileId {
-			//Self comment
-			fmt.Println("Self Comment")
-			return
-		}
-		postCreator := mongo.GetProfileById(comment.Post.Created.ProfileId)
-		tokens := mongo.GetTokensByProfiles([]bson.ObjectId{comment.Post.Created.ProfileId})
-		notification := mongo.CreateNotification(comment.PostId, "comment", "post", comment.Post.Created.ProfileId)
 
 		// comment on comment
 		if len(comment.Parents) >= 2 {
@@ -114,13 +106,18 @@ func main() {
 			// get comment id
 			commentId := comment.CommentId
 			replyOnComment := mongo.GetCommentById(commentId.Hex())
+			if replyOnComment.Created.ProfileId == comment.Created.ProfileId {
+				// Self Reply on comment
+				fmt.Println("Self reply on comments")
+				return;
+			}
 			fmt.Printf("reply on comments %+v\n", replyOnComment)
 			// get replied on comment creator
 			replyOnCommentCreator := mongo.GetProfileById(replyOnComment.Created.ProfileId)
 			notification1 := mongo.CreateNotification(replyOnComment.Id, "comment", "comment", replyOnComment.Created.ProfileId)
 			tokens1 := mongo.GetTokensByProfiles([]bson.ObjectId{replyOnComment.Created.ProfileId})
 			// comment title
-			count := len(notification.UniqueUsers) - 1
+			count := len(notification1.UniqueUsers) - 1
 			fmt.Println("Comment count: ", count)
 			commentTitle := replyOnComment.Content
 			utils.TruncateTitle(commentTitle, 4)
@@ -147,7 +144,7 @@ func main() {
 				Id:         notification1.Identifier,
 			}
 			if tokens1 != nil {
-				for _, token := range tokens {
+				for _, token := range tokens1 {
 					go firebase.SendMessage(msg, token.Token)
 				}
 			} else {
@@ -155,6 +152,15 @@ func main() {
 			}
 			fmt.Println("end reply on comments")
 		}
+
+		if comment.Post.Created.ProfileId == comment.Created.ProfileId {
+			//Self comment
+			fmt.Println("Self Comment")
+			return
+		}
+		postCreator := mongo.GetProfileById(comment.Post.Created.ProfileId)
+		tokens := mongo.GetTokensByProfiles([]bson.ObjectId{comment.Post.Created.ProfileId})
+		notification := mongo.CreateNotification(comment.PostId, "comment", "post", comment.Post.Created.ProfileId)
 
 		postTitle := utils.TruncateTitle(comment.Post.Title, 4)
 		data := i18n.DataModel{
