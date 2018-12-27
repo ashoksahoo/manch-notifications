@@ -99,11 +99,15 @@ func main() {
 			}
 		}()
 		comment, uniqueCommentator := mongo.GetFullCommentById(c.Id)
-		
-		// replied on Comment
-		replyOnCommentId := comment.CommentId
-		replyOnComment := mongo.GetCommentById(replyOnCommentId.Hex())
 
+		// replied on Comment
+		// replyOnCommentId := comment.CommentId
+		// replyOnComment := mongo.GetCommentById(replyOnCommentId.Hex())
+		// var replyOnComment bson.ObjectId
+		var replyOnComment mongo.CommentModel
+		if len(comment.Parents) >= 2 {
+			replyOnComment = mongo.GetCommentById(comment.CommentId.Hex())
+		}
 		// comment on comment
 		if len(comment.Parents) >= 2 && replyOnComment.Created.ProfileId != comment.Created.ProfileId {
 			fmt.Println("reply on comments")
@@ -120,16 +124,15 @@ func main() {
 			// comment title
 			count := len(notification1.UniqueUsers) - 1
 			fmt.Println("Comment count: ", count)
-			commentTitle := replyOnComment.Content
-			utils.TruncateTitle(commentTitle, 4)
+			commentTitle := utils.TruncateTitle(replyOnComment.Content, 4)
 			data1 := i18n.DataModel{
 				Name:    comment.Created.Name,
 				Comment: commentTitle,
-				Count: count,
+				Count:   count,
 			}
 			var msgStr1 string
 			if count > 0 {
-				msgStr1 = i18n.GetString(replyOnCommentCreator.Language, "comment_reply_multi", data1)				
+				msgStr1 = i18n.GetString(replyOnCommentCreator.Language, "comment_reply_multi", data1)
 			} else {
 				msgStr1 = i18n.GetString(replyOnCommentCreator.Language, "comment_reply_one", data1)
 			}
