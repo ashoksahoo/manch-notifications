@@ -7,6 +7,11 @@ var Strings = map[string]map[string]string{
 		"comment_two":   "{{.Name}} & {{.Name2}} commented on Your Post \"{{.Post}}\"",
 		"comment_one":   "{{.Name}} commented on Your Post \"{{.Post}}\"",
 
+		"comment_reply_multi": "{{.Name}} and {{.Count}} others have replied to your comment \"{{.Comment}}\"",
+		"comment_reply_three": "{{.Name}}, {{.Name2}} and {{.Name3}} have replied to your comment \"{{.Comment}}\"",
+		"comment_reply_two": "{{.Name}} and {{.Name2}} have replied to your comment \"{{.Comment}}\"",
+		"comment_reply_one": "{{.Name}} has replied to your comment \"{{.Comment}}\"",
+
 		"post_like_multi": "{{.Name}} & {{.Count}} others liked Your Post \"{{.Post}}\"",
 		"post_like_three": "{{.Name}}, {{.Name2}} & {{.Name3}} liked Your Post \"{{.Post}}\"",
 		"post_like_two":   "{{.Name}} & {{.Name2}} liked Your Post \"{{.Post}}\"",
@@ -36,6 +41,11 @@ var Strings = map[string]map[string]string{
 		"comment_two":   "{{.Name}} और {{.Name2}} ने आपकी पोस्ट \"{{.Post}}\" पर कमेंट किया है ",
 		"comment_one":   "{{.Name}} ने आपकी पोस्ट \"{{.Post}}\" पर कमेंट किया है ",
 
+		"comment_reply_multi": "{{.Name}} और {{.Count}} अन्य सदस्य ने आपके कमेंट \"{{.Comment}}\" का जवाब दिया है",
+		"comment_reply_three": "{{.Name}}, {{.Name2}} और {{.Name3}} ने आपके कमेंट \"{{.Comment}}\" का जवाब दिया है",
+		"comment_reply_two": "{{.Name}} और {{.Name2}} ने आपके कमेंट \"{{.Comment}}\" का जवाब दिया है",
+		"comment_reply_one": "{{.Name}} ने आपके कमेंट \"{{.Comment}}\" का जवाब दिया है",
+
 		"post_like_multi": "{{.Name}} और {{.Count}} लोगों ने आपकी पोस्ट \"{{.Post}}\" को पसंद किया है",
 		"post_like_three": "{{.Name}}, {{.Name2}} और {{.Name3}} ने आपकी पोस्ट \"{{.Post}}\" को पसंद किया है",
 		"post_like_two":   "{{.Name}} और {{.Name2}} ने आपकी पोस्ट \"{{.Post}}\" को पसंद किया है",
@@ -63,6 +73,11 @@ var Strings = map[string]map[string]string{
 		"comment_three": "{{.Name}}, {{.Name2}} & {{.Name3}} మీ పోస్ట్ \"{{.Post}}\" పైన కామెంట్ చేసారు.",
 		"comment_two":   "{{.Name}} & {{.Name2}} మీ పోస్ట్ \"{{.Post}}\" పైన కామెంట్ చేసారు.",
 		"comment_one":   "{{.Name}} మీ పోస్ట్ \"{{.Post}}\" పైన కామెంట్ చేసారు.",
+
+		"comment_reply_multi": "{{.Name}} మరియు {{.Count}} వ్యక్తులు మీ కామెంట్  \"{{Titile}}\" కి రిప్లయ్ ఇచ్చారు",
+		"comment_reply_three": "{{.Name}}, {{.Name2}} మరియు {{.Name3}}  మీ కామెంట్  \"{{Comment}}\" కి రిప్లయ్ ఇచ్చారు",
+		"comment_reply_two": "{{.Name}} మరియు {{.Name2}} మీ కామెంట్  \"{{.Comment}}\" కి రిప్లయ్ ఇచ్చారు",
+		"comment_reply_one": "{{.Name}} మీ కామెంట్ \"{{.Comment}}\" కి రిప్లయ్ ఇచ్చారు ",
 
 		"post_like_multi": "{{.Name}} +{{.Count}} వ్యక్తులు మీ పోస్ట్ \"{{.Post}}\" ని లైక్ చేసారు.",
 		"post_like_three": "{{.Name}}, {{.Name2}} & {{.Name3}} మీ పోస్ట్ \"{{.Post}}\" ని లైక్ చేసారు.",

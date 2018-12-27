@@ -67,9 +67,9 @@ func GetBotUsers() []UserModel {
 func GetProfileById(Id bson.ObjectId) Profile {
 	s := session.Clone()
 	defer s.Close()
-	posts := s.DB("manch").C("users")
+	users := s.DB("manch").C("users")
 	user := UserModel{}
-	posts.Find(bson.M{"profiles._id": Id}).Select(bson.M{"email": 1, "profiles.$": 1}).One(&user)
+	users.Find(bson.M{"profiles._id": Id}).Select(bson.M{"email": 1, "profiles.$": 1}).One(&user)
 	fmt.Printf("Mongo Query return for Profile %+v\n", user.Profiles)
 	return user.Profiles[0]
 }

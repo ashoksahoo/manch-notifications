@@ -1,8 +1,10 @@
 package mongo
 
 import (
-	"github.com/globalsign/mgo/bson"
+	"fmt"
 	"strconv"
+
+	"github.com/globalsign/mgo/bson"
 )
 
 type NotificationModel struct {
@@ -25,6 +27,17 @@ func GenerateIdentifier(Id bson.ObjectId, t string) string {
 		identifier = "2"
 	}
 	return strconv.FormatInt(ts2018, 10) + identifier
+}
+
+func RemoveNotificationUser(rId bson.ObjectId, t string, u bson.ObjectId) {
+	s := session.Clone()
+	defer s.Close()
+	N := s.DB("manch").C("notifications")
+	query, update := bson.M{"resource_id": rId, "type": t}, bson.M{
+		"$pull": bson.M{"profile_ids": u},
+	}
+	N.Update(query, update)
+	fmt.Printf("removed from notifications model profile id %s\n", u.Hex())
 }
 
 func CreateNotification(rId bson.ObjectId, t string, rT string, u bson.ObjectId) NotificationModel {

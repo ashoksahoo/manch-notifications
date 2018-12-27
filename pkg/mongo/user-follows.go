@@ -2,7 +2,6 @@ package mongo
 
 import (
 	"github.com/globalsign/mgo/bson"
-	"fmt"
 )
 
 
@@ -15,7 +14,6 @@ type UserFollowModel struct {
 }
 
 func GetUserFollowById(Id string) (UserFollowModel) {
-	fmt.Print("comes to this function")
 	s := session.Clone()
 	defer s.Close()
 	user_follow := UserFollowModel{}

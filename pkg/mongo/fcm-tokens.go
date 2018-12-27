@@ -46,6 +46,6 @@ func DeleteToken(token string) {
 	s := session.Clone()
 	defer s.Close()
 	T := s.DB("manch").C("fcm_tokens")
-	T.Update(bson.M{"fcm_token": token}, bson.M{"$set": bson.M{"deleted": true}})
+	T.UpdateAll(bson.M{"fcm_token": token}, bson.M{"$set": bson.M{"deleted": true}})
 	fmt.Printf("deleted token")
 }

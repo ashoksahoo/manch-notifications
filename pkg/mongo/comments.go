@@ -5,13 +5,16 @@ import (
 )
 
 type CommentModel struct {
-	Id          bson.ObjectId `json:"_id" bson:"_id"`
-	Content     string        `json:"content"`
-	PostId      bson.ObjectId `json:"post_id" bson:"post_id"`
-	Post        PostModel
-	Created     Creator `json:"created" bson:"created"`
-	UpVotes     int     `json:"up_votes" bson:"up_vote"`
-	DownVotes   int     `json:"down_votes" bson:"down_vote"`
+	Id           bson.ObjectId `json:"_id" bson:"_id"`
+	Content      string        `json:"content"`
+	PostId       bson.ObjectId `json:"post_id" bson:"post_id"`
+	Post         PostModel
+	Created      Creator         `json:"created" bson:"created"`
+	UpVotes      int             `json:"up_votes" bson:"up_vote"`
+	DownVotes    int             `json:"down_votes" bson:"down_vote"`
+	CommentId    bson.ObjectId   `json:"comment_id" bson:"comment_id"`
+	Parents      []bson.ObjectId `json:"parents" bson:"parents"`
+	CommentCount int             `json:"no_of_comments" bson:"no_of_comments"`
 }
 
 func GetFullCommentById(Id string) (CommentModel, int) {
@@ -26,7 +29,7 @@ func GetFullCommentById(Id string) (CommentModel, int) {
 	return c, uniqCommentator
 }
 
-func GetCommentCount(postId bson.ObjectId) (int) {
+func GetCommentCount(postId bson.ObjectId) int {
 	s := session.Clone()
 	defer s.Close()
 	C := s.DB("manch").C("comments")
@@ -46,7 +49,7 @@ func GetCommentatorCount(postId bson.ObjectId, opId bson.ObjectId) int {
 	return len(result)
 }
 
-func GetCommentById(Id string) (CommentModel) {
+func GetCommentById(Id string) CommentModel {
 	s := session.Clone()
 	defer s.Close()
 	C := s.DB("manch").C("comments")
