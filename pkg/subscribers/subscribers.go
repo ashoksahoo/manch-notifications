@@ -68,6 +68,10 @@ func UserFollowSubscriber(callback func(subj, reply string, m *Subscription)) {
 	go c.QueueSubscribe(subject("user.follow"), queue(), callback)
 }
 
+func UserFollowRemovedSubscriber(callback func (subj, reply string, m *Subscription))  {
+	go c.QueueSubscribe(subject("user.follow.removed"), queue(), callback)
+}
+
 func init() {
 	if url == "" {
 		url = nats.DefaultURL

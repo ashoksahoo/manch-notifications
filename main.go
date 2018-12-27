@@ -147,6 +147,7 @@ func main() {
 				BadgeCount: strconv.Itoa(replyOnComment.CommentCount),
 				Id:         notification1.Identifier,
 			}
+			fmt.Printf("\nGCM Message %+v\n", msg)
 			if tokens1 != nil {
 				for _, token := range tokens1 {
 					go firebase.SendMessage(msg, token.Token)
@@ -189,6 +190,7 @@ func main() {
 			BadgeCount: strconv.Itoa(comment.Post.CommentCount),
 			Id:         notification.Identifier,
 		}
+		fmt.Printf("\nGCM Message %+v\n", msg)
 		//firebase.SendMessage(msg, "frgp37gfvFg:APA91bHbnbfoX-bp3M_3k-ceD7E4fZ73fcmVL4b5DGB5cQn-fFEvfbj3aAI9g0wXozyApIb-6wGsJauf67auK1p3Ins5Ff7IXCN161fb5JJ5pfBnTZ4LEcRUatO6wimsbiS7EANoGDr4")
 		if tokens != nil {
 			for _, token := range tokens {
@@ -531,6 +533,30 @@ func main() {
 		}
 		fmt.Printf("Processed a post on subject %s! with Post ID %s\n", subj, p.Id)
 
+	})
+
+	subscribers.UserFollowRemovedSubscriber(func (subj, reply string, uf *subscribers.Subscription)  {
+		// update unique user remove (resource, type).uniquUsers set to profile id
+		fmt.Printf("Received a User follow on subject %s! with user follow %+v\n", subj, uf)
+		defer func() {
+			if r := recover(); r != nil {
+				fmt.Println("Recovered in subscribers.UserFollowSubscriber", uf)
+			}
+		}()
+
+		if uf.ResourceType != "user" {
+			fmt.Println("Not a user resource follows")
+			return
+		}
+
+
+		userFollow := mongo.GetUserFollowById(uf.Id)
+		// fmt.Printf("\nuser follow %+v\n", userFollow)
+		follower := mongo.GetProfileById(userFollow.ProfileId)
+		// fmt.Printf("\nfollower %+v\n", follower)
+		followsTo := mongo.GetProfileById(userFollow.ResourceId)
+
+		mongo.RemoveNotificationUser(followsTo.Id, "follows", follower.Id)
 	})
 
 	http.ListenAndServe(":5000", r)
