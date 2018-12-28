@@ -39,6 +39,10 @@ func main() {
 	// received user-follow removed
 	subscribers.UserFollowRemovedSubscriber(callbacks.UserFollowRemovedSubscriberCB)
 
+	// received re-post event
+	subscribers.RepostSubscriber(callbacks.RepostSubscriberCB)
+
+
 	// listen on http server 5000
 	http.ListenAndServe(":5000", r)
 }

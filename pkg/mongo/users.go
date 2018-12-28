@@ -73,3 +73,22 @@ func GetProfileById(Id bson.ObjectId) Profile {
 	fmt.Printf("Mongo Query return for Profile %+v\n", user.Profiles)
 	return user.Profiles[0]
 }
+
+func GetBotProfilesIds() (int, [100]string) {
+	botUsers := GetBotUsers()
+	// array of bot profiles ids
+	var botProfilesIds [100]string
+	// no. of profiles counter
+	i := 0
+	for _, botUser := range botUsers {
+		profiles := botUser.Profiles
+		for _, profile := range profiles {
+			if i == 100 {
+				break
+			}
+			botProfilesIds[i] = profile.Id.Hex()
+			i++
+		}
+	}
+	return i, botProfilesIds
+}
