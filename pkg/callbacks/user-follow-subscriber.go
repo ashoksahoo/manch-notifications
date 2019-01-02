@@ -31,16 +31,27 @@ func UserFollowSubscriberCB(subj, reply string, uf *subscribers.Subscription) {
 	followsTo := mongo.GetProfileById(userFollow.ResourceId)
 	// fmt.Printf("\nfollowsTo %+v\n", followsTo)
 	tokens := mongo.GetTokensByProfiles([]bson.ObjectId{userFollow.ResourceId})
-	notification := mongo.CreateNotification(followsTo.Id, "follows", "user", follower.Id)
-
-	count := len(notification.UniqueUsers) - 1
+	// notification := mongo.CreateNotification(followsTo.Id, "follows", "user", follower.Id)
+	notification := mongo.CreateNotification(mongo.NotificationModel{
+		Receiver:        followsTo.Id,
+		Identifier:      followsTo.Id.Hex() + "_follow",
+		Participants:    []bson.ObjectId{follower.Id},
+		DisplayTemplate: "transactional",
+		EntityGroupId:   userFollow.Id.Hex(),
+		ActionId:        userFollow.Id,
+		ActionType:      "userfollow",
+		Purpose:         "follow",
+		Entities:        []string{"user_follow"},
+		NUUID:           "",
+	})
+	count := len(notification.Participants) - 1
 	data := i18n.DataModel{
 		Name:  follower.Name,
 		Count: count,
 	}
 	var msgStr string
 
-	if len(notification.UniqueUsers) > 1 {
+	if len(notification.Participants) > 1 {
 		msgStr = i18n.GetString(followsTo.Language, "follow_user_multi", data)
 	} else {
 		msgStr = i18n.GetString(followsTo.Language, "follow_user_one", data)
@@ -48,6 +59,10 @@ func UserFollowSubscriberCB(subj, reply string, uf *subscribers.Subscription) {
 
 	title := i18n.GetAppTitle(followsTo.Language)
 	msgStr = strings.Replace(msgStr, "\"\" ", "", 1)
+
+	// update notification message
+	mongo.UpdateNotificationMessage(notification.Id, msgStr)
+
 	msg := firebase.ManchMessage{
 		Title:    title,
 		Message:  msgStr,

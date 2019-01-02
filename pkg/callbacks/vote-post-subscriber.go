@@ -56,7 +56,20 @@ func VotePostSubscriberCB(subj, reply string, v *subscribers.Vote) {
 	}
 	postCreator := mongo.GetProfileById(post.Created.ProfileId)
 	tokens := mongo.GetTokensByProfiles([]bson.ObjectId{post.Created.ProfileId})
-	notification := mongo.CreateNotification(post.Id, "like", "post", vote.Created.ProfileId)
+	// notification := mongo.CreateNotification(post.Id, "like", "post", vote.Created.ProfileId)
+
+	notification := mongo.CreateNotification(mongo.NotificationModel{
+		Receiver:        postCreator.Id,
+		Identifier:      post.Id.Hex() + "_vote",
+		Participants:    []bson.ObjectId{vote.Created.ProfileId},
+		DisplayTemplate: "transactional",
+		EntityGroupId:   post.Id.Hex(),
+		ActionId:        vote.Id,
+		ActionType:      "vote",
+		Purpose:         "vote",
+		Entities:        []string{"post", "vote"},
+		NUUID:           "",
+	})
 
 	postTitle := utils.TruncateTitle(post.Title, 4)
 	data := i18n.DataModel{
@@ -72,6 +85,10 @@ func VotePostSubscriberCB(subj, reply string, v *subscribers.Vote) {
 	}
 	title := i18n.GetAppTitle(postCreator.Language)
 	msgStr = strings.Replace(msgStr, "\"\" ", "", 1)
+
+	// update notification message
+	mongo.UpdateNotificationMessage(notification.Id, msgStr)
+
 	msg := firebase.ManchMessage{
 		Title:    title,
 		Message:  msgStr,

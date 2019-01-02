@@ -14,18 +14,18 @@ import (
 )
 
 /**
-	This processes Comments from Posts
-	1) Get Comment Details and Unique commentator count
-	2) Validate self comment
-	3) Get Who created the post -> He gets the notification and we need his current lang
-	4) Get tokens from the above profile (Supports multiple device tokens.)
-	5) Create/Update Notification Table which has the meta info for the notificaiotn
-	6) Construct Data for i18n template
-	7) Generate template using template data and String Formatter
-	8) Create push notification
-	9) Fire the notifications in routines.
+This processes Comments from Posts
+1) Get Comment Details and Unique commentator count
+2) Validate self comment
+3) Get Who created the post -> He gets the notification and we need his current lang
+4) Get tokens from the above profile (Supports multiple device tokens.)
+5) Create/Update Notification Table which has the meta info for the notificaiotn
+6) Construct Data for i18n template
+7) Generate template using template data and String Formatter
+8) Create push notification
+9) Fire the notifications in routines.
 
-	*/
+*/
 func CommentSubscriberCB(subj, reply string, c *subscribers.Comment) {
 	//fmt.Printf("\nNats MSG %+v", c)
 	fmt.Printf("Received a comment on subject %s! with Comment %+v\n", subj, c)
@@ -36,10 +36,7 @@ func CommentSubscriberCB(subj, reply string, c *subscribers.Comment) {
 	}()
 	comment, uniqueCommentator := mongo.GetFullCommentById(c.Id)
 
-	// replied on Comment
-	// replyOnCommentId := comment.CommentId
-	// replyOnComment := mongo.GetCommentById(replyOnCommentId.Hex())
-	// var replyOnComment bson.ObjectId
+	// get replied on comment
 	var replyOnComment mongo.CommentModel
 	if len(comment.Parents) >= 2 {
 		replyOnComment = mongo.GetCommentById(comment.CommentId.Hex())
@@ -55,10 +52,23 @@ func CommentSubscriberCB(subj, reply string, c *subscribers.Comment) {
 		fmt.Printf("reply on comments %+v\n", replyOnComment)
 		// get replied on comment creator
 		replyOnCommentCreator := mongo.GetProfileById(replyOnComment.Created.ProfileId)
-		notification1 := mongo.CreateNotification(replyOnComment.Id, "comment", "comment", comment.Created.ProfileId)
+		// notification1 := mongo.CreateNotification(replyOnComment.Id, "comment", "comment", comment.Created.ProfileId)
+
+		notification1 := mongo.CreateNotification(mongo.NotificationModel{
+			Receiver:        replyOnComment.Created.ProfileId,
+			Identifier:      replyOnComment.Id.Hex() + "comment",
+			Participants:    []bson.ObjectId{comment.Created.ProfileId},
+			DisplayTemplate: "transactional",
+			EntityGroupId:   replyOnComment.Id.Hex(),
+			ActionId:        comment.Id,
+			ActionType:      "comment",
+			Purpose:         "comment",
+			Entities:        []string{"post", "comment"},
+			NUUID:           "",
+		})
 		tokens1 := mongo.GetTokensByProfiles([]bson.ObjectId{replyOnComment.Created.ProfileId})
 		// comment title
-		count := len(notification1.UniqueUsers) - 1
+		count := len(notification1.Participants) - 1
 		fmt.Println("Comment count: ", count)
 		commentTitle := utils.TruncateTitle(replyOnComment.Content, 4)
 		data1 := i18n.DataModel{
@@ -75,6 +85,10 @@ func CommentSubscriberCB(subj, reply string, c *subscribers.Comment) {
 		fmt.Println("message string: ", msgStr1)
 		title := i18n.GetAppTitle(replyOnCommentCreator.Language)
 		msgStr1 = strings.Replace(msgStr1, "\"\" ", "", 1)
+
+		// update notification message
+		mongo.UpdateNotificationMessage(notification1.Id, msgStr1)
+
 		msg := firebase.ManchMessage{
 			Title:      title,
 			Message:    msgStr1,
@@ -94,6 +108,9 @@ func CommentSubscriberCB(subj, reply string, c *subscribers.Comment) {
 		fmt.Println("end reply on comments")
 	}
 
+	// get notification with resource id and resource type
+	// send notification to all the users who is on profile_ids except this user
+	//
 	if comment.Post.Created.ProfileId == comment.Created.ProfileId {
 		//Self comment
 		fmt.Println("Self Comment")
@@ -101,7 +118,20 @@ func CommentSubscriberCB(subj, reply string, c *subscribers.Comment) {
 	}
 	postCreator := mongo.GetProfileById(comment.Post.Created.ProfileId)
 	tokens := mongo.GetTokensByProfiles([]bson.ObjectId{comment.Post.Created.ProfileId})
-	notification := mongo.CreateNotification(comment.PostId, "comment", "post", comment.Post.Created.ProfileId)
+	// notification := mongo.CreateNotification(comment.PostId, "comment", "post", comment.Post.Created.ProfileId)
+
+	notification := mongo.CreateNotification(mongo.NotificationModel{
+		Receiver:        postCreator.Id,
+		Identifier:      c.Id + "_comment",
+		Participants:    []bson.ObjectId{comment.Created.ProfileId},
+		DisplayTemplate: "transactional",
+		EntityGroupId:   c.Id,
+		ActionId:        comment.Id,
+		ActionType:      "comment",
+		Purpose:         "comment",
+		Entities:        []string{"post", "comments"},
+		NUUID:           "",
+	})
 
 	postTitle := utils.TruncateTitle(comment.Post.Title, 4)
 	data := i18n.DataModel{
@@ -118,6 +148,10 @@ func CommentSubscriberCB(subj, reply string, c *subscribers.Comment) {
 	}
 	title := i18n.GetAppTitle(postCreator.Language)
 	msgStr = strings.Replace(msgStr, "\"\" ", "", 1)
+
+	// update notification message
+	mongo.UpdateNotificationMessage(notification.Id, msgStr)
+
 	msg := firebase.ManchMessage{
 		Title:      title,
 		Message:    msgStr,

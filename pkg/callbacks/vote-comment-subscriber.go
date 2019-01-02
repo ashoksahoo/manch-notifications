@@ -43,7 +43,20 @@ func VoteCommentSubscriberCB(subj, reply string, v *subscribers.Vote) {
 
 	post := mongo.GetPostById(comment.PostId.Hex())
 	commentCreator := mongo.GetProfileById(comment.Created.ProfileId)
-	notification := mongo.CreateNotification(comment.Id, "like", "comment", vote.Created.ProfileId)
+	// notification := mongo.CreateNotification(comment.Id, "like", "comment", vote.Created.ProfileId)
+	notification := mongo.CreateNotification(mongo.NotificationModel{
+		Receiver:        commentCreator.Id,
+		Identifier:      comment.Id.Hex() + "_vote",
+		Participants:    []bson.ObjectId{vote.Created.ProfileId},
+		DisplayTemplate: "transactional",
+		EntityGroupId:   comment.Id.Hex(),
+		ActionId:        vote.Id,
+		ActionType:      "vote",
+		Purpose:         "vote",
+		Entities:        []string{"post", "comment", "vote"},
+		NUUID:           "",
+	})
+
 	tokens := mongo.GetTokensByProfiles([]bson.ObjectId{comment.Created.ProfileId})
 
 	commentTitle := utils.TruncateTitle(comment.Content, 4)
@@ -60,6 +73,10 @@ func VoteCommentSubscriberCB(subj, reply string, v *subscribers.Vote) {
 		msgStr = i18n.GetString(commentCreator.Language, "comment_like_one", data)
 	}
 	msgStr = strings.Replace(msgStr, "\"\" ", "", 1)
+		
+	// update notification message
+	mongo.UpdateNotificationMessage(notification.Id, msgStr)
+
 	title := i18n.GetAppTitle(commentCreator.Language)
 	msg := firebase.ManchMessage{
 		Title:    title,
