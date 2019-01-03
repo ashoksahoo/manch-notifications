@@ -44,7 +44,7 @@ func PostRemovedSubscriber(callback func(subj, reply string, m *Post)) {
 	go c.QueueSubscribe(subject("post.ignore-from-feed"), queue(), callback)
 }
 
-func RepostSubscriber(callback func(subj, reply string, m * Post))  {
+func RepostSubscriber(callback func(subj, reply string, m *Post)) {
 	go c.QueueSubscribe(subject("post.re-post"), queue(), callback)
 }
 
@@ -72,8 +72,12 @@ func UserFollowSubscriber(callback func(subj, reply string, m *Subscription)) {
 	go c.QueueSubscribe(subject("user.follow"), queue(), callback)
 }
 
-func UserFollowRemovedSubscriber(callback func (subj, reply string, m *Subscription))  {
+func UserFollowRemovedSubscriber(callback func(subj, reply string, m *Subscription)) {
 	go c.QueueSubscribe(subject("user.follow.removed"), queue(), callback)
+}
+
+func ShareSubscriber(callback func(subj, reply string, m *Share)) {
+	go c.QueueSubscribe(subject("share.new"), queue(), callback)
 }
 
 func init() {

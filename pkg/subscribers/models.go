@@ -46,3 +46,11 @@ type Subscription struct {
 	ProfileId    string `json:"profile_id"`
 	New          bool   `json:"isNew"`
 }
+
+type Share struct {
+	Id string `json:"_id"`
+	GUID string `json:"guid"`
+	Resource string `json:"resource_id"`
+	ResourceType string `json:"resource_type"`
+	ProfileId string `json:"profile_id"`
+}
