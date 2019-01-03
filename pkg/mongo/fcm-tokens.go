@@ -2,6 +2,7 @@ package mongo
 
 import (
 	"fmt"
+
 	"github.com/globalsign/mgo/bson"
 )
 

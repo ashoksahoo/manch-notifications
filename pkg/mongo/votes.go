@@ -2,6 +2,7 @@ package mongo
 
 import (
 	"fmt"
+
 	"github.com/globalsign/mgo/bson"
 )
 
@@ -22,7 +23,7 @@ type VoteModelComment struct {
 	Value        int     `json:"vote" bson:"vote"`
 }
 
-func (c CommentModel) GetVote(Id string) (VoteModelComment) {
+func (c CommentModel) GetVote(Id string) VoteModelComment {
 	s := session.Clone()
 	defer s.Close()
 	vote := VoteModelComment{}
@@ -32,7 +33,7 @@ func (c CommentModel) GetVote(Id string) (VoteModelComment) {
 	return vote
 }
 
-func (p PostModel) GetVote(Id string) (VoteModelPost) {
+func (p PostModel) GetVote(Id string) VoteModelPost {
 	s := session.Clone()
 	defer s.Close()
 	vote := VoteModelPost{}
