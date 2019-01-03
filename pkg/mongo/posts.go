@@ -14,8 +14,8 @@ type PostModel struct {
 	Created      Creator         `json:"created" bson:"created"`
 	CommunityIds []bson.ObjectId `json:"community_ids" bson:"community_ids"`
 	CommentCount int             `json:"no_of_comments" bson:"no_of_comments"`
-	UpVotes      int             `json:"up_votes" bson:"up_vote"`
-	DownVotes    int             `json:"down_votes" bson:"down_vote"`
+	UpVotes      int             `json:"up_votes" bson:"up_votes"`
+	DownVotes    int             `json:"down_votes" bson:"down_votes"`
 	Views        int             `json:"no_of_views"bson:"no_of_views"`
 	Impressions  int             `json:"no_of_impressions"bson:"no_of_impressions"`
 	MediaUrls    []Media         `json:"media_urls"bson:"media_urls"`
