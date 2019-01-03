@@ -94,7 +94,7 @@ func VotePostSubscriberCB(subj, reply string, v *subscribers.Vote) {
 		Message:  msgStr,
 		Icon:     mongo.ExtractThumbNailFromPost(post),
 		DeepLink: "manch://posts/" + post.Id.Hex(),
-		Id:       notification.Identifier,
+		Id:       notification.NId,
 	}
 
 	fmt.Printf("\nGCM Message %+v\n", msg)

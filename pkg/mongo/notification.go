@@ -80,7 +80,7 @@ func CreateNotification(notification NotificationModel) NotificationModel {
 	count, _ := N.Find(bson.M{"identifier": notification.Identifier, "is_read": notification.IsRead}).Count()
 	print(count)
 	if count > 0 {
-		N.Upsert(bson.M{"action_id": notification.ActionId, "action_type": notification.ActionType}, bson.M{
+		N.Upsert(bson.M{"identifier": notification.Identifier, "is_read": notification.IsRead}, bson.M{
 			"$addToSet": bson.M{"participants": notification.Participants[0]},
 		})
 	} else {

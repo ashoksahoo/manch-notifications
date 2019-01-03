@@ -67,7 +67,7 @@ func UserFollowSubscriberCB(subj, reply string, uf *subscribers.Subscription) {
 		Title:    title,
 		Message:  msgStr,
 		DeepLink: "manch://profile/" + followsTo.Id.Hex(),
-		Id:       notification.Identifier,
+		Id:       notification.NId,
 	}
 	//firebase.SendMessage(msg, "frgp37gfvFg:APA91bHbnbfoX-bp3M_3k-ceD7E4fZ73fcmVL4b5DGB5cQn-fFEvfbj3aAI9g0wXozyApIb-6wGsJauf67auK1p3Ins5Ff7IXCN161fb5JJ5pfBnTZ4LEcRUatO6wimsbiS7EANoGDr4")
 	fmt.Printf("\nGCM Message %+v\n", msg)

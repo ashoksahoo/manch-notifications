@@ -56,7 +56,7 @@ func CommentSubscriberCB(subj, reply string, c *subscribers.Comment) {
 
 		notification1 := mongo.CreateNotification(mongo.NotificationModel{
 			Receiver:        replyOnComment.Created.ProfileId,
-			Identifier:      replyOnComment.Id.Hex() + "comment",
+			Identifier:      replyOnComment.Id.Hex() + "_comment",
 			Participants:    []bson.ObjectId{comment.Created.ProfileId},
 			DisplayTemplate: "transactional",
 			EntityGroupId:   replyOnComment.Id.Hex(),
@@ -95,7 +95,7 @@ func CommentSubscriberCB(subj, reply string, c *subscribers.Comment) {
 			Icon:       mongo.ExtractThumbNailFromPost(comment.Post),
 			DeepLink:   "manch://posts/" + comment.PostId.Hex(),
 			BadgeCount: strconv.Itoa(replyOnComment.CommentCount),
-			Id:         notification1.Identifier,
+			Id:         notification1.NId,
 		}
 		fmt.Printf("\nGCM Message %+v\n", msg)
 		if tokens1 != nil {
@@ -158,7 +158,7 @@ func CommentSubscriberCB(subj, reply string, c *subscribers.Comment) {
 		Icon:       mongo.ExtractThumbNailFromPost(comment.Post),
 		DeepLink:   "manch://posts/" + comment.PostId.Hex(),
 		BadgeCount: strconv.Itoa(comment.Post.CommentCount),
-		Id:         notification.Identifier,
+		Id:         notification.NId,
 	}
 	fmt.Printf("\nGCM Message %+v\n", msg)
 	//firebase.SendMessage(msg, "frgp37gfvFg:APA91bHbnbfoX-bp3M_3k-ceD7E4fZ73fcmVL4b5DGB5cQn-fFEvfbj3aAI9g0wXozyApIb-6wGsJauf67auK1p3Ins5Ff7IXCN161fb5JJ5pfBnTZ4LEcRUatO6wimsbiS7EANoGDr4")

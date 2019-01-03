@@ -58,7 +58,7 @@ func PostRemovedSubscriberCB(subj, reply string, p *subscribers.Post) {
 		Message:  msgStr,
 		Icon:     mongo.ExtractThumbNailFromPost(post),
 		DeepLink: "manch://profile/" + postCreator.Id.Hex(),
-		Id:       notification.Identifier,
+		Id:       notification.NId,
 	}
 
 	fmt.Printf("\nGCM Message %+v\n", msg)
