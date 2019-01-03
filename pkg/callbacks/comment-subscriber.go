@@ -53,7 +53,17 @@ func CommentSubscriberCB(subj, reply string, c *subscribers.Comment) {
 		// get replied on comment creator
 		replyOnCommentCreator := mongo.GetProfileById(replyOnComment.Created.ProfileId)
 		// notification1 := mongo.CreateNotification(replyOnComment.Id, "comment", "comment", comment.Created.ProfileId)
-
+		
+		entities := []mongo.Entity{
+			{
+				EntityId: comment.Post.Id,
+				EntityType: "post",
+			},
+			{
+				EntityId: replyOnComment.Id,
+				EntityType: "comment",
+			},
+		}
 		notification1 := mongo.CreateNotification(mongo.NotificationModel{
 			Receiver:        replyOnComment.Created.ProfileId,
 			Identifier:      replyOnComment.Id.Hex() + "_comment",
@@ -63,7 +73,7 @@ func CommentSubscriberCB(subj, reply string, c *subscribers.Comment) {
 			ActionId:        comment.Id,
 			ActionType:      "comment",
 			Purpose:         "comment",
-			Entities:        []string{"post", "comment"},
+			Entities:        entities,
 			NUUID:           "",
 		})
 		tokens1 := mongo.GetTokensByProfiles([]bson.ObjectId{replyOnComment.Created.ProfileId})
@@ -76,18 +86,28 @@ func CommentSubscriberCB(subj, reply string, c *subscribers.Comment) {
 			Comment: commentTitle,
 			Count:   count,
 		}
-		var msgStr1 string
-		if count > 0 {
-			msgStr1 = i18n.GetString(replyOnCommentCreator.Language, "comment_reply_multi", data1)
-		} else {
-			msgStr1 = i18n.GetString(replyOnCommentCreator.Language, "comment_reply_one", data1)
-		}
-		fmt.Println("message string: ", msgStr1)
-		title := i18n.GetAppTitle(replyOnCommentCreator.Language)
-		msgStr1 = strings.Replace(msgStr1, "\"\" ", "", 1)
 
+		var msgStr1 string
+		var templateName string
+		if count > 0 {
+			templateName = "comment_reply_multi"
+		} else {
+			templateName = "comment_reply_one"
+		}
+	
+		msgStr1 = i18n.GetString(replyOnCommentCreator.Language, templateName, data1)
+		msgStr1 = strings.Replace(msgStr1, "\"\" ", "", 1)
+		title := i18n.GetAppTitle(replyOnCommentCreator.Language)
+
+		messageMeta := mongo.MessageMeta{
+			Template: templateName,
+			Data: data1,
+		}
 		// update notification message
-		mongo.UpdateNotificationMessage(notification1.Id, msgStr1)
+		mongo.UpdateNotification(bson.M{"_id": notification1.Id}, bson.M{
+			"message": msgStr1,
+			"message_meta": messageMeta,
+		})
 
 		msg := firebase.ManchMessage{
 			Title:      title,
@@ -125,6 +145,16 @@ func CommentSubscriberCB(subj, reply string, c *subscribers.Comment) {
 	tokens := mongo.GetTokensByProfiles([]bson.ObjectId{comment.Post.Created.ProfileId})
 	// notification := mongo.CreateNotification(comment.PostId, "comment", "post", comment.Post.Created.ProfileId)
 
+	entities := []mongo.Entity{
+		{
+			EntityId: comment.Post.Id,
+			EntityType: "post",
+		},
+		{
+			EntityId: comment.Id,
+			EntityType: "comment",
+		},
+	}
 	notification := mongo.CreateNotification(mongo.NotificationModel{
 		Receiver:        postCreator.Id,
 		Identifier:      c.Id + "_comment",
@@ -134,7 +164,7 @@ func CommentSubscriberCB(subj, reply string, c *subscribers.Comment) {
 		ActionId:        comment.Id,
 		ActionType:      "comment",
 		Purpose:         "comment",
-		Entities:        []string{"post", "comments"},
+		Entities:        entities,
 		NUUID:           "",
 	})
 
@@ -144,18 +174,28 @@ func CommentSubscriberCB(subj, reply string, c *subscribers.Comment) {
 		Count: uniqueCommentator - 1,
 		Post:  postTitle,
 	}
+
 	var msgStr string
-
+	var templateName string
 	if uniqueCommentator > 1 {
-		msgStr = i18n.GetString(postCreator.Language, "comment_multi", data)
+		templateName = "comment_multi"
 	} else {
-		msgStr = i18n.GetString(postCreator.Language, "comment_one", data)
+		templateName = "comment_one"
 	}
-	title := i18n.GetAppTitle(postCreator.Language)
-	msgStr = strings.Replace(msgStr, "\"\" ", "", 1)
 
+	msgStr = i18n.GetString(postCreator.Language, templateName, data)
+	msgStr = strings.Replace(msgStr, "\"\" ", "", 1)
+	title := i18n.GetAppTitle(postCreator.Language)
+
+	messageMeta := mongo.MessageMeta{
+		Template: templateName,
+		Data: data,
+	}
 	// update notification message
-	mongo.UpdateNotificationMessage(notification.Id, msgStr)
+	mongo.UpdateNotification(bson.M{"_id": notification.Id}, bson.M{
+		"message": msgStr,
+		"message_meta": messageMeta,
+	})
 
 	msg := firebase.ManchMessage{
 		Title:      title,
@@ -165,6 +205,7 @@ func CommentSubscriberCB(subj, reply string, c *subscribers.Comment) {
 		BadgeCount: strconv.Itoa(comment.Post.CommentCount),
 		Id:         notification.NId,
 	}
+
 	fmt.Printf("\nGCM Message %+v\n", msg)
 	//firebase.SendMessage(msg, "frgp37gfvFg:APA91bHbnbfoX-bp3M_3k-ceD7E4fZ73fcmVL4b5DGB5cQn-fFEvfbj3aAI9g0wXozyApIb-6wGsJauf67auK1p3Ins5Ff7IXCN161fb5JJ5pfBnTZ4LEcRUatO6wimsbiS7EANoGDr4")
 	if tokens != nil {

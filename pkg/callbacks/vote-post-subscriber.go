@@ -58,6 +58,16 @@ func VotePostSubscriberCB(subj, reply string, v *subscribers.Vote) {
 	tokens := mongo.GetTokensByProfiles([]bson.ObjectId{post.Created.ProfileId})
 	// notification := mongo.CreateNotification(post.Id, "like", "post", vote.Created.ProfileId)
 
+	entities := []mongo.Entity{
+		{
+			EntityId: post.Id,
+			EntityType: "post",
+		},
+		{
+			EntityId: vote.Id,
+			EntityType: "vote",
+		},
+	}
 	notification := mongo.CreateNotification(mongo.NotificationModel{
 		Receiver:        postCreator.Id,
 		Identifier:      post.Id.Hex() + "_vote",
@@ -67,7 +77,7 @@ func VotePostSubscriberCB(subj, reply string, v *subscribers.Vote) {
 		ActionId:        vote.Id,
 		ActionType:      "vote",
 		Purpose:         "vote",
-		Entities:        []string{"post", "vote"},
+		Entities:        entities,
 		NUUID:           "",
 	})
 
@@ -77,14 +87,28 @@ func VotePostSubscriberCB(subj, reply string, v *subscribers.Vote) {
 		Post:  postTitle,
 		Count: post.UpVotes,
 	}
+	
 	var msgStr string
+	var templateName string
 	if post.UpVotes > 1 {
-		msgStr = i18n.GetString(postCreator.Language, "post_like_multi", data)
+		templateName = "post_like_multi"
 	} else {
-		msgStr = i18n.GetString(postCreator.Language, "post_like_one", data)
+		templateName = "post_like_one"
 	}
-	title := i18n.GetAppTitle(postCreator.Language)
+
+	msgStr = i18n.GetString(postCreator.Language, templateName, data)	
 	msgStr = strings.Replace(msgStr, "\"\" ", "", 1)
+	title := i18n.GetAppTitle(postCreator.Language)
+
+	messageMeta := mongo.MessageMeta{
+		Template: templateName,
+		Data: data,
+	}
+	// update notification message
+	mongo.UpdateNotification(bson.M{"_id": notification.Id}, bson.M{
+		"message": msgStr,
+		"message_meta": messageMeta,
+	})
 
 	// update notification message
 	mongo.UpdateNotificationMessage(notification.Id, msgStr)

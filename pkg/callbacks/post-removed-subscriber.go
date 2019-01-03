@@ -20,7 +20,14 @@ func PostRemovedSubscriberCB(subj, reply string, p *subscribers.Post) {
 
 	tokens := mongo.GetTokensByProfiles([]bson.ObjectId{post.Created.ProfileId})
 	// notification := mongo.CreateNotification(post.Id, "delete", "post", postCreator.Id)
-	
+
+	entities := []mongo.Entity{
+		{
+			EntityId: post.Id,
+			EntityType: "post",
+		},
+	}
+
 	notification := mongo.CreateNotification(mongo.NotificationModel{
 		Receiver:        postCreator.Id,
 		Identifier:      post.Id.Hex() + "_remove",
@@ -30,7 +37,7 @@ func PostRemovedSubscriberCB(subj, reply string, p *subscribers.Post) {
 		ActionId:        post.Id,
 		ActionType:      "post",
 		Purpose:         "remove",
-		Entities:        []string{"post"},
+		Entities:        entities,
 		NUUID:           "",
 	})
 
@@ -45,13 +52,21 @@ func PostRemovedSubscriberCB(subj, reply string, p *subscribers.Post) {
 		DeleteReason: deleteReason,
 	}
 	var msgStr string
-	msgStr = i18n.GetString(language, "post_removed", data)
+	templateName := "post_removed"
+	msgStr = i18n.GetString(language, templateName, data)
 	fmt.Println(msgStr)
 	title := i18n.GetAppTitle(language)
 	msgStr = strings.Replace(msgStr, "\"\" ", "", 1)
 
+	messageMeta := mongo.MessageMeta{
+		Template: templateName,
+		Data: data,
+	}
 	// update notification message
-	mongo.UpdateNotificationMessage(notification.Id, msgStr)
+	mongo.UpdateNotification(bson.M{"_id": notification.Id}, bson.M{
+		"message": msgStr,
+		"message_meta": messageMeta,
+	})
 
 	msg := firebase.ManchMessage{
 		Title:    title,

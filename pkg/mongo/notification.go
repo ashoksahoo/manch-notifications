@@ -2,6 +2,7 @@ package mongo
 
 import (
 	"fmt"
+	"notification-service/pkg/i18n"
 	"strconv"
 
 	"github.com/globalsign/mgo/bson"
@@ -15,6 +16,16 @@ import (
 // 	UniqueUsers  []bson.ObjectId `json:"profile_ids" bson:"profile_ids"`
 // 	Identifier   string          `json:"identifier" bson:"identifier"`
 // }
+
+type Entity struct {
+	EntityId   bson.ObjectId `json:"entity_id" bson:"entity_id"`
+	EntityType string        `json:"entity_type" bson:"entity_type"`
+}
+
+type MessageMeta struct {
+	Template string         `json:"template_name" bson:"template_name"`
+	Data     i18n.DataModel `json:"data" bson:"data"`
+}
 
 type NotificationModel struct {
 	Id              bson.ObjectId   `json:"_id,omitempty" bson:"_id,omitempty"`
@@ -30,7 +41,8 @@ type NotificationModel struct {
 	NId             string          `json:"n_id" bson:"n_id"`
 	NUUID           string          `json:"nuuid" bson:"nuuid"`
 	Purpose         string          `json:"purpose" bson:"purpose"`
-	Entities        []string        `json:"entities" bson:"entities"`
+	Entities        []Entity        `json:"entities" bson:"entities"`
+	MessageMeta     MessageMeta     `json:"message_meta" bson:"message_meta"`
 }
 
 func GenerateIdentifier(Id bson.ObjectId, t string) string {
@@ -89,11 +101,18 @@ func CreateNotification(notification NotificationModel) NotificationModel {
 	return GetNotificationByIdentifier(notification.Identifier)
 }
 
-func UpdateNotificationMessage(id bson.ObjectId, message string)  {
+func UpdateNotificationMessage(id bson.ObjectId, message string) {
 	s := session.Clone()
 	defer s.Close()
 	N := s.DB("manch").C("notifications")
 	N.Update(bson.M{"_id": id}, bson.M{"$set": bson.M{"message": message}})
+}
+
+func UpdateNotification(query, update bson.M)  {
+	s := session.Clone()
+	defer s.Close()
+	N := s.DB("manch").C("notifications")
+	N.Update(query, bson.M{"$set": update})
 }
 
 // func CreateNotification(rId bson.ObjectId, t string, rT string, u bson.ObjectId) NotificationModel {

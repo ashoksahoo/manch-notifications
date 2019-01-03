@@ -41,9 +41,26 @@ func VoteCommentSubscriberCB(subj, reply string, v *subscribers.Vote) {
 		return
 	}
 
+
+
 	post := mongo.GetPostById(comment.PostId.Hex())
 	commentCreator := mongo.GetProfileById(comment.Created.ProfileId)
 	// notification := mongo.CreateNotification(comment.Id, "like", "comment", vote.Created.ProfileId)
+	
+	entities := []mongo.Entity{
+		{
+			EntityId: comment.Post.Id,
+			EntityType: "post",
+		},
+		{
+			EntityId: comment.Id,
+			EntityType: "comment",
+		},
+		{
+			EntityId: vote.Id,
+			EntityType: "vote",
+		},
+	}
 	notification := mongo.CreateNotification(mongo.NotificationModel{
 		Receiver:        commentCreator.Id,
 		Identifier:      comment.Id.Hex() + "_vote",
@@ -53,7 +70,7 @@ func VoteCommentSubscriberCB(subj, reply string, v *subscribers.Vote) {
 		ActionId:        vote.Id,
 		ActionType:      "vote",
 		Purpose:         "vote",
-		Entities:        []string{"post", "comment", "vote"},
+		Entities:        entities,
 		NUUID:           "",
 	})
 
@@ -66,18 +83,29 @@ func VoteCommentSubscriberCB(subj, reply string, v *subscribers.Vote) {
 		Comment: commentTitle,
 		Count:   comment.UpVotes,
 	}
-	var msgStr string
-	if comment.UpVotes > 1 {
-		msgStr = i18n.GetString(commentCreator.Language, "comment_like_multi", data)
-	} else {
-		msgStr = i18n.GetString(commentCreator.Language, "comment_like_one", data)
-	}
-	msgStr = strings.Replace(msgStr, "\"\" ", "", 1)
-		
-	// update notification message
-	mongo.UpdateNotificationMessage(notification.Id, msgStr)
 
+	var msgStr string
+	var templateName string
+	if comment.UpVotes > 1 {
+		templateName = "comment_like_multi"
+	} else {
+		templateName = "comment_like_one"		
+	}
+
+	msgStr = i18n.GetString(commentCreator.Language, templateName, data)
+	msgStr = strings.Replace(msgStr, "\"\" ", "", 1)
 	title := i18n.GetAppTitle(commentCreator.Language)
+
+	messageMeta := mongo.MessageMeta{
+		Template: templateName,
+		Data: data,
+	}
+	// update notification message
+	mongo.UpdateNotification(bson.M{"_id": notification.Id}, bson.M{
+		"message": msgStr,
+		"message_meta": messageMeta,
+	})
+
 	msg := firebase.ManchMessage{
 		Title:    title,
 		Message:  msgStr,

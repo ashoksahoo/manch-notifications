@@ -6,13 +6,13 @@ import (
 import "text/template"
 
 type DataModel struct {
-	Name    string
-	Name2   string
-	Name3   string
-	Count   int
-	Post    string
-	Comment string
-	DeleteReason string
+	Name         string `json:"name" bson:"name"`
+	Name2        string `json:"name2" bson:"name2"`
+	Name3        string `json:"name3" bson:"name3"`
+	Count        int    `json:"count" bson:"count"`
+	Post         string `json:"post" bson:"post"`
+	Comment      string `json:"comment" bson:"comment"`
+	DeleteReason string `json:"deletereason" bson:"deletereason"`
 }
 
 func GetString(lang string, s string, d DataModel) string {
