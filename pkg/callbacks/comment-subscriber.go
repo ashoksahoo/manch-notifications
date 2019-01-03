@@ -108,6 +108,11 @@ func CommentSubscriberCB(subj, reply string, c *subscribers.Comment) {
 		fmt.Println("end reply on comments")
 	}
 
+	// get previous notification with this identifier
+	// get all the participants
+	// send them this user has also comment on the same post
+	// 
+
 	// get notification with resource id and resource type
 	// send notification to all the users who is on profile_ids except this user
 	//
