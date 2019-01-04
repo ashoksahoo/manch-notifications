@@ -110,9 +110,6 @@ func VotePostSubscriberCB(subj, reply string, v *subscribers.Vote) {
 		"message_meta": messageMeta,
 	})
 
-	// update notification message
-	mongo.UpdateNotificationMessage(notification.Id, msgStr)
-
 	msg := firebase.ManchMessage{
 		Title:    title,
 		Message:  msgStr,

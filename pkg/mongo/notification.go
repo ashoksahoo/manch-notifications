@@ -137,13 +137,6 @@ func CreateNotification(notification NotificationModel) NotificationModel {
 	return GetNotificationByIdentifier(notification.Identifier)
 }
 
-func UpdateNotificationMessage(id bson.ObjectId, message string) {
-	s := session.Clone()
-	defer s.Close()
-	N := s.DB("manch").C("notifications")
-	N.Update(bson.M{"_id": id}, bson.M{"$set": bson.M{"message": message}})
-}
-
 func UpdateNotification(query, update bson.M) {
 	s := session.Clone()
 	defer s.Close()
