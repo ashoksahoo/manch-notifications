@@ -66,13 +66,13 @@ func CommentSubscriberCB(subj, reply string, c *subscribers.Comment) {
 		}
 		notification1 := mongo.CreateNotification(mongo.NotificationModel{
 			Receiver:        replyOnComment.Created.ProfileId,
-			Identifier:      replyOnComment.Id.Hex() + "_comment",
+			Identifier:      replyOnComment.Id.Hex() + "_reply",
 			Participants:    []bson.ObjectId{comment.Created.ProfileId},
 			DisplayTemplate: "transactional",
 			EntityGroupId:   replyOnComment.Id.Hex(),
 			ActionId:        comment.Id,
 			ActionType:      "comment",
-			Purpose:         "comment",
+			Purpose:         "reply",
 			Entities:        entities,
 			NUUID:           "",
 		})
