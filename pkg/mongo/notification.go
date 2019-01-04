@@ -12,15 +12,6 @@ import (
 	"github.com/globalsign/mgo/bson"
 )
 
-// type NotificationModel struct {
-// 	Id           bson.ObjectId   `json:"_id,omitempty" bson:"_id,omitempty"`
-// 	Type         string          `json:"type" bson:"type"`
-// 	ResourceType string          `json:"resource_type" bson:"resource_type"`
-// 	Resource     bson.ObjectId   `json:"resource_id" bson:"resource_id"`
-// 	UniqueUsers  []bson.ObjectId `json:"profile_ids" bson:"profile_ids"`
-// 	Identifier   string          `json:"identifier" bson:"identifier"`
-// }
-
 type Entity struct {
 	EntityId   bson.ObjectId `json:"entity_id" bson:"entity_id"`
 	EntityType string        `json:"entity_type" bson:"entity_type"`
@@ -69,17 +60,6 @@ func GenerateIdentifier(Id bson.ObjectId, t string) string {
 	}
 	return strconv.FormatInt(ts2018, 10) + identifier
 }
-
-// func RemoveNotificationUser(rId bson.ObjectId, t string, u bson.ObjectId) {
-// 	s := session.Clone()
-// 	defer s.Close()
-// 	N := s.DB("manch").C("notifications")
-// 	query, update := bson.M{"resource_id": rId, "type": t}, bson.M{
-// 		"$pull": bson.M{"profile_ids": u},
-// 	}
-// 	N.Update(query, update)
-// 	fmt.Printf("removed from notifications model profile id %s\n", u.Hex())
-// }
 
 func RemoveParticipants(identifier string, isRead bool, participant bson.ObjectId) {
 	s := session.Clone()
@@ -154,30 +134,6 @@ func UpdateNotification(query, update bson.M) {
 	N.Update(query, bson.M{"$set": update})
 }
 
-// func CreateNotification(rId bson.ObjectId, t string, rT string, u bson.ObjectId) NotificationModel {
-// 	s := session.Clone()
-// 	defer s.Close()
-// 	N := s.DB("manch").C("notifications")
-// 	n := NotificationModel{
-// 		Resource:     rId,
-// 		Type:         t,
-// 		ResourceType: rT,
-// 		UniqueUsers:  []bson.ObjectId{u},
-// 		Identifier:   GenerateIdentifier(rId, t),
-// 	}
-// 	count, _ := N.Find(bson.M{"resource_id": rId, "type": t}).Count()
-// 	print(count)
-// 	if count > 0 {
-// 		N.Upsert(bson.M{"resource_id": rId, "type": t}, bson.M{
-// 			"$addToSet": bson.M{"profile_ids": u},
-// 		})
-// 	} else {
-// 		N.Insert(n)
-// 	}
-// 	return GetNotificationByResource(rId, t)
-
-// }
-
 func GetNotificationByIdentifier(identifier string) NotificationModel {
 	s := session.Clone()
 	defer s.Close()
@@ -186,12 +142,3 @@ func GetNotificationByIdentifier(identifier string) NotificationModel {
 	N.Find(bson.M{"identifier": identifier, "is_read": false}).One(&notif)
 	return notif
 }
-
-// func GetNotificationByResource(rId bson.ObjectId, t string) NotificationModel {
-// 	s := session.Clone()
-// 	defer s.Close()
-// 	N := s.DB("manch").C("notifications")
-// 	notif := NotificationModel{}
-// 	N.Find(bson.M{"resource_id": rId, "type": t}).One(&notif)
-// 	return notif
-// }
