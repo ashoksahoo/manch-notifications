@@ -51,7 +51,7 @@ func VotePostSubscriberCB(subj, reply string, v *subscribers.Vote) {
 	}
 	if dir < 1 {
 		//Do not process downvotes and unvote
-		mongo.RemoveParticipants((post.Id.Hex() + "_vote"), true, vote.Created.ProfileId)
+		mongo.RemoveParticipants((post.Id.Hex() + "_vote"), false, vote.Created.ProfileId)
 		return
 	}
 	postCreator := mongo.GetProfileById(post.Created.ProfileId)
