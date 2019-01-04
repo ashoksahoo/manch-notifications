@@ -120,7 +120,7 @@ func CommentSubscriberCB(subj, reply string, c *subscribers.Comment) {
 		fmt.Printf("\nGCM Message %+v\n", msg)
 		if tokens1 != nil {
 			for _, token := range tokens1 {
-				go firebase.SendMessage(msg, token.Token)
+				go firebase.SendMessage(msg, token.Token, notification1.Id)
 			}
 		} else {
 			fmt.Printf("No token")
@@ -210,7 +210,7 @@ func CommentSubscriberCB(subj, reply string, c *subscribers.Comment) {
 	//firebase.SendMessage(msg, "frgp37gfvFg:APA91bHbnbfoX-bp3M_3k-ceD7E4fZ73fcmVL4b5DGB5cQn-fFEvfbj3aAI9g0wXozyApIb-6wGsJauf67auK1p3Ins5Ff7IXCN161fb5JJ5pfBnTZ4LEcRUatO6wimsbiS7EANoGDr4")
 	if tokens != nil {
 		for _, token := range tokens {
-			go firebase.SendMessage(msg, token.Token)
+			go firebase.SendMessage(msg, token.Token, notification.Id)
 		}
 	} else {
 		fmt.Printf("No token")

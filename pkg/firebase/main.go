@@ -1,6 +1,9 @@
 package firebase
 
 import (
+	"time"
+	"notification-service/pkg/constants"
+	"github.com/globalsign/mgo/bson"
 	"encoding/json"
 	"firebase.google.com/go"
 	"firebase.google.com/go/messaging"
@@ -57,7 +60,7 @@ func MessageBuilder(m ManchMessage) map[string]string {
 	return inInterface
 }
 
-func SendMessage(m ManchMessage, token string) {
+func SendMessage(m ManchMessage, token string, notificationId bson.ObjectId) {
 	// See documentation on defining a message payload.
 	m.Namespace = "manch:N"
 	if m.Icon == "" {
@@ -87,10 +90,27 @@ func SendMessage(m ManchMessage, token string) {
 	if err != nil {
 		//log.Fatalln(err)
 		fmt.Println("Error:", err, token)
+		// delete token
 		mongo.DeleteToken(token)
+		// update push info
+		mongo.UpdateNotification(bson.M{"_id": notificationId}, bson.M{
+			"push": mongo.PushMeta{
+				Status: constants.FAILED,
+				FailReason: err.Error(),
+				CreatedAt: time.Now(),
+			},
+		})
 	} else {
 		// Response is a message ID string.
 		fmt.Println("Successfully sent message:", response, token)
+		// update push info
+		mongo.UpdateNotification(bson.M{"_id": notificationId}, bson.M{
+			"push": mongo.PushMeta{
+				Status: constants.PUSHED,
+				PushId: response,
+				CreatedAt: time.Now(),
+			},
+		})
 	}
 
 }

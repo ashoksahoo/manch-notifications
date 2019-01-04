@@ -78,6 +78,12 @@ var Strings = map[string]map[string]string{
 		"comment_on_same_post_two": "{{.Name}} और {{.Name2}} ने भी  पोस्ट \"{{.Post}}\" पर कमेंट किया है",
 		"comment_on_same_post_three": "{{.Name}}, {{.Name2}} और {{.Name3}} ने भी  पोस्ट \"{{.Post}}\" पर कमेंट किया है",
 		"comment_on_same_post_multi": "{{.Name}} और {{.Count}} अन्य सदस्य ने भी  पोस्ट \"{{.Post}}\" पर कमेंट किया है",
+
+		"share_post_one": "{{.Name}} ने आपकी पोस्ट \"{{.Post}}\" को शेयर किया है",
+		"share_post_two": "{{.Name}} और {{.Name2}} ने आपकी पोस्ट \"{{.Post}}\" को शेयर किया है",
+		"share_post_three": "{{.Name}}, {{.Name2}} और {{.Name3}} ने आपकी पोस्ट \"{{.Post}}\" को शेयर किया है",
+		"share_post_multi": "{{.Name}} और {{.Count}} अन्य सदस्य ने आपकी पोस्ट \"{{.Post}}\" को शेयर किया है ",
+
 	},
 
 	"te": {
@@ -117,6 +123,11 @@ var Strings = map[string]map[string]string{
 		"comment_on_same_post_two": "{{.Name}} మరియు {{.Name2}} కూడా \"{{.Post}}\" పోస్టుపై కామెంట్ చేసారు",
 		"comment_on_same_post_three": "{{.Name}}, {{.Name2}} మరియు {{.Name3}} కూడా \"{{.Post}}\" పోస్టుపై కామెంట్ చేసారు",
 		"comment_on_same_post_multi": "{{.Name}} మరియు ఇంకో {{.Count}} వ్యక్తులు కూడా \"{{.Post}}\" పోస్టుపై కామెంట్ చేసారు",
+
+		"share_post_one": "{{.Name}} ने आपकी पोस्ट \"{{.Post}}\" को शेयर किया है",
+		"share_post_two": "{{.Name}} और {{.Name2}} ने आपकी पोस्ट \"{{.Post}}\" को शेयर किया है",
+		"share_post_three": "{{.Name}}, {{.Name2}} और {{.Name3}} ने आपकी पोस्ट \"{{.Post}}\" को शेयर किया है",
+		"share_post_multi": "{{.Name}} और {{.Count}} अन्य सदस्य ने आपकी पोस्ट \"{{.Post}}\" को शेयर किया है ",
 
 	},
 }

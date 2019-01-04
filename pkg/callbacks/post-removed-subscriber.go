@@ -79,7 +79,7 @@ func PostRemovedSubscriberCB(subj, reply string, p *subscribers.Post) {
 	fmt.Printf("\nGCM Message %+v\n", msg)
 	if tokens != nil {
 		for _, token := range tokens {
-			go firebase.SendMessage(msg, token.Token)
+			go firebase.SendMessage(msg, token.Token, notification.Id)
 		}
 	} else {
 		fmt.Printf("No token")

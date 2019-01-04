@@ -48,9 +48,16 @@ type Subscription struct {
 }
 
 type Share struct {
-	Id string `json:"_id"`
-	GUID string `json:"guid"`
-	Resource string `json:"resource_id"`
+	Id           string `json:"_id"`
+	GUID         string `json:"guid"`
+	Resource     string `json:"resource_id"`
 	ResourceType string `json:"resource_type"`
+	ProfileId    string `json:"profile_id"`
+}
+
+type SharePost struct {
+	Id        string `json:"_id"`
+	GUID      string `json:"guid"`
 	ProfileId string `json:"profile_id"`
+	ShareCount string `json:"no_of_shares"`
 }

@@ -62,7 +62,6 @@ func UserFollowSubscriberCB(subj, reply string, uf *subscribers.Subscription) {
 		templateName = "follow_user_multi"
 	} else {
 		templateName = "follow_user_one"
-		msgStr = i18n.GetString(followsTo.Language, "follow_user_one", data)
 	}
 
 	msgStr = i18n.GetString(followsTo.Language, templateName, data)	
@@ -89,7 +88,7 @@ func UserFollowSubscriberCB(subj, reply string, uf *subscribers.Subscription) {
 	fmt.Printf("\nGCM Message %+v\n", msg)
 	if tokens != nil {
 		for _, token := range tokens {
-			go firebase.SendMessage(msg, token.Token)
+			go firebase.SendMessage(msg, token.Token, notification.Id)
 		}
 	} else {
 		fmt.Printf("No token\n")

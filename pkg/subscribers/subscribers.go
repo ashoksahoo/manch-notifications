@@ -76,8 +76,8 @@ func UserFollowRemovedSubscriber(callback func(subj, reply string, m *Subscripti
 	go c.QueueSubscribe(subject("user.follow.removed"), queue(), callback)
 }
 
-func ShareSubscriber(callback func(subj, reply string, m *Share)) {
-	go c.QueueSubscribe(subject("share.new"), queue(), callback)
+func SharePostSubscriber(callback func(subj, reply string, m *SharePost)) {
+	go c.QueueSubscribe(subject("share.post"), queue(), callback)
 }
 
 func init() {

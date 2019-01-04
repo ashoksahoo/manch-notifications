@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"notification-service/pkg/i18n"
 	"strconv"
+	"time"
 
 	"github.com/globalsign/mgo/bson"
 )
@@ -27,6 +28,13 @@ type MessageMeta struct {
 	Data     i18n.DataModel `json:"data" bson:"data"`
 }
 
+type PushMeta struct {
+	Status     string    `json:"status" bson:"status"`
+	PushId     string    `json:"push_id" bson:"push_id"`
+	FailReason string    `json:"failed_reason" bson:"failed_reason"`
+	CreatedAt  time.Time `json:"created_at" bson:"created_at"`
+}
+
 type NotificationModel struct {
 	Id              bson.ObjectId   `json:"_id,omitempty" bson:"_id,omitempty"`
 	Receiver        bson.ObjectId   `json:"receiver" bson:"receiver"`
@@ -43,6 +51,7 @@ type NotificationModel struct {
 	Purpose         string          `json:"purpose" bson:"purpose"`
 	Entities        []Entity        `json:"entities" bson:"entities"`
 	MessageMeta     MessageMeta     `json:"message_meta" bson:"message_meta"`
+	Push            PushMeta        `json:"push" bson:"push"`
 }
 
 func GenerateIdentifier(Id bson.ObjectId, t string) string {
@@ -108,7 +117,7 @@ func UpdateNotificationMessage(id bson.ObjectId, message string) {
 	N.Update(bson.M{"_id": id}, bson.M{"$set": bson.M{"message": message}})
 }
 
-func UpdateNotification(query, update bson.M)  {
+func UpdateNotification(query, update bson.M) {
 	s := session.Clone()
 	defer s.Close()
 	N := s.DB("manch").C("notifications")

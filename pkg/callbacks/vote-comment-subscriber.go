@@ -117,7 +117,7 @@ func VoteCommentSubscriberCB(subj, reply string, v *subscribers.Vote) {
 	fmt.Printf("\nGCM Message %+v\n", msg)
 	if tokens != nil {
 		for _, token := range tokens {
-			go firebase.SendMessage(msg, token.Token)
+			go firebase.SendMessage(msg, token.Token, notification.Id)
 		}
 	} else {
 		fmt.Printf("No token\n")
