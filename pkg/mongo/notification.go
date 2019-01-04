@@ -2,6 +2,7 @@ package mongo
 
 import (
 	"fmt"
+	"notification-service/pkg/constants"
 	"notification-service/pkg/i18n"
 	"strconv"
 	"time"
@@ -84,6 +85,12 @@ func CreateNotification(notification NotificationModel) NotificationModel {
 	s := session.Clone()
 	defer s.Close()
 	N := s.DB("manch").C("notifications")
+
+	push := PushMeta{
+		Status:    constants.PENDING,
+		CreatedAt: time.Now(),
+	}
+
 	n := NotificationModel{
 		Receiver:        notification.Receiver,
 		Identifier:      notification.Identifier,
@@ -97,6 +104,7 @@ func CreateNotification(notification NotificationModel) NotificationModel {
 		NId:             GenerateIdentifier(notification.ActionId, notification.ActionType),
 		Purpose:         notification.Purpose,
 		Entities:        notification.Entities,
+		Push:            push,
 	}
 
 	count, _ := N.Find(bson.M{"identifier": notification.Identifier, "is_read": notification.IsRead}).Count()
