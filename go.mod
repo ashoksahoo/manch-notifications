@@ -5,6 +5,7 @@ require (
 	firebase.google.com/go v3.4.0+incompatible
 	github.com/globalsign/mgo v0.0.0-20181015135952-eeefdecb41b8
 	github.com/go-chi/chi v3.3.3+incompatible
+	github.com/gofrs/uuid v3.1.0+incompatible
 	github.com/gomodule/redigo v2.0.0+incompatible
 	github.com/google/logger v0.0.0-20180208223940-54b4ae679a63
 	github.com/google/martian v2.1.0+incompatible // indirect
@@ -14,6 +15,7 @@ require (
 	github.com/nats-io/go-nats v1.6.0
 	github.com/nats-io/nuid v1.0.0 // indirect
 	github.com/newrelic/go-agent v2.1.0+incompatible
+	github.com/satori/go.uuid v1.2.0
 	go.opencensus.io v0.18.0 // indirect
 	golang.org/x/crypto v0.0.0-20181030102418-4d3f4d9ffa16 // indirect
 	golang.org/x/net v0.0.0-20181201002055-351d144fa1fc

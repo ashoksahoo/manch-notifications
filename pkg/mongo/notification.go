@@ -6,6 +6,8 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/gofrs/uuid"
+
 	"github.com/globalsign/mgo/bson"
 )
 
@@ -31,8 +33,8 @@ type MessageMeta struct {
 type PushMeta struct {
 	Status     string    `json:"status" bson:"status"`
 	PushId     string    `json:"push_id" bson:"push_id"`
-	FailReason string    `json:"failed_reason" bson:"failed_reason"`
-	CreatedAt  time.Time `json:"created_at" bson:"created_at"`
+	FailReason string    `json:"error" bson:"error"`
+	CreatedAt  time.Time `json:"date" bson:"date"`
 }
 
 type NotificationModel struct {
@@ -95,16 +97,33 @@ func CreateNotification(notification NotificationModel) NotificationModel {
 		NId:             GenerateIdentifier(notification.ActionId, notification.ActionType),
 		Purpose:         notification.Purpose,
 		Entities:        notification.Entities,
-		NUUID:           notification.NUUID,
 	}
 
 	count, _ := N.Find(bson.M{"identifier": notification.Identifier, "is_read": notification.IsRead}).Count()
 	print(count)
 	if count > 0 {
+		var nuuid string
+		value, error := uuid.NewV4()
+		if error != nil {
+			nuuid = ""
+		} else {
+			nuuid = value.String()
+		}
 		N.Upsert(bson.M{"identifier": notification.Identifier, "is_read": notification.IsRead}, bson.M{
-			"$addToSet": bson.M{"participants": notification.Participants[0]},
+			"$addToSet":    bson.M{"participants": notification.Participants[0]},
+			"$setOnInsert": bson.M{"nuuid": nuuid},
 		})
 	} else {
+		if n.NUUID == "" {
+			var nuuid string
+			value, error := uuid.NewV4()
+			if error != nil {
+				nuuid = ""
+			} else {
+				nuuid = value.String()
+			}
+			n.NUUID = nuuid
+		}
 		N.Insert(n)
 	}
 	return GetNotificationByIdentifier(notification.Identifier)

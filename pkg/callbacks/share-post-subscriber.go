@@ -83,7 +83,7 @@ func SharePostSubscriberCB(subj, reply string, share *subscribers.SharePost) {
 	fmt.Printf("\nGCM Message %+v\n", msg)
 	if tokens != nil {
 		for _, token := range tokens {
-			go firebase.SendMessage(msg, token.Token, notification.Id)
+			go firebase.SendMessage(msg, token.Token, notification)
 		}
 	} else {
 		fmt.Printf("No token\n")
