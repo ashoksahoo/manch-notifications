@@ -2,26 +2,28 @@ package callbacks
 
 import (
 	"fmt"
+	"strings"
+
 	"notification-service/pkg/firebase"
 	"notification-service/pkg/i18n"
 	"notification-service/pkg/mongo"
 	"notification-service/pkg/subscribers"
-	"strconv"
-	"strings"
 
 	"github.com/globalsign/mgo/bson"
+
 )
 
 func SharePostSubscriberCB(subj, reply string, share *subscribers.SharePost) {
+
 	fmt.Printf("Received a Post Share on Subject%s! with postShare %+v\n", subj, share)
 	defer func() {
 		if r := recover(); r != nil {
 			fmt.Println("Recovered in subscribers.SharePostSubscriber", share)
 		}
 	}()
-	
+
 	profile := mongo.GetProfileById(bson.ObjectIdHex(share.ProfileId))
-	
+
 	post := mongo.GetPostById(share.Id)
 	postCreator := mongo.GetProfileById(post.Created.ProfileId)
 
@@ -45,7 +47,7 @@ func SharePostSubscriberCB(subj, reply string, share *subscribers.SharePost) {
 		Entities:        entities,
 		NUUID:           "",
 	})
-	count, _ := strconv.Atoi(share.ShareCount)
+	count := share.ShareCount
 	data := i18n.DataModel{
 		Name:  profile.Name,
 		Count: count - 1,

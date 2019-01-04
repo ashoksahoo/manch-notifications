@@ -56,8 +56,8 @@ type Subscription struct {
 // }
 
 type SharePost struct {
-	Id        string `json:"_id"`
+	Id string `json:"_id"`
 	GUID      string `json:"guid"`
 	ProfileId string `json:"profile_id"`
-	ShareCount string `json:"no_of_shares"`
+	ShareCount int `json:"no_of_shares"`
 }
