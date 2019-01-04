@@ -70,15 +70,25 @@ func GenerateIdentifier(Id bson.ObjectId, t string) string {
 	return strconv.FormatInt(ts2018, 10) + identifier
 }
 
-func RemoveNotificationUser(rId bson.ObjectId, t string, u bson.ObjectId) {
+// func RemoveNotificationUser(rId bson.ObjectId, t string, u bson.ObjectId) {
+// 	s := session.Clone()
+// 	defer s.Close()
+// 	N := s.DB("manch").C("notifications")
+// 	query, update := bson.M{"resource_id": rId, "type": t}, bson.M{
+// 		"$pull": bson.M{"profile_ids": u},
+// 	}
+// 	N.Update(query, update)
+// 	fmt.Printf("removed from notifications model profile id %s\n", u.Hex())
+// }
+
+func RemoveParticipants(identifier string, isRead bool, participant bson.ObjectId) {
 	s := session.Clone()
 	defer s.Close()
 	N := s.DB("manch").C("notifications")
-	query, update := bson.M{"resource_id": rId, "type": t}, bson.M{
-		"$pull": bson.M{"profile_ids": u},
-	}
+	query, update := bson.M{"identifier": identifier, "is_read": isRead},
+		bson.M{"$pull": bson.M{"participants": participant}}
 	N.Update(query, update)
-	fmt.Printf("removed from notifications model profile id %s\n", u.Hex())
+	fmt.Printf("removed from participants with id %s\n",participant.Hex())
 }
 
 func CreateNotification(notification NotificationModel) NotificationModel {

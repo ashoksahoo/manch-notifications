@@ -36,12 +36,10 @@ func VoteCommentSubscriberCB(subj, reply string, v *subscribers.Vote) {
 	}
 
 	if dir < 1 {
-		mongo.RemoveNotificationUser(comment.Id, "like", vote.Created.ProfileId)
+		mongo.RemoveParticipants((comment.Id.Hex() + "_vote"), true, vote.Created.ProfileId)
 		//Do not process downvotes and unvote
 		return
 	}
-
-
 
 	post := mongo.GetPostById(comment.PostId.Hex())
 	commentCreator := mongo.GetProfileById(comment.Created.ProfileId)
