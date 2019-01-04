@@ -10,7 +10,7 @@ type CommentModel struct {
 	PostId       bson.ObjectId `json:"post_id" bson:"post_id"`
 	Post         PostModel
 	Created      Creator         `json:"created" bson:"created"`
-	UpVotes      int             `json:"up_votes" bson:"up_vote"`
+	UpVotes      int             `json:"up_votes" bson:"up_votes"`
 	DownVotes    int             `json:"down_votes" bson:"down_vote"`
 	CommentId    bson.ObjectId   `json:"comment_id" bson:"comment_id"`
 	Parents      []bson.ObjectId `json:"parents" bson:"parents"`
