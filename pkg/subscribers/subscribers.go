@@ -19,8 +19,8 @@ func subject(s string) string {
 		env = "development"
 	}
 	s = "manch-api." + env + "." + s
+	fmt.Println("listening for ", s)
 	return s
-
 }
 
 func queue() string {
