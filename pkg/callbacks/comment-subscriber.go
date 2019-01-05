@@ -53,7 +53,7 @@ func CommentSubscriberCB(subj, reply string, c *subscribers.Comment) {
 		// get replied on comment creator
 		replyOnCommentCreator := mongo.GetProfileById(replyOnComment.Created.ProfileId)
 		// notification1 := mongo.CreateNotification(replyOnComment.Id, "comment", "comment", comment.Created.ProfileId)
-		count := mongo.GetReplierCount(comment.Id, comment.Created.ProfileId) - 1
+		count := mongo.GetReplierCount(replyOnComment.Id, replyOnComment.Created.ProfileId) - 1
 
 		entities := []mongo.Entity{
 			{
