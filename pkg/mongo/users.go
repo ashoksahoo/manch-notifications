@@ -7,10 +7,11 @@ import (
 )
 
 type Profile struct {
-	Id       bson.ObjectId `json:"_id" bson:"_id"`
-	Avatar   string        `json:"avatar"`
-	Name     string        `json:"name"`
-	Language string        `json:"language"`
+	Id            bson.ObjectId `json:"_id" bson:"_id"`
+	Avatar        string        `json:"avatar"`
+	Name          string        `json:"name"`
+	Language      string        `json:"language"`
+	FollowerCount int           `json:"no_of_followers" bson:"no_of_followers"`
 }
 
 type Creator struct {

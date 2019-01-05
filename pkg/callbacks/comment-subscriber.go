@@ -53,7 +53,8 @@ func CommentSubscriberCB(subj, reply string, c *subscribers.Comment) {
 		// get replied on comment creator
 		replyOnCommentCreator := mongo.GetProfileById(replyOnComment.Created.ProfileId)
 		// notification1 := mongo.CreateNotification(replyOnComment.Id, "comment", "comment", comment.Created.ProfileId)
-		
+		count := mongo.GetReplierCount(comment.Id, comment.Created.ProfileId) - 1
+
 		entities := []mongo.Entity{
 			{
 				EntityId: comment.Post.Id,
@@ -78,7 +79,7 @@ func CommentSubscriberCB(subj, reply string, c *subscribers.Comment) {
 		})
 		tokens1 := mongo.GetTokensByProfiles([]bson.ObjectId{replyOnComment.Created.ProfileId})
 		// comment title
-		count := len(notification1.Participants) - 1
+		// count := len(notification1.Participants) - 1
 		fmt.Println("Comment count: ", count)
 		commentTitle := utils.TruncateTitle(replyOnComment.Content, 4)
 		data1 := i18n.DataModel{
@@ -94,7 +95,7 @@ func CommentSubscriberCB(subj, reply string, c *subscribers.Comment) {
 		} else {
 			templateName = "comment_reply_one"
 		}
-	
+
 		msgStr1 = i18n.GetString(replyOnCommentCreator.Language, templateName, data1)
 		msgStr1 = strings.Replace(msgStr1, "\"\" ", "", 1)
 		title := i18n.GetAppTitle(replyOnCommentCreator.Language)
@@ -127,11 +128,6 @@ func CommentSubscriberCB(subj, reply string, c *subscribers.Comment) {
 		}
 		fmt.Println("end reply on comments")
 	}
-
-	// get previous notification with this identifier
-	// get all the participants
-	// send them this user has also comment on the same post
-	// 
 
 	// get notification with resource id and resource type
 	// send notification to all the users who is on profile_ids except this user

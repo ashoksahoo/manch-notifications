@@ -51,14 +51,14 @@ func UserFollowSubscriberCB(subj, reply string, uf *subscribers.Subscription) {
 		Entities:        entities,
 		NUUID:           "",
 	})
-	count := len(notification.Participants) - 1
+	count := followsTo.FollowerCount - 1
 	data := i18n.DataModel{
 		Name:  follower.Name,
 		Count: count,
 	}
 	var msgStr string
 	var templateName string
-	if len(notification.Participants) > 1 {
+	if count > 0 {
 		templateName = "follow_user_multi"
 	} else {
 		templateName = "follow_user_one"

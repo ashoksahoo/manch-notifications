@@ -64,7 +64,7 @@ func GenerateIdentifier(Id bson.ObjectId, t string) string {
 func RemoveParticipants(identifier string, isRead bool, participant bson.ObjectId) {
 	s := session.Clone()
 	defer s.Close()
-	N := s.DB("manch").C("notifications")
+	N := s.DB("manch").C("notificationsv2")
 	query, update := bson.M{"identifier": identifier, "is_read": isRead},
 		bson.M{"$pull": bson.M{"participants": participant}}
 	N.Update(query, update)
@@ -74,7 +74,7 @@ func RemoveParticipants(identifier string, isRead bool, participant bson.ObjectI
 func CreateNotification(notification NotificationModel) NotificationModel {
 	s := session.Clone()
 	defer s.Close()
-	N := s.DB("manch").C("notifications")
+	N := s.DB("manch").C("notificationsv2")
 
 	push := PushMeta{
 		Status:    constants.PENDING,
@@ -130,14 +130,14 @@ func CreateNotification(notification NotificationModel) NotificationModel {
 func UpdateNotification(query, update bson.M) {
 	s := session.Clone()
 	defer s.Close()
-	N := s.DB("manch").C("notifications")
+	N := s.DB("manch").C("notificationsv2")
 	N.Update(query, bson.M{"$set": update})
 }
 
 func GetNotificationByIdentifier(identifier string) NotificationModel {
 	s := session.Clone()
 	defer s.Close()
-	N := s.DB("manch").C("notifications")
+	N := s.DB("manch").C("notificationsv2")
 	notif := NotificationModel{}
 	N.Find(bson.M{"identifier": identifier, "is_read": false}).One(&notif)
 	return notif
