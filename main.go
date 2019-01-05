@@ -42,6 +42,8 @@ func main() {
 	// received re-post event
 	subscribers.RepostSubscriber(callbacks.RepostSubscriberCB)
 
+	// received share-post event
+	subscribers.SharePostSubscriber(callbacks.SharePostSubscriberCB)
 
 	// listen on http server 5000
 	http.ListenAndServe(":5000", r)

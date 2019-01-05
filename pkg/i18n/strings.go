@@ -33,8 +33,19 @@ var Strings = map[string]map[string]string{
 		"follow_user_one": "{{.Name}} has started following you on Manch",
 		
 		"post_removed": "Dear {{.Name}}, Your post \"{{.Post}}\" ",
+		
+		"comment_on_same_post_one": "{{.Name}} has also commented on the post  \"{{.Post}}\"",
+		"comment_on_same_post_two": "{{.Name}} and {{.Name2}} have also commented on the post \"{{.Post}}\"",
+		"comment_on_same_post_three": "{{.Name}}, {{.Name2}} and {{.Name3}} have also commented on the post \"{{.Post}}\"",
+		"comment_on_same_post_multi": "{{.Name}} and {{.Count}} other have also commented on the post  \"{{.Post}}\"",
+
+		"share_post_one": "{{.Name}}  ने आपकी पोस्ट \"{{.Post}}\" को शेयर किया है. आप भी अपने पोस्ट को दोस्तों के साथ शेयर करें और अपने फॉलोअर्स बढ़ायें.",
+		"share_post_two": "{{.Name}} और {{.Name2}}  ने आपकी पोस्ट \"{{.Post}}\" को शेयर किया है. आप भी अपने पोस्ट को दोस्तों के साथ शेयर करें और अपने फॉलोअर्स बढ़ायें.",
+		"share_post_three": "{{.Name}}, {{.Name2}} और {{.Name3}} ने आपकी पोस्ट \"{{.Post}}\" को शेयर किया है. आप भी अपने पोस्ट को दोस्तों के साथ शेयर करें और अपने फॉलोअर्स बढ़ायें.",
+		"share_post_multi": "{{.Name}} और {{.Count}} अन्य सदस्य ने आपकी पोस्ट \"{{.Post}}\" को शेयर किया है. आप भी अपने पोस्ट को दोस्तों के साथ शेयर करें और अपने फॉलोअर्स बढ़ायें.",
 
 	},
+
 	"hi": {
 		"comment_multi": "{{.Name}} और {{.Count}} लोगों ने आपकी पोस्ट \"{{.Post}}\" पर कमेंट किया है ",
 		"comment_three": "{{.Name}}, {{.Name2}} और {{.Name3}} ने आपकी पोस्ट \"{{.Post}}\" पर कमेंट किया है ",
@@ -67,7 +78,19 @@ var Strings = map[string]map[string]string{
 		"follow_user_one": "{{.Name}} अब आपको फॉलो कर रहे हैं",
 
 		"post_removed": "{{.Name}} जी आपके पोस्ट \"{{.Post}}\" में {{.DeleteReason}} होने के कारण, वह अब लोकप्रिय मंच पर नहीं दिखेगा",
+
+		"comment_on_same_post_one": "{{.Name}} ने भी  पोस्ट \"{{.Post}}\" पर कमेंट किया है",
+		"comment_on_same_post_two": "{{.Name}} और {{.Name2}} ने भी  पोस्ट \"{{.Post}}\" पर कमेंट किया है",
+		"comment_on_same_post_three": "{{.Name}}, {{.Name2}} और {{.Name3}} ने भी  पोस्ट \"{{.Post}}\" पर कमेंट किया है",
+		"comment_on_same_post_multi": "{{.Name}} और {{.Count}} अन्य सदस्य ने भी  पोस्ट \"{{.Post}}\" पर कमेंट किया है",
+
+		"share_post_one": "{{.Name}}  ने आपकी पोस्ट \"{{.Post}}\" को शेयर किया है. आप भी अपने पोस्ट को दोस्तों के साथ शेयर करें और अपने फॉलोअर्स बढ़ायें.",
+		"share_post_two": "{{.Name}} और {{.Name2}}  ने आपकी पोस्ट \"{{.Post}}\" को शेयर किया है. आप भी अपने पोस्ट को दोस्तों के साथ शेयर करें और अपने फॉलोअर्स बढ़ायें.",
+		"share_post_three": "{{.Name}}, {{.Name2}} और {{.Name3}} ने आपकी पोस्ट \"{{.Post}}\" को शेयर किया है. आप भी अपने पोस्ट को दोस्तों के साथ शेयर करें और अपने फॉलोअर्स बढ़ायें.",
+		"share_post_multi": "{{.Name}} और {{.Count}} अन्य सदस्य ने आपकी पोस्ट \"{{.Post}}\" को शेयर किया है. आप भी अपने पोस्ट को दोस्तों के साथ शेयर करें और अपने फॉलोअर्स बढ़ायें.",
+
 	},
+
 	"te": {
 		"comment_multi": "{{.Name}} +{{.Count}} వ్యక్తులు మీ పోస్ట్ \"{{.Post}}\" పైన కామెంట్ చేసారు.",
 		"comment_three": "{{.Name}}, {{.Name2}} & {{.Name3}} మీ పోస్ట్ \"{{.Post}}\" పైన కామెంట్ చేసారు.",
@@ -100,6 +123,16 @@ var Strings = map[string]map[string]string{
 		"follow_user_one": "{{.Name}} మంచ్ లో మిమ్మల్ని ఫాలో చేస్తున్నారు",
 
 		"post_removed": "{{.Name}} మీ పోస్టు\"{{.Post}}\" లో{{.DeleteReason}}  కలిగి ఉంది, అందుకే పాపులర్  ఫీడ్ లో కనిపించవు.",
+
+		"comment_on_same_post_one": "{{.Name}} కూడా \"{{.Post}}\" పోస్టుపై కామెంట్ చేసారు",
+		"comment_on_same_post_two": "{{.Name}} మరియు {{.Name2}} కూడా \"{{.Post}}\" పోస్టుపై కామెంట్ చేసారు",
+		"comment_on_same_post_three": "{{.Name}}, {{.Name2}} మరియు {{.Name3}} కూడా \"{{.Post}}\" పోస్టుపై కామెంట్ చేసారు",
+		"comment_on_same_post_multi": "{{.Name}} మరియు ఇంకో {{.Count}} వ్యక్తులు కూడా \"{{.Post}}\" పోస్టుపై కామెంట్ చేసారు",
+
+		"share_post_one": "{{.Name}} మీ పోస్ట్  \"{{.Post}}\" ని వారి ఫ్రండ్స్ తో  షేర్ చేశారు . మీరు కుడా మీ ఫ్రెండ్స్ తో షేర్ చేయండి మరియూ మీ ఫాలోవర్స్ ని పెంచుకోండి",
+        "share_post_two": "{{.Name}} మరియు {{.Name2}}  మీ పోస్ట్\"{{.Post}}\"ని వారి ఫ్రండ్స్ తో  షేర్ చేశారు . మీరు కుడా మీ ఫ్రెండ్స్ తో షేర్ చేయండి మరియూ మీ ఫాలోవర్స్ ని పెంచుకోండి. ",
+        "share_post_three": "{{.Name1}}, {{.Name2}} మరియు {{.Name3}}  మీ పోస్ట్\"{{.Post}}\"ని వారి ఫ్రండ్స్ తో  షేర్ చేశారు . మీరు కుడా మీ ఫ్రెండ్స్ తో షేర్ చేయండి మరియూ మీ ఫాలోవర్స్ ని పెంచుకోండి. ",
+  		"share_post_multi": "{{.Name}}, మరియు +{{.Count}} ఇతరులు   మీ పోస్ట్\"{{.Post}}\"ని వారి ఫ్రండ్స్ తో  షేర్ చేశారు . మీరు కుడా మీ ఫ్రెండ్స్ తో షేర్ చేయండి మరియూ మీ ఫాలోవర్స్ ని పెంచుకోండి.",
 	},
 }
 

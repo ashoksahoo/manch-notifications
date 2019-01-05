@@ -50,13 +50,36 @@ func VotePostSubscriberCB(subj, reply string, v *subscribers.Vote) {
 		return
 	}
 	if dir < 1 {
-		mongo.RemoveNotificationUser(post.Id, "like", vote.Created.ProfileId)
 		//Do not process downvotes and unvote
+		mongo.RemoveParticipants((post.Id.Hex() + "_vote"), false, vote.Created.ProfileId)
 		return
 	}
 	postCreator := mongo.GetProfileById(post.Created.ProfileId)
 	tokens := mongo.GetTokensByProfiles([]bson.ObjectId{post.Created.ProfileId})
-	notification := mongo.CreateNotification(post.Id, "like", "post", vote.Created.ProfileId)
+	// notification := mongo.CreateNotification(post.Id, "like", "post", vote.Created.ProfileId)
+
+	entities := []mongo.Entity{
+		{
+			EntityId: post.Id,
+			EntityType: "post",
+		},
+		{
+			EntityId: vote.Id,
+			EntityType: "vote",
+		},
+	}
+	notification := mongo.CreateNotification(mongo.NotificationModel{
+		Receiver:        postCreator.Id,
+		Identifier:      post.Id.Hex() + "_vote",
+		Participants:    []bson.ObjectId{vote.Created.ProfileId},
+		DisplayTemplate: "transactional",
+		EntityGroupId:   post.Id.Hex(),
+		ActionId:        vote.Id,
+		ActionType:      "vote",
+		Purpose:         "vote",
+		Entities:        entities,
+		NUUID:           "",
+	})
 
 	postTitle := utils.TruncateTitle(post.Title, 4)
 	data := i18n.DataModel{
@@ -64,26 +87,41 @@ func VotePostSubscriberCB(subj, reply string, v *subscribers.Vote) {
 		Post:  postTitle,
 		Count: post.UpVotes,
 	}
+	
 	var msgStr string
+	var templateName string
 	if post.UpVotes > 1 {
-		msgStr = i18n.GetString(postCreator.Language, "post_like_multi", data)
+		templateName = "post_like_multi"
 	} else {
-		msgStr = i18n.GetString(postCreator.Language, "post_like_one", data)
+		templateName = "post_like_one"
 	}
-	title := i18n.GetAppTitle(postCreator.Language)
+
+	msgStr = i18n.GetString(postCreator.Language, templateName, data)	
 	msgStr = strings.Replace(msgStr, "\"\" ", "", 1)
+	title := i18n.GetAppTitle(postCreator.Language)
+
+	messageMeta := mongo.MessageMeta{
+		Template: templateName,
+		Data: data,
+	}
+	// update notification message
+	mongo.UpdateNotification(bson.M{"_id": notification.Id}, bson.M{
+		"message": msgStr,
+		"message_meta": messageMeta,
+	})
+
 	msg := firebase.ManchMessage{
 		Title:    title,
 		Message:  msgStr,
 		Icon:     mongo.ExtractThumbNailFromPost(post),
 		DeepLink: "manch://posts/" + post.Id.Hex(),
-		Id:       notification.Identifier,
+		Id:       notification.NId,
 	}
 
 	fmt.Printf("\nGCM Message %+v\n", msg)
 	if tokens != nil {
 		for _, token := range tokens {
-			go firebase.SendMessage(msg, token.Token)
+			go firebase.SendMessage(msg, token.Token, notification)
 		}
 	} else {
 		fmt.Printf("No token")

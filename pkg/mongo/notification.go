@@ -2,18 +2,50 @@ package mongo
 
 import (
 	"fmt"
+	"notification-service/pkg/constants"
+	"notification-service/pkg/i18n"
 	"strconv"
+	"time"
+
+	"github.com/gofrs/uuid"
 
 	"github.com/globalsign/mgo/bson"
 )
 
+type Entity struct {
+	EntityId   bson.ObjectId `json:"entity_id" bson:"entity_id"`
+	EntityType string        `json:"entity_type" bson:"entity_type"`
+}
+
+type MessageMeta struct {
+	Template string         `json:"template_name" bson:"template_name"`
+	Data     i18n.DataModel `json:"data" bson:"data"`
+}
+
+type PushMeta struct {
+	Status     string    `json:"status" bson:"status"`
+	PushId     string    `json:"push_id" bson:"push_id"`
+	FailReason string    `json:"error" bson:"error"`
+	CreatedAt  time.Time `json:"date" bson:"date"`
+}
+
 type NotificationModel struct {
-	Id           bson.ObjectId   `json:"_id,omitempty" bson:"_id,omitempty"`
-	Type         string          `json:"type" bson:"type"`
-	ResourceType string          `json:"resource_type" bson:"resource_type"`
-	Resource     bson.ObjectId   `json:"resource_id" bson:"resource_id"`
-	UniqueUsers  []bson.ObjectId `json:"profile_ids" bson:"profile_ids"`
-	Identifier   string          `json:"identifier" bson:"identifier"`
+	Id              bson.ObjectId   `json:"_id,omitempty" bson:"_id,omitempty"`
+	Receiver        bson.ObjectId   `json:"receiver" bson:"receiver"`
+	Identifier      string          `json:"identifier" bson:"identifier"`
+	Message         string          `json:"message" bson:"message"`
+	IsRead          bool            `json:"is_read" bson:"is_read"`
+	Participants    []bson.ObjectId `json:"participants" bson:"participants"`
+	DisplayTemplate string          `json:"display_template" bson:"display_template"`
+	EntityGroupId   string          `json:"entity_group_id" bson:"entity_group_id"`
+	ActionType      string          `json:"action_type" bson:"action_type"`
+	ActionId        bson.ObjectId   `json:"action_id" bson:"action_id"`
+	NId             string          `json:"n_id" bson:"n_id"`
+	NUUID           string          `json:"nuuid" bson:"nuuid"`
+	Purpose         string          `json:"purpose" bson:"purpose"`
+	Entities        []Entity        `json:"entities" bson:"entities"`
+	MessageMeta     MessageMeta     `json:"message_meta" bson:"message_meta"`
+	Push            PushMeta        `json:"push" bson:"push"`
 }
 
 func GenerateIdentifier(Id bson.ObjectId, t string) string {
@@ -29,46 +61,84 @@ func GenerateIdentifier(Id bson.ObjectId, t string) string {
 	return strconv.FormatInt(ts2018, 10) + identifier
 }
 
-func RemoveNotificationUser(rId bson.ObjectId, t string, u bson.ObjectId) {
+func RemoveParticipants(identifier string, isRead bool, participant bson.ObjectId) {
 	s := session.Clone()
 	defer s.Close()
-	N := s.DB("manch").C("notifications")
-	query, update := bson.M{"resource_id": rId, "type": t}, bson.M{
-		"$pull": bson.M{"profile_ids": u},
-	}
+	N := s.DB("manch").C("notificationsv2")
+	query, update := bson.M{"identifier": identifier, "is_read": isRead},
+		bson.M{"$pull": bson.M{"participants": participant}}
 	N.Update(query, update)
-	fmt.Printf("removed from notifications model profile id %s\n", u.Hex())
+	fmt.Printf("removed from participants with id %s\n",participant.Hex())
 }
 
-func CreateNotification(rId bson.ObjectId, t string, rT string, u bson.ObjectId) NotificationModel {
+func CreateNotification(notification NotificationModel) NotificationModel {
 	s := session.Clone()
 	defer s.Close()
-	N := s.DB("manch").C("notifications")
-	n := NotificationModel{
-		Resource:     rId,
-		Type:         t,
-		ResourceType: rT,
-		UniqueUsers:  []bson.ObjectId{u},
-		Identifier:   GenerateIdentifier(rId, t),
+	N := s.DB("manch").C("notificationsv2")
+
+	push := PushMeta{
+		Status:    constants.PENDING,
+		CreatedAt: time.Now(),
 	}
-	count, _ := N.Find(bson.M{"resource_id": rId, "type": t}).Count()
+
+	n := NotificationModel{
+		Receiver:        notification.Receiver,
+		Identifier:      notification.Identifier,
+		Message:         notification.Message,
+		IsRead:          false,
+		Participants:    notification.Participants,
+		DisplayTemplate: notification.DisplayTemplate,
+		EntityGroupId:   notification.EntityGroupId,
+		ActionId:        notification.ActionId,
+		ActionType:      notification.ActionType,
+		NId:             GenerateIdentifier(notification.ActionId, notification.ActionType),
+		Purpose:         notification.Purpose,
+		Entities:        notification.Entities,
+		Push:            push,
+	}
+
+	count, _ := N.Find(bson.M{"identifier": notification.Identifier, "is_read": notification.IsRead}).Count()
 	print(count)
 	if count > 0 {
-		N.Upsert(bson.M{"resource_id": rId, "type": t}, bson.M{
-			"$addToSet": bson.M{"profile_ids": u},
+		var nuuid string
+		value, error := uuid.NewV4()
+		if error != nil {
+			nuuid = ""
+		} else {
+			nuuid = value.String()
+		}
+		N.Upsert(bson.M{"identifier": notification.Identifier, "is_read": notification.IsRead}, bson.M{
+			"$addToSet":    bson.M{"participants": notification.Participants[0]},
+			"$setOnInsert": bson.M{"nuuid": nuuid},
 		})
 	} else {
+		if n.NUUID == "" {
+			var nuuid string
+			value, error := uuid.NewV4()
+			if error != nil {
+				nuuid = ""
+			} else {
+				nuuid = value.String()
+			}
+			n.NUUID = nuuid
+		}
 		N.Insert(n)
 	}
-	return GetNotificationByResource(rId, t)
-
+	return GetNotificationByIdentifier(notification.Identifier)
 }
 
-func GetNotificationByResource(rId bson.ObjectId, t string) NotificationModel {
+func UpdateNotification(query, update bson.M) {
 	s := session.Clone()
 	defer s.Close()
-	N := s.DB("manch").C("notifications")
+	N := s.DB("manch").C("notificationsv2")
+	N.Update(query, bson.M{"$set": update})
+}
+
+func GetNotificationByIdentifier(identifier string) NotificationModel {
+	s := session.Clone()
+	defer s.Close()
+	N := s.DB("manch").C("notificationsv2")
 	notif := NotificationModel{}
-	N.Find(bson.M{"resource_id": rId, "type": t}).One(&notif)
+	N.Find(bson.M{"identifier": identifier, "is_read": false}).One(&notif)
 	return notif
 }

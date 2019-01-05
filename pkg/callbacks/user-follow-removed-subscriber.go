@@ -25,5 +25,5 @@ func UserFollowRemovedSubscriberCB(subj, reply string, uf *subscribers.Subscript
 	follower := mongo.GetProfileById(bson.ObjectIdHex(uf.ProfileId))
 	// fmt.Printf("\nfollower %+v\n", follower)
 	followsTo := mongo.GetProfileById(bson.ObjectIdHex(uf.Resource))
-	mongo.RemoveNotificationUser(followsTo.Id, "follows", follower.Id)
+	mongo.RemoveParticipants((followsTo.Id.Hex() + "_follow"), false, follower.Id)
 }

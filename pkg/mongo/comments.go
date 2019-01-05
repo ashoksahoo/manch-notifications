@@ -10,7 +10,7 @@ type CommentModel struct {
 	PostId       bson.ObjectId `json:"post_id" bson:"post_id"`
 	Post         PostModel
 	Created      Creator         `json:"created" bson:"created"`
-	UpVotes      int             `json:"up_votes" bson:"up_vote"`
+	UpVotes      int             `json:"up_votes" bson:"up_votes"`
 	DownVotes    int             `json:"down_votes" bson:"down_vote"`
 	CommentId    bson.ObjectId   `json:"comment_id" bson:"comment_id"`
 	Parents      []bson.ObjectId `json:"parents" bson:"parents"`
@@ -29,6 +29,7 @@ func GetFullCommentById(Id string) (CommentModel, int) {
 	return c, uniqCommentator
 }
 
+
 func GetCommentCount(postId bson.ObjectId) int {
 	s := session.Clone()
 	defer s.Close()
@@ -46,6 +47,15 @@ func GetCommentatorCount(postId bson.ObjectId, opId bson.ObjectId) int {
 	//fmt.Printf("R %+v", result)
 	//fmt.Printf("P %+v", postId)
 	//fmt.Printf("OP %+v", opId)
+	return len(result)
+}
+
+func GetReplierCount(commentId, commentCreator bson.ObjectId) int {
+	s := session.Clone()
+	defer s.Close()
+	C := s.DB("manch").C("comments")
+	var result []bson.ObjectId
+	C.Find(bson.M{"comment_id": commentId, "created.profile_id": bson.M{"$ne": commentCreator}}).Distinct("created.profile_id", &result)
 	return len(result)
 }
 

@@ -30,7 +30,6 @@ func PostSubscriberCB(subj, reply string, p *subscribers.Post) {
 			i++
 		}
 	}
-
 	rand.Seed(time.Now().UnixNano())
 	rand.Shuffle(i, func(i, j int) { botProfilesIds[i], botProfilesIds[j] = botProfilesIds[j], botProfilesIds[i] })
 	var no_of_votes int
@@ -58,5 +57,20 @@ func PostSubscriberCB(subj, reply string, p *subscribers.Post) {
 		vote := mongo.CreateVotesSchedulePost(t[k], bson.ObjectIdHex(p.Id), bson.ObjectIdHex(botProfilesIds[j]))
 		mongo.AddVoteSchedule(vote)
 	}
+
+	// schedule shares on posts
+	var no_of_shares int
+	no_of_shares = utils.Random(15, 40)
+
+	j = 0
+	fmt.Println("no_of_shares: ", no_of_shares)
+	t = utils.SplitTimeInRange(1, 240, no_of_shares, time.Minute)
+	for k := 0; j < no_of_shares; j, k = j+1, k+1 {
+		share := mongo.CreateShareSchedule(t[k], bson.ObjectIdHex(p.Id), bson.ObjectIdHex(botProfilesIds[j]))
+		mongo.AddShareSchedule(share)
+	}
+
+	fmt.Printf("Add %d share scheduleds\n", no_of_shares)
+
 	fmt.Printf("Processed a post on subject %s! with Post Id%s\n", subj, p.Id)
 }

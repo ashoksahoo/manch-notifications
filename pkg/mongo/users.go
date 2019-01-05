@@ -1,16 +1,17 @@
 package mongo
 
 import (
-	// "fmt"
-	"github.com/globalsign/mgo/bson"
 	"fmt"
+
+	"github.com/globalsign/mgo/bson"
 )
 
 type Profile struct {
-	Id       bson.ObjectId `json:"_id" bson:"_id"`
-	Avatar   string        `json:"avatar"`
-	Name     string        `json:"name"`
-	Language string        `json:"language"`
+	Id            bson.ObjectId `json:"_id" bson:"_id"`
+	Avatar        string        `json:"avatar"`
+	Name          string        `json:"name"`
+	Language      string        `json:"language"`
+	FollowerCount int           `json:"no_of_followers" bson:"no_of_followers"`
 }
 
 type Creator struct {
@@ -26,7 +27,7 @@ type UserModel struct {
 	Name     string        `json:"name" bson:"name"`
 	Phone    string        `json:"phone" bson:"phone"`
 	Profiles []Profile     `json:"profiles" bson:"profiles"`
-	UserType string		   `json:"type" bson:"type"`
+	UserType string        `json:"type" bson:"type"`
 }
 
 func GetUserById(Id string) UserModel {
@@ -58,6 +59,7 @@ func GetBotUsers() []UserModel {
 	fmt.Println("total bot users", len(allUsers))
 	return allUsers
 }
+
 // func GetProfile(profileId string) Profile {
 // 	s := session.Clone()
 // 	defer s.Close()

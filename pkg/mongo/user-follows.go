@@ -4,16 +4,15 @@ import (
 	"github.com/globalsign/mgo/bson"
 )
 
-
 type UserFollowModel struct {
-	Id bson.ObjectId `json:"_id" bson:"_id"`
-	ProfileId bson.ObjectId `json:"profile_id" bson:"profile_id"`
-	ResourceId     bson.ObjectId `json:"resource_id" bson:"resource_id"`
-	ResourceType string `json:"resource_type" bson:"resource_type"`
-	Created Creator `json:"created" bson:"created"`
+	Id           bson.ObjectId `json:"_id" bson:"_id"`
+	ProfileId    bson.ObjectId `json:"profile_id" bson:"profile_id"`
+	ResourceId   bson.ObjectId `json:"resource_id" bson:"resource_id"`
+	ResourceType string        `json:"resource_type" bson:"resource_type"`
+	Created      Creator       `json:"created" bson:"created"`
 }
 
-func GetUserFollowById(Id string) (UserFollowModel) {
+func GetUserFollowById(Id string) UserFollowModel {
 	s := session.Clone()
 	defer s.Close()
 	user_follow := UserFollowModel{}
