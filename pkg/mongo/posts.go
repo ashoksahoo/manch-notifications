@@ -1,6 +1,8 @@
 package mongo
 
 import (
+	"fmt"
+
 	"github.com/globalsign/mgo/bson"
 )
 
@@ -34,13 +36,14 @@ func GetPost(Id bson.ObjectId) PostModel {
 	return post
 }
 
-func GetPostById(Id string) PostModel {
+func GetPostById(Id string) (error, PostModel) {
 	s := session.Clone()
 	defer s.Close()
 	post := PostModel{}
 	P := s.DB("manch").C("posts")
-	P.Find(bson.M{"_id": bson.ObjectIdHex(Id)}).One(&post)
-	return post
+	err := P.Find(bson.M{"_id": bson.ObjectIdHex(Id), "deleted": false}).One(&post)
+	fmt.Println("error", err)
+	return err, post
 }
 
 func ExtractThumbNailFromPost(post PostModel) (thumb string) {

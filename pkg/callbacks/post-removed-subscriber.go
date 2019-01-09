@@ -14,8 +14,10 @@ import (
 
 func PostRemovedSubscriberCB(subj, reply string, p *subscribers.Post) {
 	fmt.Printf("Received a post on subject %s! with Post %+v\n", subj, p)
-	post := mongo.GetPostById(p.Id)
-
+	err, post := mongo.GetPostById(p.Id)
+	if err != nil {
+		return
+	}
 	postCreator := mongo.GetProfileById(post.Created.ProfileId)
 
 	tokens := mongo.GetTokensByProfiles([]bson.ObjectId{post.Created.ProfileId})

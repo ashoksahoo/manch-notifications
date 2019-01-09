@@ -41,7 +41,10 @@ func VoteCommentSubscriberCB(subj, reply string, v *subscribers.Vote) {
 		return
 	}
 
-	post := mongo.GetPostById(comment.PostId.Hex())
+	err, post := mongo.GetPostById(comment.PostId.Hex())
+	if err != nil {
+		return
+	}
 	commentCreator := mongo.GetProfileById(comment.Created.ProfileId)
 	// notification := mongo.CreateNotification(comment.Id, "like", "comment", vote.Created.ProfileId)
 	
