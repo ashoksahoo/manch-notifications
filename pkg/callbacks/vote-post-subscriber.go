@@ -41,7 +41,10 @@ func VotePostSubscriberCB(subj, reply string, v *subscribers.Vote) {
 		return
 	}
 
-	post := mongo.GetPostById(v.Resource)
+	err, post := mongo.GetPostById(v.Resource)
+	if err != nil {
+		return
+	}
 	vote := post.GetVote(v.Id)
 	if vote.Created.ProfileId == post.Created.ProfileId {
 		//Self Vote

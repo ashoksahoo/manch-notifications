@@ -21,10 +21,14 @@ func SharePostSubscriberCB(subj, reply string, share *subscribers.SharePost) {
 			fmt.Println("Recovered in subscribers.SharePostSubscriber", share)
 		}
 	}()
+	
+	err, post := mongo.GetPostById(share.Id)
+	if err != nil {
+		return;
+	}
 
 	profile := mongo.GetProfileById(bson.ObjectIdHex(share.ProfileId))
 
-	post := mongo.GetPostById(share.Id)
 	postCreator := mongo.GetProfileById(post.Created.ProfileId)
 
 	tokens := mongo.GetTokensByProfiles([]bson.ObjectId{postCreator.Id})
