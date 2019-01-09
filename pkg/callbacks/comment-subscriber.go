@@ -129,9 +129,22 @@ func CommentSubscriberCB(subj, reply string, c *subscribers.Comment) {
 		fmt.Println("end reply on comments")
 	}
 
-	// get notification with resource id and resource type
-	// send notification to all the users who is on profile_ids except this user
-	//
+	/*
+	Comment on same post logic
+	1. create unique identifier <profileId>_<post_id>_<purpose>
+	2. get all previous commentator and update their participants
+	3. accordingly
+	*/
+
+	participants := mongo.GetCommentsByPostId(comment.Post.Id, comment.Created.ProfileId)
+
+	for _, participant := range participants {
+		if participant == comment.Created.ProfileId {
+			continue
+		}
+
+	}
+
 	if comment.Post.Created.ProfileId == comment.Created.ProfileId {
 		//Self comment
 		fmt.Println("Self Comment")
