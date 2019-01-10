@@ -83,23 +83,15 @@ func CommentSubscriberCB(subj, reply string, c *subscribers.Comment) {
 				Entities:        replyEntity,
 				NUUID:           "",
 			})
-			participantCount := len(notif.Participants)
 			receiver := mongo.GetProfileById(participant)
 			commentTitle := utils.TruncateTitle(replyOnComment.Content, 4)
 			tokens := mongo.GetTokensByProfiles([]bson.ObjectId{participant})
 			data := i18n.DataModel{
 				Name:  comment.Created.Name,
-				Count: participantCount - 1,
 				Comment: commentTitle,
 			}
 			var templateName, msgStr string
-			if participantCount > 1 {
-				// create message for multi
-				templateName = "reply_on_same_comment_multi"
-			} else {
-				// create message for single
-				templateName = "reply_on_same_comment_one"
-			}
+			templateName = "reply_on_same_comment_one"
 
 			msgStr = i18n.GetString(receiver.Language, templateName, data)
 			msgStr = strings.Replace(msgStr, "\"\" ", "", 1)
