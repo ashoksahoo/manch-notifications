@@ -67,9 +67,10 @@ func CommentSubscriberCB(subj, reply string, c *subscribers.Comment) {
 		*/
 		participants := mongo.GetRepliesByCommentId(comment.Post.Id, replyOnComment.Id, comment.Created.ProfileId)
 		for _, participant := range participants {
-			if participant == comment.Created.ProfileId {
+			if participant == comment.Created.ProfileId || participant == replyOnComment.Created.ProfileId {
 				continue
 			}
+
 			identity := participant.Hex() + "_" + comment.Post.Id.Hex() + "_" + replyOnComment.Id.Hex() + "_multi_reply"
 			notif := mongo.CreateNotification(mongo.NotificationModel{
 				Receiver:        participant,
@@ -214,7 +215,7 @@ func CommentSubscriberCB(subj, reply string, c *subscribers.Comment) {
 	if len(comment.Parents) < 2 {
 		participants := mongo.GetCommentsByPostId(comment.Post.Id, comment.Created.ProfileId)
 		for _, participant := range participants {
-			if participant == comment.Created.ProfileId {
+			if participant == comment.Created.ProfileId || participant == comment.Post.Created.ProfileId {
 				continue
 			}
 			identity := participant.Hex() + "_" + comment.Post.Id.Hex() + "_multi_comment"
@@ -230,6 +231,35 @@ func CommentSubscriberCB(subj, reply string, c *subscribers.Comment) {
 				Entities:        commentEntity,
 				NUUID:           "",
 			})
+			participantCount := len(notif.Participants)
+
+			receiver := mongo.GetProfileById(participant)
+			postTitle := utils.TruncateTitle(comment.Post.Title, 4)
+			data := i18n.DataModel{
+				Name:  comment.Created.Name,
+				Post: postTitle,
+				Count: participantCount - 1,
+			}
+			var templateName, msgStr string
+			if participantCount > 1 {
+				templateName = "comment_on_same_post_multi"	
+			} else {
+				templateName = "comment_on_same_post_one"
+			}
+
+			msgStr = i18n.GetString(receiver.Language, templateName, data)
+			msgStr = strings.Replace(msgStr, "\"\" ", "", 1)
+
+			messageMeta := mongo.MessageMeta{
+				Template: templateName,
+				Data:     data,
+			}
+			// update notification message
+			mongo.UpdateNotification(bson.M{"_id": notif.Id}, bson.M{
+				"message":      msgStr,
+				"message_meta": messageMeta,
+			})
+
 			fmt.Printf("Notification created for multi comments with id %s", notif.Id.Hex())
 		}
 	}
