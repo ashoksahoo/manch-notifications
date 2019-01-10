@@ -63,7 +63,7 @@ func CommentSubscriberCB(subj, reply string, c *subscribers.Comment) {
 			},
 		}
 		/*
-		Create notification for Multi reply on comments
+			Create notification for Multi reply on comments
 		*/
 		participants := mongo.GetRepliesByCommentId(comment.Post.Id, replyOnComment.Id, comment.Created.ProfileId)
 		for _, participant := range participants {
@@ -83,6 +83,56 @@ func CommentSubscriberCB(subj, reply string, c *subscribers.Comment) {
 				Entities:        replyEntity,
 				NUUID:           "",
 			})
+			participantCount := len(notif.Participants)
+			receiver := mongo.GetProfileById(participant)
+			commentTitle := utils.TruncateTitle(replyOnComment.Content, 4)
+			tokens := mongo.GetTokensByProfiles([]bson.ObjectId{participant})
+			data := i18n.DataModel{
+				Name:  comment.Created.Name,
+				Count: participantCount - 1,
+				Comment: commentTitle,
+			}
+			var templateName, msgStr string
+			if participantCount > 1 {
+				// create message for multi
+				templateName = "reply_on_same_comment_multi"
+			} else {
+				// create message for single
+				templateName = "reply_on_same_comment_one"
+			}
+
+			msgStr = i18n.GetString(receiver.Language, templateName, data)
+			msgStr = strings.Replace(msgStr, "\"\" ", "", 1)
+			title := i18n.GetAppTitle(receiver.Language)
+
+			messageMeta := mongo.MessageMeta{
+				Template: templateName,
+				Data:     data,
+			}
+			// update notification message
+			mongo.UpdateNotification(bson.M{"_id": notif.Id}, bson.M{
+				"message":      msgStr,
+				"message_meta": messageMeta,
+			})
+
+			msg := firebase.ManchMessage{
+				Title:      title,
+				Message:    msgStr,
+				Icon:       mongo.ExtractThumbNailFromPost(comment.Post),
+				DeepLink:   "manch://posts/" + comment.PostId.Hex(),
+				BadgeCount: strconv.Itoa(comment.Post.CommentCount),
+				Id:         notif.NId,
+			}
+
+			fmt.Printf("\nGCM Message %+v\n", msg)
+			//firebase.SendMessage(msg, "frgp37gfvFg:APA91bHbnbfoX-bp3M_3k-ceD7E4fZ73fcmVL4b5DGB5cQn-fFEvfbj3aAI9g0wXozyApIb-6wGsJauf67auK1p3Ins5Ff7IXCN161fb5JJ5pfBnTZ4LEcRUatO6wimsbiS7EANoGDr4")
+			if tokens != nil {
+				for _, token := range tokens {
+					go firebase.SendMessage(msg, token.Token, notif)
+				}
+			} else {
+				fmt.Printf("No token")
+			}
 			fmt.Printf("Notification created for multi reply with id %s", notif.Id.Hex())
 		}
 	}

@@ -44,6 +44,11 @@ var Strings = map[string]map[string]string{
 		"share_post_three": "{{.Name}}, {{.Name2}} और {{.Name3}} ने आपकी पोस्ट \"{{.Post}}\" को शेयर किया है. आप भी अपने पोस्ट को दोस्तों के साथ शेयर करें और अपने फॉलोअर्स बढ़ायें.",
 		"share_post_multi": "{{.Name}} और {{.Count}} अन्य सदस्य ने आपकी पोस्ट \"{{.Post}}\" को शेयर किया है. आप भी अपने पोस्ट को दोस्तों के साथ शेयर करें और अपने फॉलोअर्स बढ़ायें.",
 
+		"reply_on_same_comment_one": "{{.Name}} has also replied to the comment \"{{.Comment}}\"",
+		"reply_on_same_comment_two": "{{.Name}} and {{.Name2}} have also replied to the comment \"{{.Comment}}\"",
+		"reply_on_same_comment_three": "{{.Name}}, {{.Name2}} and {{.Name3}} नhave also replied to the comment \"{{.Comment}}\"",
+		"reply_on_same_comment_multi": "{{.Name}} and {{.Count}} other have also replied to the comment \"{{.Comment}}\"",
+
 	},
 
 	"hi": {
@@ -84,11 +89,15 @@ var Strings = map[string]map[string]string{
 		"comment_on_same_post_three": "{{.Name}}, {{.Name2}} और {{.Name3}} ने भी  पोस्ट \"{{.Post}}\" पर कमेंट किया है",
 		"comment_on_same_post_multi": "{{.Name}} और {{.Count}} अन्य सदस्य ने भी  पोस्ट \"{{.Post}}\" पर कमेंट किया है",
 
+		"reply_on_same_comment_one": "{{.Name}} ने भी \"{{.Comment}}\" का जवाब दिया है",
+		"reply_on_same_comment_two": "{{.Name}} और {{.Name2}} ने भी \"{{.Comment}}\" का जवाब दिया है",
+		"reply_on_same_comment_three": "{{.Name}}, {{.Name2}} और {{.Name3}} ने भी \"{{.Comment}}\" का जवाब दिया है",
+		"reply_on_same_comment_multi": "{{.Name}} और {{.Count}} अन्य सदस्य ने भी \"{{.Comment}}\" का जवाब दिया है",
+
 		"share_post_one": "{{.Name}}  ने आपकी पोस्ट \"{{.Post}}\" को शेयर किया है. आप भी अपने पोस्ट को दोस्तों के साथ शेयर करें और अपने फॉलोअर्स बढ़ायें.",
 		"share_post_two": "{{.Name}} और {{.Name2}}  ने आपकी पोस्ट \"{{.Post}}\" को शेयर किया है. आप भी अपने पोस्ट को दोस्तों के साथ शेयर करें और अपने फॉलोअर्स बढ़ायें.",
 		"share_post_three": "{{.Name}}, {{.Name2}} और {{.Name3}} ने आपकी पोस्ट \"{{.Post}}\" को शेयर किया है. आप भी अपने पोस्ट को दोस्तों के साथ शेयर करें और अपने फॉलोअर्स बढ़ायें.",
 		"share_post_multi": "{{.Name}} और {{.Count}} अन्य सदस्य ने आपकी पोस्ट \"{{.Post}}\" को शेयर किया है. आप भी अपने पोस्ट को दोस्तों के साथ शेयर करें और अपने फॉलोअर्स बढ़ायें.",
-
 	},
 
 	"te": {
@@ -128,6 +137,11 @@ var Strings = map[string]map[string]string{
 		"comment_on_same_post_two": "{{.Name}} మరియు {{.Name2}} కూడా \"{{.Post}}\" పోస్టుపై కామెంట్ చేసారు",
 		"comment_on_same_post_three": "{{.Name}}, {{.Name2}} మరియు {{.Name3}} కూడా \"{{.Post}}\" పోస్టుపై కామెంట్ చేసారు",
 		"comment_on_same_post_multi": "{{.Name}} మరియు ఇంకో {{.Count}} వ్యక్తులు కూడా \"{{.Post}}\" పోస్టుపై కామెంట్ చేసారు",
+
+		"reply_on_same_comment_one": "{{.Name}} గారు మీ కామెంట్ \"{{.Comment}}\" కి రిప్లయ్ ఇచ్చారు",
+		"reply_on_same_comment_two": "{{.Name}} మరియు {{.Name2}} గారు కూడా మీ కామెంట్ \"{{.Comment}}\" కి రిప్లయ్ ఇచ్చారు",
+		"reply_on_same_comment_three": "{{.Name}}, {{.Name2}} మరియు {{.Name3}} గారు కూడా మీ కామెంట్ \"{{.Comment}}\" కి రిప్లయ్ ఇచ్చారు",
+		"reply_on_same_comment_multi": "{{.Name}} మరియు {{.Count}} వ్యక్తులు కూడా మీ కామెంట్ \"{{.Comment}}\" కి రిప్లయ్ ఇచ్చారు",
 
 		"share_post_one": "{{.Name}} మీ పోస్ట్  \"{{.Post}}\" ని వారి ఫ్రండ్స్ తో  షేర్ చేశారు . మీరు కుడా మీ ఫ్రెండ్స్ తో షేర్ చేయండి మరియూ మీ ఫాలోవర్స్ ని పెంచుకోండి",
         "share_post_two": "{{.Name}} మరియు {{.Name2}}  మీ పోస్ట్\"{{.Post}}\"ని వారి ఫ్రండ్స్ తో  షేర్ చేశారు . మీరు కుడా మీ ఫ్రెండ్స్ తో షేర్ చేయండి మరియూ మీ ఫాలోవర్స్ ని పెంచుకోండి. ",
