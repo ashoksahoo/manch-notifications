@@ -29,7 +29,6 @@ func GetFullCommentById(Id string) (CommentModel, int) {
 	return c, uniqCommentator
 }
 
-
 func GetCommentCount(postId bson.ObjectId) int {
 	s := session.Clone()
 	defer s.Close()
@@ -66,4 +65,31 @@ func GetCommentById(Id string) CommentModel {
 	c := CommentModel{}
 	C.Find(bson.M{"_id": bson.ObjectIdHex(Id)}).One(&c)
 	return c
+}
+
+func GetCommentsByPostId(postId, commentCreator bson.ObjectId) []bson.ObjectId{
+	s := session.Clone()
+	defer s.Close()
+	C := s.DB("manch").C("comments")
+	var result []bson.ObjectId
+	C.Find(bson.M{
+		"post_id": postId,
+		"created.profile_id": bson.M{"$ne": commentCreator},
+		"parents" : bson.M{"$exists":true},
+		"$where":"this.parents.length<2",
+	}).Distinct("created.profile_id", &result)
+	return result
+}
+
+func GetRepliesByCommentId(postId, commentId, replyCreator bson.ObjectId) []bson.ObjectId {
+	s := session.Clone()
+	defer s.Close()
+	C := s.DB("manch").C("comments")
+	var result []bson.ObjectId
+	C.Find(bson.M{
+		"post_id": postId,
+		"comment_id": commentId,
+		"created.profile_id": bson.M{"$ne": replyCreator},
+	}).Distinct("created.profile_id", &result)
+	return result
 }

@@ -124,7 +124,8 @@ func CreateNotification(notification NotificationModel) NotificationModel {
 		}
 		N.Insert(n)
 	}
-	return GetNotificationByIdentifier(notification.Identifier)
+	_, notif :=  GetNotificationByIdentifier(notification.Identifier)
+	return notif
 }
 
 func UpdateNotification(query, update bson.M) {
@@ -134,11 +135,11 @@ func UpdateNotification(query, update bson.M) {
 	N.Update(query, bson.M{"$set": update})
 }
 
-func GetNotificationByIdentifier(identifier string) NotificationModel {
+func GetNotificationByIdentifier(identifier string) (error, NotificationModel) {
 	s := session.Clone()
 	defer s.Close()
 	N := s.DB("manch").C("notificationsv2")
 	notif := NotificationModel{}
-	N.Find(bson.M{"identifier": identifier, "is_read": false}).One(&notif)
-	return notif
+	err := N.Find(bson.M{"identifier": identifier, "is_read": false}).One(&notif)
+	return err, notif
 }
