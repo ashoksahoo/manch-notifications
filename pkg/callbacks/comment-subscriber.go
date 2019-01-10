@@ -57,11 +57,11 @@ func CommentSubscriberCB(subj, reply string, c *subscribers.Comment) {
 
 		entities := []mongo.Entity{
 			{
-				EntityId: comment.Post.Id,
+				EntityId:   comment.Post.Id,
 				EntityType: "post",
 			},
 			{
-				EntityId: replyOnComment.Id,
+				EntityId:   replyOnComment.Id,
 				EntityType: "comment",
 			},
 		}
@@ -102,11 +102,11 @@ func CommentSubscriberCB(subj, reply string, c *subscribers.Comment) {
 
 		messageMeta := mongo.MessageMeta{
 			Template: templateName,
-			Data: data1,
+			Data:     data1,
 		}
 		// update notification message
 		mongo.UpdateNotification(bson.M{"_id": notification1.Id}, bson.M{
-			"message": msgStr1,
+			"message":      msgStr1,
 			"message_meta": messageMeta,
 		})
 
@@ -130,18 +130,42 @@ func CommentSubscriberCB(subj, reply string, c *subscribers.Comment) {
 	}
 
 	/*
-	Comment on same post logic
-	1. create unique identifier <profileId>_<post_id>_<purpose>
-	2. get all previous commentator and update their participants
-	3. accordingly
+		Comment on same post logic
+		1. create unique identifier <profileId>_<post_id>_<purpose>
+		2. get all previous commentator and update their participants
+		3. accordingly
 	*/
-
+	entities := []mongo.Entity{
+		{
+			EntityId:   comment.Post.Id,
+			EntityType: "post",
+		},
+		{
+			EntityId:   comment.Id,
+			EntityType: "comment",
+		},
+	}
 	participants := mongo.GetCommentsByPostId(comment.Post.Id, comment.Created.ProfileId)
 
 	for _, participant := range participants {
 		if participant == comment.Created.ProfileId {
 			continue
 		}
+		// create notification with identifier <profile_id>_<post_id>_<multi_comments>
+		identity := participant.Hex() + "_" + comment.Post.Id.Hex() + "_multi_comments"
+		notif := mongo.CreateNotification(mongo.NotificationModel{
+			Receiver:        participant,
+			Identifier:      identity,
+			Participants:    []bson.ObjectId{comment.Created.ProfileId},
+			DisplayTemplate: "transactional",
+			EntityGroupId:   c.Id,
+			ActionId:        comment.Id,
+			ActionType:      "comment",
+			Purpose:         "multi_comment",
+			Entities:        entities,
+			NUUID:           "",
+		})
+		fmt.Printf("Notification created for multi comments with id %s", notif.Id.Hex())
 
 	}
 
@@ -154,16 +178,6 @@ func CommentSubscriberCB(subj, reply string, c *subscribers.Comment) {
 	tokens := mongo.GetTokensByProfiles([]bson.ObjectId{comment.Post.Created.ProfileId})
 	// notification := mongo.CreateNotification(comment.PostId, "comment", "post", comment.Post.Created.ProfileId)
 
-	entities := []mongo.Entity{
-		{
-			EntityId: comment.Post.Id,
-			EntityType: "post",
-		},
-		{
-			EntityId: comment.Id,
-			EntityType: "comment",
-		},
-	}
 	notification := mongo.CreateNotification(mongo.NotificationModel{
 		Receiver:        postCreator.Id,
 		Identifier:      c.Id + "_comment",
@@ -198,11 +212,11 @@ func CommentSubscriberCB(subj, reply string, c *subscribers.Comment) {
 
 	messageMeta := mongo.MessageMeta{
 		Template: templateName,
-		Data: data,
+		Data:     data,
 	}
 	// update notification message
 	mongo.UpdateNotification(bson.M{"_id": notification.Id}, bson.M{
-		"message": msgStr,
+		"message":      msgStr,
 		"message_meta": messageMeta,
 	})
 

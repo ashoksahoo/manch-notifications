@@ -77,7 +77,6 @@ func GetCommentsByPostId(postId, commentCreator bson.ObjectId) []bson.ObjectId{
 		"created.profile_id": bson.M{"$ne": commentCreator},
 		"parents" : bson.M{"$exists":true},
 		"$where":"this.parents.length<2",
-
 	}).Distinct("created.profile_id", &result)
 	return result
 }
