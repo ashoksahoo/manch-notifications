@@ -80,3 +80,16 @@ func GetCommentsByPostId(postId, commentCreator bson.ObjectId) []bson.ObjectId{
 	}).Distinct("created.profile_id", &result)
 	return result
 }
+
+func GetRepliesByCommentId(postId, commentId, replyCreator bson.ObjectId) []bson.ObjectId {
+	s := session.Clone()
+	defer s.Close()
+	C := s.DB("manch").C("comments")
+	var result []bson.ObjectId
+	C.Find(bson.M{
+		"post_id": postId,
+		"comment_id": commentId,
+		"created.profile_id": bson.M{"$ne": replyCreator},
+	}).Distinct("created.profile_id", &result)
+	return result
+}
