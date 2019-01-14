@@ -2,6 +2,7 @@ package mongo
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/globalsign/mgo/bson"
 )
@@ -24,11 +25,12 @@ type Creator struct {
 }
 
 type UserModel struct {
-	Id       bson.ObjectId `json:"_id" bson:"_id"`
-	Name     string        `json:"name" bson:"name"`
-	Phone    string        `json:"phone" bson:"phone"`
-	Profiles []Profile     `json:"profiles" bson:"profiles"`
-	UserType string        `json:"type" bson:"type"`
+	Id        bson.ObjectId `json:"_id" bson:"_id"`
+	Name      string        `json:"name" bson:"name"`
+	Phone     string        `json:"phone" bson:"phone"`
+	Profiles  []Profile     `json:"profiles" bson:"profiles"`
+	UserType  string        `json:"type" bson:"type"`
+	CreatedAt time.Time     `json:"createdAt" bson:"createdAt"`
 }
 
 func GetUserById(Id string) UserModel {
