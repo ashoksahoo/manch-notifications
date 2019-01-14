@@ -275,10 +275,10 @@ func CommentSubscriberCB(subj, reply string, c *subscribers.Comment) {
 
 	// update user score
 	mongo.CreateUserScore(mongo.UserScore{
-		ProfileId: postCreator.Id,
+		ProfileId: comment.Created.ProfileId,
 		CommunityId: comment.Post.CommunityIds[0],
 		Score: 1,
-		UserType: postCreator.Type,
+		UserType: comment.Created.UserType,
 	})
 
 	notification := mongo.CreateNotification(mongo.NotificationModel{
