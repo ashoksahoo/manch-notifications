@@ -272,7 +272,14 @@ func CommentSubscriberCB(subj, reply string, c *subscribers.Comment) {
 	}
 	postCreator := mongo.GetProfileById(comment.Post.Created.ProfileId)
 	tokens := mongo.GetTokensByProfiles([]bson.ObjectId{comment.Post.Created.ProfileId})
-	// notification := mongo.CreateNotification(comment.PostId, "comment", "post", comment.Post.Created.ProfileId)
+
+	// update user score
+	mongo.CreateUserScore(mongo.UserScore{
+		ProfileId: comment.Created.ProfileId,
+		CommunityId: comment.Post.CommunityIds[0],
+		Score: 1,
+		UserType: comment.Created.UserType,
+	})
 
 	notification := mongo.CreateNotification(mongo.NotificationModel{
 		Receiver:        postCreator.Id,

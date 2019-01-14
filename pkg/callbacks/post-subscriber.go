@@ -30,6 +30,17 @@ func PostSubscriberCB(subj, reply string, p *subscribers.Post) {
 			i++
 		}
 	}
+
+	// update user score for new post
+	_, post := mongo.GetPostById(p.Id)
+	mongo.CreateUserScore(mongo.UserScore{
+		ProfileId:   post.Created.ProfileId,
+		CommunityId: post.CommunityIds[0],
+		Score:       1,
+		UserType:    post.Created.UserType,
+	})
+
+	// Schedule vote on new Post
 	rand.Seed(time.Now().UnixNano())
 	rand.Shuffle(i, func(i, j int) { botProfilesIds[i], botProfilesIds[j] = botProfilesIds[j], botProfilesIds[i] })
 	var no_of_votes int

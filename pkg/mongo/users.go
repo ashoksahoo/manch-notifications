@@ -12,6 +12,7 @@ type Profile struct {
 	Name          string        `json:"name"`
 	Language      string        `json:"language"`
 	FollowerCount int           `json:"no_of_followers" bson:"no_of_followers"`
+	Type          string        `json:"type" bson:"type"`
 }
 
 type Creator struct {
