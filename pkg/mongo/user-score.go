@@ -33,7 +33,6 @@ func CreateUserScore(userScore UserScore) {
 	} else {
 		fmt.Printf("inserting user score %+v\n", userScore)
 		US.Insert(userScore)
-		fmt.Println("inserted user score")
 	}
 }
 
