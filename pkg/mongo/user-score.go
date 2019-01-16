@@ -20,7 +20,7 @@ type UserScore struct {
 func CreateUserScore(userScore UserScore) {
 	s := session.Clone()
 	defer s.Close()
-	US := s.DB("manch").C("user_score")
+	US := s.DB("manch").C("user_scores")
 	userScore.LastUpdated = time.Now()
 	userScore.Id = bson.NewObjectId()
 
@@ -44,7 +44,7 @@ func CreateUserScore(userScore UserScore) {
 func GetUserScoreById(id bson.ObjectId) UserScore {
 	s := session.Clone()
 	defer s.Close()
-	US := s.DB("manch").C("user_score")
+	US := s.DB("manch").C("user_scores")
 	userScore := UserScore{}
 	US.Find(bson.M{"_id": id}).One(&userScore)
 	return userScore
