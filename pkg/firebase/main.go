@@ -32,26 +32,39 @@ String MSG_CHANNEL_ID = "mnc_cid";
 String MSG_COLLAPSE_KEY = "mnc_ck";
 String MSG_PRIORITY = "mnc_pr";
 String MSG_ACTIONS = "mnc_acts";
-
+// notification "type" attribute  [ P(promotional) T(Transactional) ]
+String MSG_TYPE = "mnc_at";
+// notification purpose attribute  [ C(campaign), TC(txn comment), TL(Txn Like) etc.   ]
+String MSG_PURPOSE = "mnc_ap";
+// notification campaign id
+String MSG_CAMPAIGN_ID = "mnc_acid";
+// notification AB test variations
+String MSG_AB_TEST_VARIATION = "mnc_atv";
+// notification date attribute
+String MSG_DATE = "mnc_ad";
  */
 type ManchMessage struct {
-	Id          string `json:"mnc_nid,omitempty"`
-	Namespace   string `json:"mnc_ns,omitempty"`
-	Title       string `json:"mnc_nt,omitempty"`
-	Message     string `json:"mnc_nm,omitempty"`
-	Icon        string `json:"mnc_ico,omitempty"`
-	DeepLink    string `json:"mnc_dl,omitempty"`
-	Sound       string `json:"mnc_sound,omitempty"`
-	BigPicture  string `json:"mnc_bp,omitempty"`
-	BadgeIcon   string `json:"mnc_bi,omitempty"`
-	BadgeCount  string `json:"mnc_bc,omitempty"`
-	ChannelId   string `json:"mnc_cid,omitempty"`
-	CollapseKey string `json:"mnc_ck,omitempty"`
-	Priority    string `json:"mnc_pr,omitempty"`
-	Actions     string `json:"mnc_acts,omitempty"`
-	Silent      string `json:"mns_sn,omitempty"`
-	MessageType string `json:"manch_message_type,omitempty"`
-	MNCID 		string `json:"mnc_id" bson:"mnc_id"`
+	Id          	string `json:"mnc_nid,omitempty"`
+	Namespace   	string `json:"mnc_ns,omitempty"`
+	Title       	string `json:"mnc_nt,omitempty"`
+	Message     	string `json:"mnc_nm,omitempty"`
+	Icon        	string `json:"mnc_ico,omitempty"`
+	DeepLink    	string `json:"mnc_dl,omitempty"`
+	Sound       	string `json:"mnc_sound,omitempty"`
+	BigPicture  	string `json:"mnc_bp,omitempty"`
+	BadgeIcon   	string `json:"mnc_bi,omitempty"`
+	BadgeCount  	string `json:"mnc_bc,omitempty"`
+	ChannelId   	string `json:"mnc_cid,omitempty"`
+	CollapseKey 	string `json:"mnc_ck,omitempty"`
+	Priority    	string `json:"mnc_pr,omitempty"`
+	Actions     	string `json:"mnc_acts,omitempty"`
+	Silent      	string `json:"mns_sn,omitempty"`
+	MNCID 			string `json:"mnc_id" bson:"mnc_id"`
+	MessageType 	string `json:"mnc_at" bson:"mnc_at"`
+	Purpose 		string `json:"mnc_ap" bson:"mnc_ap"`
+	CampaignId 		string `json:"mnc_acid" bson:"mnc_acid"`
+	TestVariation 	string `json:"mnc_atv" bson:"mnc_atv"`
+	Date 			string `json:"mnc_ad" bson:"mnc_ad"`
 }
 
 func MessageBuilder(m ManchMessage) map[string]string {
@@ -67,6 +80,10 @@ func SendMessage(m ManchMessage, token string, notification mongo.NotificationMo
 	if m.Icon == "" {
 		m.Icon = "https://manch.app/img/new-logo.png"
 	}
+	m.MessageType = "T"
+	m.Purpose = notification.Purpose
+	m.Date = time.Now().String()
+
 	m.MNCID = notification.NUUID
 	message := &messaging.Message{
 		Data:         MessageBuilder(m),
