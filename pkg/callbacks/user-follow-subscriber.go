@@ -52,17 +52,17 @@ func UserFollowSubscriberCB(subj, reply string, uf *subscribers.Subscription) {
 		Entities:        entities,
 		NUUID:           "",
 	})
-	count := followsTo.FollowerCount - 1
+	count := followsTo.FollowerCount
 	data := i18n.DataModel{
 		Name:  follower.Name,
-		Count: count,
+		Count: count - 1,
 	}
 	var msgStr string
 	var templateName string
-	if count == 8 {
+	if count == 9 {
 		// 10th follower notification
 		data.Name = followsTo.Name
-		data.Count = count + 2
+		data.Count = count + 1
 		notifImages := []string{"tenth_follower_image_1", "tenth_follower_image_2", "tenth_follower_image_3"}
 		notifText := []string{"tenth_follower_text_1", "tenth_follower_text_2", "tenth_follower_text_3"}
 		randomIndex := utils.Random(0, 3)
@@ -102,7 +102,7 @@ func UserFollowSubscriberCB(subj, reply string, uf *subscribers.Subscription) {
 
 		return
 
-	} else if count > 0 {
+	} else if count > 1 {
 		templateName = "follow_user_multi"
 	} else {
 		templateName = "follow_user_one"
@@ -141,3 +141,6 @@ func UserFollowSubscriberCB(subj, reply string, uf *subscribers.Subscription) {
 	fmt.Printf("Processed a User follow on subject %s! with user follow ID %s\n", subj, uf.Id)
 
 }
+
+
+
