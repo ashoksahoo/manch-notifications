@@ -59,10 +59,10 @@ func UserFollowSubscriberCB(subj, reply string, uf *subscribers.Subscription) {
 	}
 	var msgStr string
 	var templateName string
-	if count == 9 {
+	if count == 8 {
 		// 10th follower notification
 		data.Name = followsTo.Name
-		data.Count = count + 1
+		data.Count = count + 2
 		notifImages := []string{"tenth_follower_image_1", "tenth_follower_image_2", "tenth_follower_image_3"}
 		notifText := []string{"tenth_follower_text_1", "tenth_follower_text_2", "tenth_follower_text_3"}
 		randomIndex := utils.Random(0, 3)
