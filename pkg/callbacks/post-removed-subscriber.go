@@ -74,7 +74,7 @@ func PostRemovedSubscriberCB(subj, reply string, p *subscribers.Post) {
 		Title:    title,
 		Message:  msgStr,
 		Icon:     mongo.ExtractThumbNailFromPost(post),
-		DeepLink: "manch://profile/" + postCreator.Id.Hex(),
+		DeepLink: "manch://posts/terms_" + post.Id.Hex(),
 		Id:       notification.NId,
 	}
 
