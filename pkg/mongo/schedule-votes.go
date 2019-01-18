@@ -65,3 +65,15 @@ func AddVoteSchedule(document VoteScheduleModelPost) {
 		fmt.Println("unable to add vote schedule:", document.Resource.Hex())
 	}
 }
+
+func RemoveVoteScheduleByResource(rId bson.ObjectId) {
+	s := session.Clone()
+	defer s.Close()
+	V := s.DB("manch").C("vote_scheduleds")
+	info, err := V.RemoveAll(bson.M{"resource": rId})
+	if err != nil {
+		fmt.Println(err)
+	} else {
+		fmt.Println("removed info", info)
+	}
+}

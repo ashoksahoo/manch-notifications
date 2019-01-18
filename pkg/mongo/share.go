@@ -71,3 +71,15 @@ func AddShareSchedule(document ShareScheduleModel) {
 		fmt.Println("unable to add share schedule:", document.ResourceId.Hex())
 	}
 }
+
+func RemoveShareScheduleByResource(rId bson.ObjectId) {
+	s := session.Clone()
+	defer s.Close()
+	F := s.DB("manch").C("shares_scheduleds")
+	info, err := F.RemoveAll(bson.M{"resource_id": rId})
+	if err != nil {
+		fmt.Println(err)
+	} else {
+		fmt.Println("removed info", info)
+	}
+}
