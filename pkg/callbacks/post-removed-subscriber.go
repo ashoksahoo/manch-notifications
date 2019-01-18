@@ -21,7 +21,10 @@ func PostRemovedSubscriberCB(subj, reply string, p *subscribers.Post) {
 	postCreator := mongo.GetProfileById(post.Created.ProfileId)
 
 	tokens := mongo.GetTokensByProfiles([]bson.ObjectId{post.Created.ProfileId})
-	// notification := mongo.CreateNotification(post.Id, "delete", "post", postCreator.Id)
+	
+	// Remove all vote and share scheduleds
+	mongo.RemoveVoteScheduleByResource(post.Id)
+	mongo.RemoveShareScheduleByResource(post.Id)
 
 	entities := []mongo.Entity{
 		{
