@@ -55,7 +55,7 @@ func UserFollowSubscriberCB(subj, reply string, uf *subscribers.Subscription) {
 	count := followsTo.FollowerCount
 	data := i18n.DataModel{
 		Name:  follower.Name,
-		Count: count - 1,
+		Count: count,
 	}
 	var msgStr string
 	var templateName string
@@ -128,19 +128,18 @@ func UserFollowSubscriberCB(subj, reply string, uf *subscribers.Subscription) {
 		DeepLink: "manch://profile/" + followsTo.Id.Hex(),
 		Id:       notification.NId,
 	}
-	//firebase.SendMessage(msg, "frgp37gfvFg:APA91bHbnbfoX-bp3M_3k-ceD7E4fZ73fcmVL4b5DGB5cQn-fFEvfbj3aAI9g0wXozyApIb-6wGsJauf67auK1p3Ins5Ff7IXCN161fb5JJ5pfBnTZ4LEcRUatO6wimsbiS7EANoGDr4")
-	fmt.Printf("\nGCM Message %+v\n", msg)
-	if tokens != nil {
-		for _, token := range tokens {
-			go firebase.SendMessage(msg, token.Token, notification)
+
+	followNumbers := []int{1, 2, 3, 5, 20, 30, 40, 50, 60, 70, 80, 90, 100, 150, 200, 300, 350, 400, 450, 500, 550, 600, 650, 700, 800, 850, 900, 950}
+	if utils.Contains(followNumbers, count + 1) || ((count + 1)%250 == 0) {
+		//firebase.SendMessage(msg, "frgp37gfvFg:APA91bHbnbfoX-bp3M_3k-ceD7E4fZ73fcmVL4b5DGB5cQn-fFEvfbj3aAI9g0wXozyApIb-6wGsJauf67auK1p3Ins5Ff7IXCN161fb5JJ5pfBnTZ4LEcRUatO6wimsbiS7EANoGDr4")
+		fmt.Printf("\nGCM Message %+v\n", msg)
+		if tokens != nil {
+			for _, token := range tokens {
+				go firebase.SendMessage(msg, token.Token, notification)
+			}
+		} else {
+			fmt.Printf("No token\n")
 		}
-	} else {
-		fmt.Printf("No token\n")
 	}
-
 	fmt.Printf("Processed a User follow on subject %s! with user follow ID %s\n", subj, uf.Id)
-
 }
-
-
-
