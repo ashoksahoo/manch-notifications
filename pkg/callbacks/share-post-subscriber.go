@@ -54,7 +54,7 @@ func SharePostSubscriberCB(subj, reply string, share *subscribers.SharePost) {
 	count := share.ShareCount
 	data := i18n.DataModel{
 		Name:  profile.Name,
-		Count: count - 1,
+		Count: count,
 	}
 	var msgStr string
 	templates := []string{"share_post_multi", "share_post_multi_1", "share_post_multi_2", "share_post_multi_3"}
