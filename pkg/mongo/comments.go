@@ -1,6 +1,8 @@
 package mongo
 
 import (
+	"fmt"
+
 	"github.com/globalsign/mgo/bson"
 )
 
@@ -67,16 +69,16 @@ func GetCommentById(Id string) CommentModel {
 	return c
 }
 
-func GetCommentsByPostId(postId, commentCreator bson.ObjectId) []bson.ObjectId{
+func GetCommentsByPostId(postId, commentCreator bson.ObjectId) []bson.ObjectId {
 	s := session.Clone()
 	defer s.Close()
 	C := s.DB("manch").C("comments")
 	var result []bson.ObjectId
 	C.Find(bson.M{
-		"post_id": postId,
+		"post_id":            postId,
 		"created.profile_id": bson.M{"$ne": commentCreator},
-		"parents" : bson.M{"$exists":true},
-		"$where":"this.parents.length<2",
+		"parents":            bson.M{"$exists": true},
+		"$where":             "this.parents.length<2",
 	}).Distinct("created.profile_id", &result)
 	return result
 }
@@ -87,9 +89,21 @@ func GetRepliesByCommentId(postId, commentId, replyCreator bson.ObjectId) []bson
 	C := s.DB("manch").C("comments")
 	var result []bson.ObjectId
 	C.Find(bson.M{
-		"post_id": postId,
-		"comment_id": commentId,
+		"post_id":            postId,
+		"comment_id":         commentId,
 		"created.profile_id": bson.M{"$ne": replyCreator},
 	}).Distinct("created.profile_id", &result)
 	return result
+}
+
+func RemoveCommentScheduleByPostId(pId bson.ObjectId) {
+	s := session.Clone()
+	defer s.Close()
+	C := s.DB("manch").C("comment_scheduleds")
+	info, err := C.RemoveAll(bson.M{"post_id": pId})
+	if err != nil {
+		fmt.Println(err)
+	} else {
+		fmt.Println("deleted comment schedule info", info)
+	}
 }
