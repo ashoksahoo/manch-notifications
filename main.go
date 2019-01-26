@@ -45,6 +45,9 @@ func main() {
 	// received share-post event
 	subscribers.SharePostSubscriber(callbacks.SharePostSubscriberCB)
 
+	// received post deleted event
+	subscribers.PostDeletedSubscriber(callbacks.PostDeletedSubscriberCB)
+
 	// listen on http server 5000
 	http.ListenAndServe(":5000", r)
 }

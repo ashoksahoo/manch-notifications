@@ -48,6 +48,10 @@ func RepostSubscriber(callback func(subj, reply string, m *Post)) {
 	go c.QueueSubscribe(subject("post.re-post"), queue(), callback)
 }
 
+func PostDeletedSubscriber(callback func(subj, reply string, m *Post)) {
+	go c.QueueSubscribe(subject("post.deleted"), queue(), callback)	
+}
+
 func CommentSubscriber(callback func(subj, reply string, m *Comment)) {
 	go c.QueueSubscribe(subject("comment.new"), queue(), callback)
 }
