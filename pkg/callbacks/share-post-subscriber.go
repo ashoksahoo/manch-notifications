@@ -8,9 +8,9 @@ import (
 	"notification-service/pkg/i18n"
 	"notification-service/pkg/mongo"
 	"notification-service/pkg/subscribers"
+	"notification-service/pkg/utils"
 
 	"github.com/globalsign/mgo/bson"
-
 )
 
 func SharePostSubscriberCB(subj, reply string, share *subscribers.SharePost) {
@@ -21,10 +21,10 @@ func SharePostSubscriberCB(subj, reply string, share *subscribers.SharePost) {
 			fmt.Println("Recovered in subscribers.SharePostSubscriber", share)
 		}
 	}()
-	
+
 	err, post := mongo.GetPostById(share.Id)
 	if err != nil {
-		return;
+		return
 	}
 
 	profile := mongo.GetProfileById(bson.ObjectIdHex(share.ProfileId))
@@ -57,12 +57,9 @@ func SharePostSubscriberCB(subj, reply string, share *subscribers.SharePost) {
 		Count: count - 1,
 	}
 	var msgStr string
-	var templateName string
-	if count > 1 {
-		templateName = "share_post_multi"
-	} else {
-		templateName = "share_post_one"
-	}
+	templates := []string{"share_post_multi", "share_post_multi_1", "share_post_multi_2", "share_post_multi_3"}
+	randomIndex := utils.Random(0, 4)
+	templateName := templates[randomIndex]
 
 	msgStr = i18n.GetString(postCreator.Language, templateName, data)
 	msgStr = strings.Replace(msgStr, "\"\" ", "", 1)
