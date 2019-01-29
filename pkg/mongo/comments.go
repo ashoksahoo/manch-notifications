@@ -2,6 +2,7 @@ package mongo
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/globalsign/mgo/bson"
 )
@@ -17,6 +18,39 @@ type CommentModel struct {
 	CommentId    bson.ObjectId   `json:"comment_id" bson:"comment_id"`
 	Parents      []bson.ObjectId `json:"parents" bson:"parents"`
 	CommentCount int             `json:"no_of_comments" bson:"no_of_comments"`
+}
+
+type CommentScheduleModel struct {
+	Id          bson.ObjectId `json:"_id" bson:"_id,omitempty"`
+	Content     string        `json:"content"`
+	PostId      bson.ObjectId `json:"post_id" bson:"post_id"`
+	Schedule    Schedule      `json:"schedule" bson:"schedule"`
+	Created     Creator       `json:"created" bson:"created"`
+	CommentType string        `json:"comment_type" bson:"comment_type"`
+}
+
+func CreateCommentSchedule(content string, postId bson.ObjectId, commentCreator Creator, scheduleTime time.Time) {
+	s := session.Clone()
+	defer s.Close()
+	C := s.DB("manch").C("comment_scheduleds")
+	schedule := Schedule{
+		Id:           bson.NewObjectId(),
+		Scheduletime: scheduleTime,
+		Created:      commentCreator,
+	}
+	commentScheduleData := CommentScheduleModel{
+		Content:     content,
+		PostId:      postId,
+		Schedule:    schedule,
+		Created:     commentCreator,
+		CommentType: "TEXT",
+	}
+	err := C.Insert(commentScheduleData)
+	if err == nil {
+		fmt.Printf("inserted comment schedule: %+v\n", commentScheduleData)
+	} else {
+		fmt.Println(err)
+	}
 }
 
 func GetFullCommentById(Id string) (CommentModel, int) {
