@@ -101,6 +101,9 @@ func VotePostSubscriberCB(subj, reply string, v *subscribers.Vote) {
 	}
 
 	msgStr = i18n.GetString(postCreator.Language, templateName, data)
+	if count > 25 {
+		msgStr = "❤️ " + msgStr
+	}
 	msgStr = strings.Replace(msgStr, "\"\" ", "", 1)
 	title := i18n.GetAppTitle(postCreator.Language)
 

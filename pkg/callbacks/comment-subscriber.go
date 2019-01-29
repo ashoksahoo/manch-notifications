@@ -310,6 +310,9 @@ func CommentSubscriberCB(subj, reply string, c *subscribers.Comment) {
 	}
 
 	msgStr = i18n.GetString(postCreator.Language, templateName, data)
+	if uniqueCommentator > 25 {
+		msgStr = "👏 " + msgStr
+	}
 	msgStr = strings.Replace(msgStr, "\"\" ", "", 1)
 	title := i18n.GetAppTitle(postCreator.Language)
 
