@@ -36,16 +36,11 @@ func PostModeratedSubscriberCB(subj, reply string, p *subscribers.Post) {
 	rand.Seed(time.Now().UnixNano())
 	rand.Shuffle(i, func(i, j int) { botProfilesIds[i], botProfilesIds[j] = botProfilesIds[j], botProfilesIds[i] })
 
-	randomIndex := utils.Random(0, i)
+	randomBotIndex := utils.Random(0, i)
 
 	postCreator := mongo.GetProfileById(post.Created.ProfileId)
 	if post.PostLevel == "2" || post.PostLevel == "1" {
 		var dbCommentKeys []string
-		// get unique auto comments for this postCreator
-		commentkeys := make([]string, 0, len(i18n.CommentStrings[postCreator.Language]))
-		for k := range i18n.CommentStrings[postCreator.Language] {
-			commentkeys = append(commentkeys, k)
-		}
 		// get comment string from db
 		err, commentString := mongo.GetCommentStringsByProfileId(postCreator.Id)
 		if err != nil {
@@ -53,7 +48,15 @@ func PostModeratedSubscriberCB(subj, reply string, p *subscribers.Post) {
 		} else {
 			dbCommentKeys = commentString.CommentStringIds
 		}
-		fmt.Println("db comment keys", dbCommentKeys)
+		if len(dbCommentKeys) >= 5 {
+			return;
+		}
+		// get unique auto comments for this postCreator
+		commentkeys := make([]string, 0, len(i18n.CommentStrings[postCreator.Language]))
+		for k := range i18n.CommentStrings[postCreator.Language] {
+			commentkeys = append(commentkeys, k)
+		}
+		
 		// get set difference of commentKeys and dbCommentKeys
 		keys := utils.Difference(commentkeys, dbCommentKeys)
 		// no key unique left
@@ -62,7 +65,7 @@ func PostModeratedSubscriberCB(subj, reply string, p *subscribers.Post) {
 		}
 		randomCommentKeyIndex := utils.Random(0, len(keys))
 		comment := i18n.CommentStrings[postCreator.Language][keys[randomCommentKeyIndex]]
-		profileId := botProfilesIds[randomIndex]
+		profileId := botProfilesIds[randomBotIndex]
 		commentator := mongo.GetProfileById(bson.ObjectIdHex(profileId))
 		commentCreator := mongo.Creator {
 			Id:        bson.NewObjectId(),
