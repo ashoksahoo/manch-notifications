@@ -21,11 +21,12 @@ type CommentModel struct {
 }
 
 type CommentScheduleModel struct {
-	Id       bson.ObjectId `json:"_id" bson:"_id,omitempty"`
-	Content  string        `json:"content"`
-	PostId   bson.ObjectId `json:"post_id" bson:"post_id"`
-	Schedule Schedule      `json:"schedule" bson:"schedule"`
-	Created  Creator       `json:"created" bson:"created"`
+	Id          bson.ObjectId `json:"_id" bson:"_id,omitempty"`
+	Content     string        `json:"content"`
+	PostId      bson.ObjectId `json:"post_id" bson:"post_id"`
+	Schedule    Schedule      `json:"schedule" bson:"schedule"`
+	Created     Creator       `json:"created" bson:"created"`
+	CommentType string        `json:"comment_type" bson:"comment_type"`
 }
 
 func CreateCommentSchedule(content string, postId bson.ObjectId, commentCreator Creator, scheduleTime time.Time) {
@@ -38,10 +39,11 @@ func CreateCommentSchedule(content string, postId bson.ObjectId, commentCreator 
 		Created:      commentCreator,
 	}
 	commentScheduleData := CommentScheduleModel{
-		Content:  content,
-		PostId:   postId,
-		Schedule: schedule,
-		Created:  commentCreator,
+		Content:     content,
+		PostId:      postId,
+		Schedule:    schedule,
+		Created:     commentCreator,
+		CommentType: "TEXT",
 	}
 	err := C.Insert(commentScheduleData)
 	if err == nil {
