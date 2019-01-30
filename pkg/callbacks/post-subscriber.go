@@ -45,7 +45,7 @@ func PostSubscriberCB(subj, reply string, p *subscribers.Post) {
 	rand.Shuffle(i, func(i, j int) { botProfilesIds[i], botProfilesIds[j] = botProfilesIds[j], botProfilesIds[i] })
 	var no_of_votes int
 	if p.CreatorType == "bot" {
-		no_of_votes = utils.Random(30, 45)
+		no_of_votes = utils.Random(20, 25)
 	} else if p.CreatorType == "super_level_1" {
 		no_of_votes = utils.Random(20, 25)
 	} else {
