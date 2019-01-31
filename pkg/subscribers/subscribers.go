@@ -53,7 +53,7 @@ func PostModeratedSubscriber(callback func(subj, reply string, m *Post)) {
 }
 
 func PostDeletedSubscriber(callback func(subj, reply string, m *Post)) {
-	go c.QueueSubscribe(subject("post.deleted"), queue(), callback)	
+	go c.QueueSubscribe(subject("post.deleted"), queue(), callback)
 }
 
 func CommentSubscriber(callback func(subj, reply string, m *Comment)) {

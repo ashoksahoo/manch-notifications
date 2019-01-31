@@ -7,6 +7,13 @@ import (
 	"github.com/globalsign/mgo/bson"
 )
 
+type Stats struct {
+	PosLevel1 int `json:"pos_level_1_posts" bson:"pos_level_1_posts"`
+	PosLevel2 int `json:"pos_level_2_posts" bson:"pos_level_2_posts"`
+	NegLevel1 int `json:"neg_level_1_posts" bson:"neg_level_1_posts"`
+	NegLevel2 int `json:"neg_level_2_posts" bson:"neg_level_2_posts"`
+}
+
 type Profile struct {
 	Id            bson.ObjectId `json:"_id" bson:"_id"`
 	Avatar        string        `json:"avatar"`
@@ -14,6 +21,7 @@ type Profile struct {
 	Language      string        `json:"language"`
 	FollowerCount int           `json:"no_of_followers" bson:"no_of_followers"`
 	Type          string        `json:"type" bson:"type"`
+	Stats         Stats         `json:"stats" bson:"stats"`
 }
 
 type Creator struct {

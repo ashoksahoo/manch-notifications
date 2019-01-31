@@ -47,6 +47,15 @@ func PostModeratedSubscriberCB(subj, reply string, p *subscribers.Post) {
 	randomBotIndex := utils.Random(0, i)
 
 	postCreator := mongo.GetProfileById(post.Created.ProfileId)
+	
+
+	// warning for 3rd & 4th ignore
+	// block on every 5th ignore for 2^i days
+	if post.PostLevel == "-2" {
+		
+	}
+
+	// schedule auto comment on post if it is good 
 	if post.PostLevel == "2" || post.PostLevel == "1" {
 		var dbCommentKeys []string
 		// get comment string from db
