@@ -11,6 +11,11 @@ import (
 	"time"
 )
 
+const (
+	MANCH_OFFICIAL_TE = "5c3c3bfd89ac4a794d45b14d"
+	MANCH_OFFICIAL_HE = "5c1c92c8eda9bd1771bcf0a7"
+)
+
 func PostModeratedSubscriberCB(subj, reply string, p *subscribers.Post) {
 	fmt.Printf("Received a post on subject %s! with Post %+v\n", subj, p)
 	err, post := mongo.GetPostById(p.Id)
@@ -28,6 +33,9 @@ func PostModeratedSubscriberCB(subj, reply string, p *subscribers.Post) {
 		for _, profile := range profiles {
 			if i == 100 {
 				break
+			}
+			if profile.Id.Hex() == MANCH_OFFICIAL_HE || profile.Id.Hex() == MANCH_OFFICIAL_TE {
+				continue
 			}
 			botProfilesIds[i] = profile.Id.Hex()
 			i++
