@@ -21,7 +21,7 @@ const (
 
 func PostModeratedSubscriberCB(subj, reply string, p *subscribers.Post) {
 	fmt.Printf("Received a post on subject %s! with Post %+v\n", subj, p)
-	err, post := mongo.GetPostById(p.Id)
+	err, post := mongo.GetPostByQuery(bson.M{"_id": bson.ObjectIdHex(p.Id)})
 	if err != nil {
 		return
 	}
@@ -110,7 +110,7 @@ func PostModeratedSubscriberCB(subj, reply string, p *subscribers.Post) {
 	notification := mongo.CreateNotification(mongo.NotificationModel{
 		Receiver:        postCreator.Id,
 		Identifier:      post.Id.Hex() + "_user_blocked",
-		Participants:    []bson.ObjectId{},
+		Participants:    []bson.ObjectId{postCreator.Id},
 		DisplayTemplate: "transactional",
 		ActionId:        post.Id,
 		ActionType:      "post",
@@ -121,6 +121,9 @@ func PostModeratedSubscriberCB(subj, reply string, p *subscribers.Post) {
 	// warning for 1st and 2nd delete post
 	// block on every 3rd delete post
 	if post.PostLevel == "-1000" {
+		// delete post callback
+		PostDeletedSubscriberCB(subj, reply, p)
+
 		query := bson.M{"created.profile_id": postCreator.Id, "deleted": true}
 		deleteCount := mongo.GetPostCountByQuery(query)
 		if deleteCount == 1 || deleteCount == 2 {
@@ -161,6 +164,9 @@ func PostModeratedSubscriberCB(subj, reply string, p *subscribers.Post) {
 	// warning for 3rd & 4th ignore post
 	// block on every 5th ignore for 2^i days
 	if post.PostLevel == "-2" {
+		// ignore from feed callback
+		PostRemovedSubscriberCB(subj, reply, p)
+
 		query := bson.M{"created.profile_id": postCreator.Id, "ignore_from_feed": true, "deleted": false}
 		fmt.Println("query is ", query)
 		ignoreCount := mongo.GetPostCountByQuery(query)
@@ -178,7 +184,7 @@ func PostModeratedSubscriberCB(subj, reply string, p *subscribers.Post) {
 				"$inc": bson.M{"blacklist.warn_count": 1},
 			})
 			notification.Purpose = "user.warned"
-			notification.Identifier = post.Id.Hex() + "_user_warned"
+			notification.Identifier = post.Id.Hex() + ""
 			send_notification = true
 		} else if ignoreCount%5 == 0 {
 			// block for 2 ^ ignoreCount / 5 days
