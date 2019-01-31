@@ -53,3 +53,14 @@ func ExtractThumbNailFromPost(post PostModel) (thumb string) {
 	}
 	return
 }
+
+func GetPostCountByQuery(query bson.M) int {
+	s := session.Clone()
+	defer s.Close()
+	P := s.DB("manch").C("posts")
+	n, err := P.Find(query).Count()
+	if err != nil {
+		return 0
+	}
+	return n
+}

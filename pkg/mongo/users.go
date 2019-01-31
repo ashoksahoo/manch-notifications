@@ -14,6 +14,14 @@ type Stats struct {
 	NegLevel2 int `json:"neg_level_2_posts" bson:"neg_level_2_posts"`
 }
 
+type BlackList struct {
+	Status       string    `json:"status" bson:"status"`
+	WarnCount    string    `json:"warn_count" bson:"warn_count"`
+	LastWarnedOn time.Time `json:"last_warned_on" bson:"last_warned_on"`
+	BlockedOn    time.Time `json:"blocked_on" bson:"blocked_on"`
+	BlockedTill  time.Time `json:"blocked_till" bson:"blocked_till"`
+}
+
 type Profile struct {
 	Id            bson.ObjectId `json:"_id" bson:"_id"`
 	Avatar        string        `json:"avatar"`
@@ -21,7 +29,6 @@ type Profile struct {
 	Language      string        `json:"language"`
 	FollowerCount int           `json:"no_of_followers" bson:"no_of_followers"`
 	Type          string        `json:"type" bson:"type"`
-	Stats         Stats         `json:"stats" bson:"stats"`
 }
 
 type Creator struct {
@@ -104,4 +111,14 @@ func GetBotProfilesIds() (int, [100]string) {
 		}
 	}
 	return i, botProfilesIds
+}
+
+func UpdateUser(query, update bson.M) {
+	s := session.Clone()
+	defer s.Close()
+	users := s.DB("manch").C("users")
+	err := users.Update(query, update)
+	if err != nil {
+		fmt.Println(err, query, update)
+	}
 }
