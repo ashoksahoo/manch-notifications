@@ -51,7 +51,6 @@ func PostModeratedSubscriberCB(subj, reply string, p *subscribers.Post) {
 
 	postCreator := mongo.GetProfileById(post.Created.ProfileId)
 
-	fmt.Println("post creator", postCreator)
 
 	// schedule auto comment on post if it is good
 	if post.PostLevel == "2" || post.PostLevel == "1" {
@@ -90,9 +89,7 @@ func PostModeratedSubscriberCB(subj, reply string, p *subscribers.Post) {
 			UserType:  commentator.Type,
 		}
 		randomMinute := utils.Random(15, 30)
-		fmt.Println("random Minute", randomMinute)
 		scheduleTime := time.Now().Local().Add(time.Minute * time.Duration(randomMinute))
-		fmt.Println("schedule time", scheduleTime)
 		// schedule comments
 		mongo.CreateCommentSchedule(comment, post.Id, commentCreator, scheduleTime)
 		mongo.AddCommentStringToProfileId(postCreator.Id, keys[randomCommentKeyIndex])
@@ -128,7 +125,6 @@ func PostModeratedSubscriberCB(subj, reply string, p *subscribers.Post) {
 		deleteCount := mongo.GetPostCountByQuery(query)
 		if deleteCount == 1 || deleteCount == 2 {
 			// Warn the user
-			fmt.Println("Warning the user")
 			mongo.UpdateUser(bson.M{
 				"profiles._id": postCreator.Id,
 			}, bson.M{
@@ -142,12 +138,11 @@ func PostModeratedSubscriberCB(subj, reply string, p *subscribers.Post) {
 			notification.Identifier = post.Id.Hex() + "_user_warned"
 			send_notification = true
 		} else if deleteCount%3 == 0 {
-			// block for 2 ^ deleteCount/5 days
+			// block for 2 ^ deleteCount/3 days
 			// manch:D, namespace & purpose
-			fmt.Println("Blocking the user")
 			days := deleteCount / 3
 			blockForDays := math.Pow(float64(2), float64(days))
-			blockTill := time.Now().Local().Add(time.Hour * 24 * time.Duration(blockForDays))
+			blockTill := time.Now().Local().Add(time.Hour * 24 * time.Duration(int64(blockForDays)))
 			mongo.UpdateUser(bson.M{
 				"profiles._id": postCreator.Id,
 			}, bson.M{
@@ -168,11 +163,8 @@ func PostModeratedSubscriberCB(subj, reply string, p *subscribers.Post) {
 		PostRemovedSubscriberCB(subj, reply, p)
 
 		query := bson.M{"created.profile_id": postCreator.Id, "ignore_from_feed": true, "deleted": false}
-		fmt.Println("query is ", query)
 		ignoreCount := mongo.GetPostCountByQuery(query)
-		fmt.Println("ignore count", ignoreCount)
 		if ignoreCount == 3 || ignoreCount == 4 {
-			fmt.Println("Warning the user")
 			// Warn the user
 			mongo.UpdateUser(bson.M{
 				"profiles._id": postCreator.Id,
@@ -188,11 +180,9 @@ func PostModeratedSubscriberCB(subj, reply string, p *subscribers.Post) {
 			send_notification = true
 		} else if ignoreCount%5 == 0 {
 			// block for 2 ^ ignoreCount / 5 days
-			fmt.Println("Blocking the user")
 			days := ignoreCount / 5
 			blockForDays := math.Pow(float64(2), float64(days))
 			blockTill := time.Now().Local().Add(time.Hour * 24 * time.Duration(blockForDays))
-			fmt.Println("block till", blockTill)
 			mongo.UpdateUser(bson.M{
 				"profiles._id": postCreator.Id,
 			}, bson.M{
@@ -204,24 +194,23 @@ func PostModeratedSubscriberCB(subj, reply string, p *subscribers.Post) {
 			})
 			send_notification = true
 		}
-
-		if send_notification {
-			tokens := mongo.GetTokensByProfiles([]bson.ObjectId{post.Created.ProfileId})
-			msg := firebase.ManchMessage{
-				Title:   "",
-				Message: "",
-				Namespace: "manch:D",
-				Id:      notification.NId,
-			}
-			if tokens != nil {
-				for _, token := range tokens {
-					go firebase.SendMessage(msg, token.Token, notification)
-				}
-			} else {
-				fmt.Printf("No token")
-			}
-		}
 	}
 
+	if send_notification {
+		tokens := mongo.GetTokensByProfiles([]bson.ObjectId{post.Created.ProfileId})
+		msg := firebase.ManchMessage{
+			Title:   "",
+			Message: "",
+			Namespace: "manch:D",
+			Id:      notification.NId,
+		}
+		if tokens != nil {
+			for _, token := range tokens {
+				go firebase.SendMessage(msg, token.Token, notification)
+			}
+		} else {
+			fmt.Printf("No token")
+		}
+	}
 	fmt.Printf("Processed a post on subject %s! with Post ID %s\n", subj, p.Id)
 }
