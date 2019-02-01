@@ -99,6 +99,7 @@ func CreateNotification(notification NotificationModel) NotificationModel {
 		Entities:        notification.Entities,
 		Push:            push,
 		CreatedAt:       time.Now(),
+		UpdatedAt:       time.Now(),
 		Delivered:       false,
 	}
 
