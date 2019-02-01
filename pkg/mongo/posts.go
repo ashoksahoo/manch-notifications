@@ -10,6 +10,7 @@ type Media struct {
 	Url       string `json:"url" bson:"url"`
 	Thumbnail string `json:"thumbnail" bson:"thumbnail"`
 }
+
 type PostModel struct {
 	Id             bson.ObjectId   `json:"_id" bson:"_id"`
 	Title          string          `json:"title" bson:"title"`
@@ -24,6 +25,7 @@ type PostModel struct {
 	IgnoreFromFeed bool            `json:"ignore_from_feed" bson:"ignore_from_feed"`
 	IgnoreReason   string          `json:"ignore_reason" bson:"ignore_reason"`
 	PostLevel      string          `json:"post_level" bson:"post_level"`
+	Language       string          `json:"language" bson:"language"`
 }
 
 func GetPost(Id bson.ObjectId) PostModel {

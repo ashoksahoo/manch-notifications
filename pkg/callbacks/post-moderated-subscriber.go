@@ -48,6 +48,9 @@ func PostModeratedSubscriberCB(subj, reply string, p *subscribers.Post) {
 
 	postCreator := mongo.GetProfileById(post.Created.ProfileId)
 	if post.PostLevel == "2" || post.PostLevel == "1" {
+		if post.Language == "te" {
+			return;
+		}
 		var dbCommentKeys []string
 		// get comment string from db
 		err, commentString := mongo.GetCommentStringsByProfileId(postCreator.Id)
