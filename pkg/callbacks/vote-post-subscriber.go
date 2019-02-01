@@ -1,6 +1,7 @@
 package callbacks
 
 import (
+	"notification-service/pkg/constants"
 	"fmt"
 	"notification-service/pkg/firebase"
 	"notification-service/pkg/i18n"
@@ -74,11 +75,11 @@ func VotePostSubscriberCB(subj, reply string, v *subscribers.Vote) {
 		Receiver:        postCreator.Id,
 		Identifier:      post.Id.Hex() + "_vote",
 		Participants:    []bson.ObjectId{vote.Created.ProfileId},
-		DisplayTemplate: "transactional",
+		DisplayTemplate: constants.NotificationTemplate["TRANSACTIONAL"],
 		EntityGroupId:   post.Id.Hex(),
 		ActionId:        vote.Id,
 		ActionType:      "vote",
-		Purpose:         "vote",
+		Purpose:         constants.NotificationPurpose["VOTE"],
 		Entities:        entities,
 		NUUID:           "",
 	})

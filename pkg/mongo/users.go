@@ -2,6 +2,7 @@ package mongo
 
 import (
 	"fmt"
+	"notification-service/pkg/constants"
 	"time"
 
 	"github.com/globalsign/mgo/bson"
@@ -79,19 +80,17 @@ func GetProfileById(Id bson.ObjectId) Profile {
 	return user.Profiles[0]
 }
 
-func GetBotProfilesIds() (int, [100]string) {
+func GetBotProfilesIds() (int, []string) {
 	botUsers := GetBotUsers()
-	// array of bot profiles ids
-	var botProfilesIds [100]string
-	// no. of profiles counter
+	botProfilesIds := make([]string, 0, 1000)
 	i := 0
 	for _, botUser := range botUsers {
 		profiles := botUser.Profiles
 		for _, profile := range profiles {
-			if i == 100 {
-				break
+			if profile.Id.Hex() == constants.MANCH_OFFICIAL_PROFILE_HE || profile.Id.Hex() == constants.MANCH_OFFICIAL_PROFILE_TE {
+				continue
 			}
-			botProfilesIds[i] = profile.Id.Hex()
+			botProfilesIds = append(botProfilesIds, profile.Id.Hex())
 			i++
 		}
 	}

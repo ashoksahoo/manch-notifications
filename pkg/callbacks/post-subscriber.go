@@ -13,23 +13,12 @@ import (
 
 func PostSubscriberCB(subj, reply string, p *subscribers.Post) {
 	fmt.Printf("Received a post on subject %s! with Post %+v\n", subj, p)
-	// get all bot users
-	botUsers := mongo.GetBotUsers()
 
-	// array of bot profiles ids
-	var botProfilesIds [100]string
-	// no. of profiles counter
-	i := 0
-	for _, botUser := range botUsers {
-		profiles := botUser.Profiles
-		for _, profile := range profiles {
-			if i == 100 {
-				break
-			}
-			botProfilesIds[i] = profile.Id.Hex()
-			i++
-		}
-	}
+	n, botProfilesIds := mongo.GetBotProfilesIds()
+
+	// shuffle profiles
+	rand.Seed(time.Now().UnixNano())
+	rand.Shuffle(n, func(i, j int) { botProfilesIds[i], botProfilesIds[j] = botProfilesIds[j], botProfilesIds[i] })
 
 	// update user score for new post
 	_, post := mongo.GetPostById(p.Id)
@@ -40,9 +29,6 @@ func PostSubscriberCB(subj, reply string, p *subscribers.Post) {
 		UserType:    post.Created.UserType,
 	})
 
-	// Schedule vote on new Post
-	rand.Seed(time.Now().UnixNano())
-	rand.Shuffle(i, func(i, j int) { botProfilesIds[i], botProfilesIds[j] = botProfilesIds[j], botProfilesIds[i] })
 	var no_of_votes int
 	if p.CreatorType == "bot" {
 		no_of_votes = utils.Random(20, 25)

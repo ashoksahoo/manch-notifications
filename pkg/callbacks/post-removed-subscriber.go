@@ -1,6 +1,7 @@
 package callbacks
 
 import (
+	"notification-service/pkg/constants"
 	"fmt"
 	"notification-service/pkg/firebase"
 	"notification-service/pkg/i18n"
@@ -37,11 +38,11 @@ func PostRemovedSubscriberCB(subj, reply string, p *subscribers.Post) {
 		Receiver:        postCreator.Id,
 		Identifier:      post.Id.Hex() + "_remove",
 		Participants:    []bson.ObjectId{postCreator.Id},
-		DisplayTemplate: "transactional",
+		DisplayTemplate: constants.NotificationTemplate["TRANSACTIONAL"],
 		EntityGroupId:   post.Id.Hex(),
 		ActionId:        post.Id,
 		ActionType:      "post",
-		Purpose:         "remove",
+		Purpose:         constants.NotificationPurpose["POST_REMOVE"],
 		Entities:        entities,
 		NUUID:           "",
 	})

@@ -14,32 +14,13 @@ import (
 func UserSubscriberCB(subj, reply string, u *subscribers.User) {
 	fmt.Printf("Received a New User on subject %s! with User %+v\n", subj, u)
 	// create follow schedule for this user
-
-	// get all bot users
-	botUsers := mongo.GetBotUsers()
 	var resourceId bson.ObjectId
 
-	// array of bot profiles ids
-	var botProfilesIds [100]string
+	n, botProfilesIds := mongo.GetBotProfilesIds()
 
-	// no. of profiles counter
-	i := 0
-	for _, botUser := range botUsers {
-		profiles := botUser.Profiles
-		for _, profile := range profiles {
-			if i == 100 {
-				break
-			}
-			botProfilesIds[i] = profile.Id.Hex()
-			i++
-		}
-	}
-
-	// shuffle the bot profiles ids
-	// fmt.Println("bot profile ids before shuffle:", botProfilesIds)
+	// shuffle profiles
 	rand.Seed(time.Now().UnixNano())
-	rand.Shuffle(i, func(i, j int) { botProfilesIds[i], botProfilesIds[j] = botProfilesIds[j], botProfilesIds[i] })
-	// fmt.Println("after shuffle:", botProfilesIds)
+	rand.Shuffle(n, func(i, j int) { botProfilesIds[i], botProfilesIds[j] = botProfilesIds[j], botProfilesIds[i] })
 
 	// get user from db
 	user := mongo.GetUserById(u.Id)

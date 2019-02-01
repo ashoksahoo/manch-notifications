@@ -1,6 +1,7 @@
 package callbacks
 
 import (
+	"notification-service/pkg/constants"
 	"fmt"
 	"notification-service/pkg/firebase"
 	"notification-service/pkg/i18n"
@@ -44,11 +45,11 @@ func UserFollowSubscriberCB(subj, reply string, uf *subscribers.Subscription) {
 		Receiver:        followsTo.Id,
 		Identifier:      followsTo.Id.Hex() + "_follow",
 		Participants:    []bson.ObjectId{follower.Id},
-		DisplayTemplate: "transactional",
+		DisplayTemplate: constants.NotificationTemplate["TRANSACTIONAL"],
 		EntityGroupId:   userFollow.Id.Hex(),
 		ActionId:        userFollow.Id,
 		ActionType:      "userfollow",
-		Purpose:         "follow",
+		Purpose:         constants.NotificationPurpose["USER_FOLLOW"],
 		Entities:        entities,
 		NUUID:           "",
 	})

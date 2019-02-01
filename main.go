@@ -1,6 +1,9 @@
 package main
 
 import (
+	"notification-service/pkg/mongo"
+	"notification-service/pkg/utils"
+	"notification-service/pkg/constants"
 	"fmt"
 	"net/http"
 	"notification-service/pkg/callbacks"
@@ -12,6 +15,9 @@ import (
 func main() {
 	r := chi.NewRouter()
 	r.Get("/ping", func(w http.ResponseWriter, r *http.Request) {
+		fmt.Println(constants.NotificationStatus["PENDING"])
+		fmt.Println(utils.UnpackMap(constants.NotificationPurpose))
+		fmt.Println(mongo.GetBotProfilesIds())
 		w.Write([]byte("pong"))
 	})
 

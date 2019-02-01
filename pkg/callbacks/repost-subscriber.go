@@ -19,11 +19,11 @@ func RepostSubscriberCB(subj, reply string, p *subscribers.Post) {
 		return;
 	}
 	// i represents no of profiles
-	i, botProfilesIds := mongo.GetBotProfilesIds()
+	n, botProfilesIds := mongo.GetBotProfilesIds()
 
 	// shuffle profiles
 	rand.Seed(time.Now().UnixNano())
-	rand.Shuffle(i, func(i, j int) { botProfilesIds[i], botProfilesIds[j] = botProfilesIds[j], botProfilesIds[i] })
+	rand.Shuffle(n, func(i, j int) { botProfilesIds[i], botProfilesIds[j] = botProfilesIds[j], botProfilesIds[i] })
 
 	if post.Created.UserType == "general" && post.UpVotes < 30 {
 		// schedule votes to reach 30 votes

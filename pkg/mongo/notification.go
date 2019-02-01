@@ -46,6 +46,9 @@ type NotificationModel struct {
 	Entities        []Entity        `json:"entities" bson:"entities"`
 	MessageMeta     MessageMeta     `json:"message_meta" bson:"message_meta"`
 	Push            PushMeta        `json:"push" bson:"push"`
+	CreatedAt       time.Time       `json:"created_at" bson:"created_at"`
+	UpdatedAt       time.Time       `json:"updated_at" bson:"updated_at"`
+	Delivered       bool            `json:"delivered" bson:"delivered"`
 }
 
 func GenerateIdentifier(Id bson.ObjectId, t string) string {
@@ -68,7 +71,7 @@ func RemoveParticipants(identifier string, isRead bool, participant bson.ObjectI
 	query, update := bson.M{"identifier": identifier, "is_read": isRead},
 		bson.M{"$pull": bson.M{"participants": participant}}
 	N.Update(query, update)
-	fmt.Printf("removed from participants with id %s\n",participant.Hex())
+	fmt.Printf("removed from participants with id %s\n", participant.Hex())
 }
 
 func CreateNotification(notification NotificationModel) NotificationModel {
@@ -95,6 +98,8 @@ func CreateNotification(notification NotificationModel) NotificationModel {
 		Purpose:         notification.Purpose,
 		Entities:        notification.Entities,
 		Push:            push,
+		CreatedAt:       time.Now(),
+		Delivered:       false,
 	}
 
 	count, _ := N.Find(bson.M{"identifier": notification.Identifier, "is_read": notification.IsRead}).Count()
@@ -108,6 +113,7 @@ func CreateNotification(notification NotificationModel) NotificationModel {
 			nuuid = value.String()
 		}
 		N.Upsert(bson.M{"identifier": notification.Identifier, "is_read": notification.IsRead}, bson.M{
+			"$set":         bson.M{"updated_at": time.Now()},
 			"$addToSet":    bson.M{"participants": notification.Participants[0]},
 			"$setOnInsert": bson.M{"nuuid": nuuid},
 		})
@@ -124,7 +130,7 @@ func CreateNotification(notification NotificationModel) NotificationModel {
 		}
 		N.Insert(n)
 	}
-	_, notif :=  GetNotificationByIdentifier(notification.Identifier)
+	_, notif := GetNotificationByIdentifier(notification.Identifier)
 	return notif
 }
 

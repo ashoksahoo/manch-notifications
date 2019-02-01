@@ -80,7 +80,11 @@ func SendMessage(m ManchMessage, token string, notification mongo.NotificationMo
 	if m.Icon == "" {
 		m.Icon = "https://manch.app/img/new-logo.png"
 	}
-	m.MessageType = "T"
+
+	if notification.DisplayTemplate == constants.NotificationTemplate["TRANSACTIONAL"] {
+		m.MessageType = "T"
+	}
+
 	m.Purpose = notification.Purpose
 	m.Date = time.Now().String()
 
