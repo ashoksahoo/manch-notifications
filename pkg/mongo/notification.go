@@ -12,6 +12,11 @@ import (
 	"github.com/globalsign/mgo/bson"
 )
 
+var (
+	NOTIFICATION_V2_MODEL = constants.ModelNames["NOTIFICATION_V2"]
+)
+
+
 type Entity struct {
 	EntityId   bson.ObjectId `json:"entity_id" bson:"entity_id"`
 	EntityType string        `json:"entity_type" bson:"entity_type"`
@@ -46,8 +51,8 @@ type NotificationModel struct {
 	Entities        []Entity        `json:"entities" bson:"entities"`
 	MessageMeta     MessageMeta     `json:"message_meta" bson:"message_meta"`
 	Push            PushMeta        `json:"push" bson:"push"`
-	CreatedAt       time.Time       `json:"created_at" bson:"created_at"`
-	UpdatedAt       time.Time       `json:"updated_at" bson:"updated_at"`
+	CreatedAt       time.Time       `json:"createdAt" bson:"createdAt"`
+	UpdatedAt       time.Time       `json:"updatedAt" bson:"updatedAt"`
 	Delivered       bool            `json:"delivered" bson:"delivered"`
 }
 
@@ -67,7 +72,7 @@ func GenerateIdentifier(Id bson.ObjectId, t string) string {
 func RemoveParticipants(identifier string, isRead bool, participant bson.ObjectId) {
 	s := session.Clone()
 	defer s.Close()
-	N := s.DB("manch").C("notificationsv2")
+	N := s.DB("manch").C(NOTIFICATION_V2_MODEL)
 	query, update := bson.M{"identifier": identifier, "is_read": isRead},
 		bson.M{"$pull": bson.M{"participants": participant}}
 	N.Update(query, update)
@@ -77,10 +82,10 @@ func RemoveParticipants(identifier string, isRead bool, participant bson.ObjectI
 func CreateNotification(notification NotificationModel) NotificationModel {
 	s := session.Clone()
 	defer s.Close()
-	N := s.DB("manch").C("notificationsv2")
+	N := s.DB("manch").C(NOTIFICATION_V2_MODEL)
 
 	push := PushMeta{
-		Status:    constants.PENDING,
+		Status:    constants.NotificationStatus["PENDING"],
 		CreatedAt: time.Now(),
 	}
 
@@ -114,7 +119,7 @@ func CreateNotification(notification NotificationModel) NotificationModel {
 			nuuid = value.String()
 		}
 		N.Upsert(bson.M{"identifier": notification.Identifier, "is_read": notification.IsRead}, bson.M{
-			"$set":         bson.M{"updated_at": time.Now()},
+			"$set":         bson.M{"updatedAt": time.Now()},
 			"$addToSet":    bson.M{"participants": notification.Participants[0]},
 			"$setOnInsert": bson.M{"nuuid": nuuid},
 		})
@@ -138,14 +143,14 @@ func CreateNotification(notification NotificationModel) NotificationModel {
 func UpdateNotification(query, update bson.M) {
 	s := session.Clone()
 	defer s.Close()
-	N := s.DB("manch").C("notificationsv2")
+	N := s.DB("manch").C(NOTIFICATION_V2_MODEL)
 	N.Update(query, bson.M{"$set": update})
 }
 
 func GetNotificationByIdentifier(identifier string) (error, NotificationModel) {
 	s := session.Clone()
 	defer s.Close()
-	N := s.DB("manch").C("notificationsv2")
+	N := s.DB("manch").C(NOTIFICATION_V2_MODEL)
 	notif := NotificationModel{}
 	err := N.Find(bson.M{"identifier": identifier, "is_read": false}).One(&notif)
 	return err, notif

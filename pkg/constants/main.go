@@ -1,12 +1,6 @@
 package constants
 
 const (
-	NA                        = "NA"
-	PENDING                   = "pending"
-	SENT                      = "sent"
-	DELIVERED                 = "delivered"
-	READ                      = "read"
-	FAILED                    = "failed"
 	MANCH_OFFICIAL_PROFILE_TE = "5c3c3bfd89ac4a794d45b14d"
 	MANCH_OFFICIAL_PROFILE_HE = "5c1c92c8eda9bd1771bcf0a7"
 )
@@ -33,5 +27,28 @@ var NotificationPurpose = map[string]string{
 
 var NotificationTemplate = map[string]string{
 	"TRANSACTIONAL": "transactional",
-	"PROMOTIONAL": "promotional",
+	"PROMOTIONAL":   "promotional",
+}
+
+var ModelNames = map[string]string{
+	"USERS":                   "users",
+	"POSTS":                   "posts",
+	"COMMUNITIES":             "communities",
+	"COMMENTS":                "comments",
+	"VOTES":                    "votes",
+	"RESOURCE_SCORE":          "RESOURCE_SCORE",
+	"USER_FOLLOWS":            "user_follows",
+	"SHARES":                  "SHARES",
+	"FCM_TOKENS":              "fcm_tokens",
+	"EVENTS":                  "events",
+	"EXPLORABLE_ENTITIES":     "explorable_entities",
+	"MEDIA_SOURCES":           "media_sources",
+	"USER_SCORE":              "user_score",
+	"COMMENT_STRINGS":         "comment_strings",
+	"COMMENT_SCHEDULEDS":      "comment_scheduleds",
+	"NOTIFICATION_V2":         "notificationsv2",
+	"USER_FOLLOWS_SCHEDULEDS": "user_follows_scheduleds",
+	"VOTE_SCHEDULEDS":         "vote_scheduleds",
+	"SHARES_SCHEDULEDS":       "shares_scheduleds",
+	"USER_SCORES":             "user_scores",
 }

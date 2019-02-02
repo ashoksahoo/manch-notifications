@@ -19,7 +19,7 @@ func PostModeratedSubscriberCB(subj, reply string, p *subscribers.Post) {
 	}
 
 	// i represents no of profiles
-	n, botProfilesIds := mongo.GetBotProfilesIds()
+	n, botProfilesIds := mongo.GetBotProfilesIds(post.Language)
 	randomBotIndex := utils.Random(0, n)
 
 	postCreator := mongo.GetProfileById(post.Created.ProfileId)

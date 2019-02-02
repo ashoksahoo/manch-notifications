@@ -1,7 +1,12 @@
 package mongo
 
 import (
+	"notification-service/pkg/constants"
 	"github.com/globalsign/mgo/bson"
+)
+
+var (
+	USER_FOLLOWS_MODEL = constants.ModelNames["USER_FOLLOWS"]
 )
 
 type UserFollowModel struct {
@@ -16,7 +21,7 @@ func GetUserFollowById(Id string) UserFollowModel {
 	s := session.Clone()
 	defer s.Close()
 	user_follow := UserFollowModel{}
-	UF := s.DB("manch").C("user_follows")
+	UF := s.DB("manch").C(USER_FOLLOWS_MODEL)
 	UF.Find(bson.M{"_id": bson.ObjectIdHex(Id)}).One(&user_follow)
 	return user_follow
 }

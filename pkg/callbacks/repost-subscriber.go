@@ -18,9 +18,11 @@ func RepostSubscriberCB(subj, reply string, p *subscribers.Post) {
 	if err != nil {
 		return;
 	}
-	// i represents no of profiles
-	n, botProfilesIds := mongo.GetBotProfilesIds()
 
+	m, botProfilesHi := mongo.GetBotProfilesIds("hi")
+	n, botProfilesTe := mongo.GetBotProfilesIds("te")
+	n = m + n;
+	botProfilesIds := append(botProfilesHi, botProfilesTe...) 
 	// shuffle profiles
 	rand.Seed(time.Now().UnixNano())
 	rand.Shuffle(n, func(i, j int) { botProfilesIds[i], botProfilesIds[j] = botProfilesIds[j], botProfilesIds[i] })

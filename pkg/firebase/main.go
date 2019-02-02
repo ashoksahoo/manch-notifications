@@ -118,7 +118,7 @@ func SendMessage(m ManchMessage, token string, notification mongo.NotificationMo
 		// update push info
 		mongo.UpdateNotification(bson.M{"_id": notification.Id}, bson.M{
 			"push": mongo.PushMeta{
-				Status: constants.FAILED,
+				Status: constants.NotificationStatus["FAILED"],
 				FailReason: err.Error(),
 				CreatedAt: time.Now(),
 			},
@@ -129,7 +129,7 @@ func SendMessage(m ManchMessage, token string, notification mongo.NotificationMo
 		// update push info
 		mongo.UpdateNotification(bson.M{"_id": notification.Id}, bson.M{
 			"push": mongo.PushMeta{
-				Status: constants.SENT,
+				Status: constants.NotificationStatus["SENT"],
 				PushId: response,
 				CreatedAt: time.Now(),
 			},

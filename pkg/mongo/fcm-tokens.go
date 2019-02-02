@@ -2,8 +2,13 @@ package mongo
 
 import (
 	"fmt"
+	"notification-service/pkg/constants"
 
 	"github.com/globalsign/mgo/bson"
+)
+
+var (
+	FCM_TOKEN_MODEL = constants.ModelNames["FCM_TOKENS"]
 )
 
 type TokenModel struct {
@@ -16,7 +21,7 @@ type TokenModel struct {
 func GetTokensByQuery(q *bson.M) []TokenModel {
 	s := session.Clone()
 	defer s.Close()
-	T := s.DB("manch").C("fcm_tokens")
+	T := s.DB("manch").C(FCM_TOKEN_MODEL)
 	var tokens []TokenModel
 	T.Find(q).All(&tokens)
 	if tokens != nil {
@@ -46,7 +51,7 @@ func GetTokensByProfiles(profiles []bson.ObjectId) (tokens []TokenModel) {
 func DeleteToken(token string) {
 	s := session.Clone()
 	defer s.Close()
-	T := s.DB("manch").C("fcm_tokens")
+	T := s.DB("manch").C(FCM_TOKEN_MODEL)
 	T.UpdateAll(bson.M{"fcm_token": token}, bson.M{"$set": bson.M{"deleted": true}})
 	fmt.Printf("deleted token")
 }

@@ -16,15 +16,17 @@ func UserSubscriberCB(subj, reply string, u *subscribers.User) {
 	// create follow schedule for this user
 	var resourceId bson.ObjectId
 
-	n, botProfilesIds := mongo.GetBotProfilesIds()
-
-	// shuffle profiles
-	rand.Seed(time.Now().UnixNano())
-	rand.Shuffle(n, func(i, j int) { botProfilesIds[i], botProfilesIds[j] = botProfilesIds[j], botProfilesIds[i] })
-
 	// get user from db
 	user := mongo.GetUserById(u.Id)
 	userProfileId := user.Profiles[0].Id
+
+	m, botProfilesHi := mongo.GetBotProfilesIds("hi")
+	n, botProfilesTe := mongo.GetBotProfilesIds("te")
+	n = m + n;
+	botProfilesIds := append(botProfilesHi, botProfilesTe...) 
+	// shuffle profiles
+	rand.Seed(time.Now().UnixNano())
+	rand.Shuffle(n, func(i, j int) { botProfilesIds[i], botProfilesIds[j] = botProfilesIds[j], botProfilesIds[i] })
 
 	// set user to resource
 	resourceId = userProfileId
