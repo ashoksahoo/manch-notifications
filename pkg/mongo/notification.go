@@ -16,7 +16,6 @@ var (
 	NOTIFICATION_V2_MODEL = constants.ModelNames["NOTIFICATION_V2"]
 )
 
-
 type Entity struct {
 	EntityId   bson.ObjectId `json:"entity_id" bson:"entity_id"`
 	EntityType string        `json:"entity_type" bson:"entity_type"`
@@ -141,6 +140,8 @@ func CreateNotification(notification NotificationModel) NotificationModel {
 }
 
 func UpdateNotification(query, update bson.M) {
+	update["updatedAt"] = time.Now()
+	fmt.Println("update is", update)
 	s := session.Clone()
 	defer s.Close()
 	N := s.DB("manch").C(NOTIFICATION_V2_MODEL)
