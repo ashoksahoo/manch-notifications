@@ -156,3 +156,32 @@ func GetNotificationByIdentifier(identifier string) (error, NotificationModel) {
 	err := N.Find(bson.M{"identifier": identifier, "is_read": false}).One(&notif)
 	return err, notif
 }
+
+// find, select, sort, skip, limit
+func GetNotificationByQuery(query bson.M) (error, []NotificationModel)  {
+	s := session.Clone()
+	defer s.Close()
+	fmt.Println("Query is ", query)
+	N := s.DB("manch").C(NOTIFICATION_V2_MODEL)
+	notifications := []NotificationModel{}
+	var err error
+	if limit, ok := query["limit"]; ok {
+		fmt.Println("ok")
+		delete(query, "limit")
+		skip := query["skip"]
+		delete(query, "skip")
+		err = N.Find(query).Skip(skip.(int)).Limit(limit.(int)).All(&notifications)	
+	} else {
+		err = N.Find(query).All(&notifications)
+	}
+	return err, notifications
+}
+
+func GetNotificationById(id bson.ObjectId) (error, NotificationModel) {
+	s := session.Clone()
+	defer s.Close()
+	N := s.DB("manch").C(NOTIFICATION_V2_MODEL)
+	notif := NotificationModel{}
+	err := N.Find(bson.M{"_id": id}).One(&notif)
+	return err, notif
+}

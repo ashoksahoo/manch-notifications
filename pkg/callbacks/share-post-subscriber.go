@@ -1,8 +1,8 @@
 package callbacks
 
 import (
-	"notification-service/pkg/constants"
 	"fmt"
+	"notification-service/pkg/constants"
 	"strings"
 
 	"notification-service/pkg/firebase"
