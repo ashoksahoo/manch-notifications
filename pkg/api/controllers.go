@@ -17,9 +17,12 @@ import (
 
 var (
 	DEFAULT_LIMIT = 20
-	DEFAULT_SKIP = 0
+	DEFAULT_SKIP  = 0
 )
 
+type NotificationUpdateMeta struct {
+	IsRead    bool `json:"is_read" bson:"is_read"`
+}
 
 func GetAllNotification(w http.ResponseWriter, r *http.Request) {
 	queries := r.URL.Query()
@@ -85,13 +88,18 @@ func GetNotificationById(w http.ResponseWriter, r *http.Request) {
 
 func UpdateNotificationById(w http.ResponseWriter, r *http.Request) {
 	id := chi.URLParam(r, "id")
-	notification := mongo.NotificationModel{}
-	err := json.NewDecoder(r.Body).Decode(&notification)
+	updateMeta := NotificationUpdateMeta{}
+	fmt.Println(r.Body)
+	err := json.NewDecoder(r.Body).Decode(&updateMeta)
 	if err != nil {
 		panic(err)
 	}
-	fmt.Println(notification)
-	render.JSON(w, r, map[string]string{"message": "Update Notification By ID", "id": id})
+	fmt.Println(updateMeta)
+	query := bson.M{"_id": bson.ObjectIdHex(id)}
+	update := bson.M{"is_read": updateMeta.IsRead}
+	mongo.UpdateNotification(query, update)
+	_, notification := mongo.GetNotificationById(bson.ObjectIdHex(id))
+	render.JSON(w, r, bson.M{"data": notification})
 }
 
 func DeleteNotificationById(w http.ResponseWriter, r *http.Request) {

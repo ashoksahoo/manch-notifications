@@ -141,11 +141,15 @@ func CreateNotification(notification NotificationModel) NotificationModel {
 
 func UpdateNotification(query, update bson.M) {
 	update["updatedAt"] = time.Now()
+	fmt.Println("query is ", query)
 	fmt.Println("update is", update)
 	s := session.Clone()
 	defer s.Close()
 	N := s.DB("manch").C(NOTIFICATION_V2_MODEL)
-	N.Update(query, bson.M{"$set": update})
+	err := N.Update(query, bson.M{"$set": update})
+	if err != nil {
+		fmt.Println("Notification update error", err)	
+	}
 }
 
 func GetNotificationByIdentifier(identifier string) (error, NotificationModel) {
