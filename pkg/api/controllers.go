@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"net/http"
 	"notification-service/pkg/mongo"
-	"reflect"
 	"strconv"
 
 	"github.com/globalsign/mgo/bson"
@@ -21,7 +20,7 @@ var (
 )
 
 type NotificationUpdateMeta struct {
-	IsRead    bool `json:"is_read" bson:"is_read"`
+	IsRead bool `json:"is_read" bson:"is_read"`
 }
 
 func GetAllNotification(w http.ResponseWriter, r *http.Request) {
@@ -50,7 +49,6 @@ func GetAllNotification(w http.ResponseWriter, r *http.Request) {
 	bsonQuery["skip"] = skip
 	bsonQuery["limit"] = limit
 	for k, v := range queries {
-		fmt.Println(k, v[0])
 		if bson.IsObjectIdHex(v[0]) {
 			bsonQuery[k] = bson.ObjectIdHex(v[0])
 		} else {
@@ -70,8 +68,6 @@ func GetAllNotification(w http.ResponseWriter, r *http.Request) {
 	} else {
 		metaInfo["has_next"] = true
 	}
-	fmt.Println(reflect.TypeOf(notifications))
-	fmt.Println("notification is ", notifications)
 
 	render.JSON(w, r, bson.M{"data": notifications, "meta": metaInfo})
 }
