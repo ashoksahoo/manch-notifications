@@ -51,5 +51,6 @@ var ModelNames = map[string]string{
 	"VOTE_SCHEDULEDS":         "vote_scheduleds",
 	"SHARES_SCHEDULEDS":       "shares_scheduleds",
 	"USER_SCORES":             "user_scores",
-	"USER_COINS_MODEL":         "user_coins",
+	"USER_COINS":              "user_coins",
+	"USER_LEADERBOARDS":       "user_leaderboards",
 }
