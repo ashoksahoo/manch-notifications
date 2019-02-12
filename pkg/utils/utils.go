@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"strconv"
 	"math/rand"
 	"time"
 )
@@ -61,4 +62,26 @@ func UnpackMap(m map[string]string) ([]string, []string) {
 		values = append(values, v)
 	}
 	return keys, values
+}
+
+func GetCurrentDateKeys() (int, int, int, int) {
+	t := time.Now()
+	dayKey := t.Format("20060102")
+	dayKeyInt, _ := strconv.Atoi(dayKey)
+	_, weekKey := t.ISOWeek()
+	monthKey := t.Format("200601")
+	monthKeyInt, _ := strconv.Atoi(monthKey)
+	yearKey := t.Format("2006")
+	yearKeyInt, _ := strconv.Atoi(yearKey)
+	return dayKeyInt, weekKey, monthKeyInt, yearKeyInt
+}
+
+func GetStartOfDay(t time.Time) time.Time {
+	year, month, day := t.Date()
+    return time.Date(year, month, day, 0, 0, 0, 0, t.Location())
+}
+
+func GetEndOfDay(t time.Time) time.Time{
+	year, month, day := t.Date()
+	return time.Date(year, month, day, 23, 59, 59, 999, t.Location())
 }

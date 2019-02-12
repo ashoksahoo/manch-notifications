@@ -88,6 +88,10 @@ func SharePostSubscriber(callback func(subj, reply string, m *SharePost)) {
 	go c.QueueSubscribe(subject("share.post"), queue(), callback)
 }
 
+func ShareSubscriber(callback func(subj, reply string, m *Share))  {
+	go c.QueueSubscribe(subject("share"), queue(), callback)
+}
+
 func init() {
 	if url == "" {
 		url = nats.DefaultURL

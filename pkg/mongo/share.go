@@ -10,6 +10,7 @@ import (
 
 var (
 	SHARES_SCHEDULEDS_MODEL = constants.ModelNames["SHARES_SCHEDULEDS"]
+	SHARES_MODEL = constants.ModelNames["SHARES"]
 )
 type ShareModel struct {
 	Id           bson.ObjectId `json:"_id" bson:"_id"`
@@ -86,4 +87,14 @@ func RemoveShareScheduleByResource(rId bson.ObjectId) {
 	} else {
 		fmt.Println("removed info", info)
 	}
+}
+
+func CountShareByQuery(query bson.M) int{
+	s := session.Clone()
+	defer s.Close()
+
+	fmt.Println("query is ", query)
+	C := s.DB("manch").C(SHARES_MODEL)
+	n, _ := C.Find(query).Count()
+	return n
 }

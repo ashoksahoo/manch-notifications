@@ -35,10 +35,10 @@ var ModelNames = map[string]string{
 	"POSTS":                   "posts",
 	"COMMUNITIES":             "communities",
 	"COMMENTS":                "comments",
-	"VOTES":                    "votes",
+	"VOTES":                   "votes",
 	"RESOURCE_SCORE":          "RESOURCE_SCORE",
 	"USER_FOLLOWS":            "user_follows",
-	"SHARES":                  "SHARES",
+	"SHARES":                  "shares",
 	"FCM_TOKENS":              "fcm_tokens",
 	"EVENTS":                  "events",
 	"EXPLORABLE_ENTITIES":     "explorable_entities",
@@ -51,4 +51,5 @@ var ModelNames = map[string]string{
 	"VOTE_SCHEDULEDS":         "vote_scheduleds",
 	"SHARES_SCHEDULEDS":       "shares_scheduleds",
 	"USER_SCORES":             "user_scores",
+	"USER_COINS_MODEL":         "user_coins",
 }

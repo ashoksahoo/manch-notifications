@@ -1,30 +1,32 @@
 package main
 
 import (
+	"notification-service/pkg/utils"
 	"fmt"
 	"net/http"
 	"notification-service/pkg/callbacks"
 	"notification-service/pkg/subscribers"
+	"time"
 
 	"notification-service/pkg/api"
-	"github.com/go-chi/chi/middleware"
+
 	"github.com/go-chi/chi"
+	"github.com/go-chi/chi/middleware"
 	"github.com/go-chi/render"
-	
 )
 
-func Routes() *chi.Mux  {
+func Routes() *chi.Mux {
 	router := chi.NewRouter()
 	router.Use(
 		render.SetContentType(render.ContentTypeJSON), // set content type header as json
-		middleware.Logger, // Log API request calls
+		middleware.Logger,          // Log API request calls
 		middleware.DefaultCompress, // Compress results
 		middleware.RedirectSlashes, // redirect slashes to no slashes
-		middleware.Recoverer, // Recover from panics without crashing server
+		middleware.Recoverer,       // Recover from panics without crashing server
 		middleware.URLFormat,
 	)
 
-	router.Route("/", func (r chi.Router)  {
+	router.Route("/", func(r chi.Router) {
 		r.Mount("/", api.Routes())
 	})
 
@@ -34,6 +36,9 @@ func Routes() *chi.Mux  {
 func main() {
 	router := Routes()
 	router.Get("/ping", func(w http.ResponseWriter, r *http.Request) {
+		tn := time.Now()
+		fmt.Println(utils.GetStartOfDay(tn))
+		fmt.Println(utils.GetEndOfDay(tn))
 		w.Write([]byte("pong"))
 	})
 
@@ -72,6 +77,9 @@ func main() {
 
 	// received post moderation event
 	subscribers.PostModeratedSubscriber(callbacks.PostModeratedSubscriberCB)
+
+	// received a Share event
+	subscribers.ShareSubscriber(callbacks.ShareSubscriberCB)
 
 	// listen on http server 5000
 	http.ListenAndServe(":5000", router)

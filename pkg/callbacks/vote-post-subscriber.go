@@ -52,6 +52,14 @@ func VotePostSubscriberCB(subj, reply string, v *subscribers.Vote) {
 		fmt.Println("Self Vote")
 		return
 	}
+
+	// create postCreator's coin
+	mongo.CreateUserCoin(mongo.UserCoinsModel{
+		ProfileId: post.Created.ProfileId,
+		CoinsEarned: 1,
+		Action: "vote",
+	});
+
 	if dir < 1 {
 		//Do not process downvotes and unvote
 		mongo.RemoveParticipants((post.Id.Hex() + "_vote"), false, vote.Created.ProfileId)
