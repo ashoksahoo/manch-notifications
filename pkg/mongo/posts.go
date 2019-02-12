@@ -2,8 +2,13 @@ package mongo
 
 import (
 	"fmt"
+	"notification-service/pkg/constants"
 
 	"github.com/globalsign/mgo/bson"
+)
+
+var (
+	POSTS_MODEL = constants.ModelNames["POSTS"]
 )
 
 type Media struct {
@@ -32,7 +37,7 @@ func GetPost(Id bson.ObjectId) PostModel {
 	s := session.Clone()
 	defer s.Close()
 	post := PostModel{}
-	P := s.DB("manch").C("posts")
+	P := s.DB("manch").C(POSTS_MODEL)
 	P.Find(bson.M{"_id": Id}).One(&post)
 	//FIXME: Do we need to get all the comments from there or its available of the post itself.
 	//post.CommentCount = GetCommentCount(Id)
@@ -43,7 +48,7 @@ func GetPostById(Id string) (error, PostModel) {
 	s := session.Clone()
 	defer s.Close()
 	post := PostModel{}
-	P := s.DB("manch").C("posts")
+	P := s.DB("manch").C(POSTS_MODEL)
 	err := P.Find(bson.M{"_id": bson.ObjectIdHex(Id), "deleted": false}).One(&post)
 	fmt.Println("error", err)
 	return err, post

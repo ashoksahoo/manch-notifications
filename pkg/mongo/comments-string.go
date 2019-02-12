@@ -1,8 +1,13 @@
 package mongo
 
 import (
+	"notification-service/pkg/constants"
 	"fmt"
 	"github.com/globalsign/mgo/bson"
+)
+
+var (
+	COMMENT_STRINGS_MODEL = constants.ModelNames["COMMENT_STRINGS"]
 )
 
 type CommentString struct {
@@ -14,7 +19,7 @@ type CommentString struct {
 func GetCommentStringsByProfileId(profileId bson.ObjectId) (error, CommentString) {
 	s := session.Clone()
 	defer s.Close()
-	C := s.DB("manch").C("comment_strings")
+	C := s.DB("manch").C(COMMENT_STRINGS_MODEL)
 	result := CommentString{}
 	err := C.Find(bson.M{"profile_id": profileId}).One(&result)
 	return err, result
@@ -24,7 +29,7 @@ func AddCommentStringToProfileId(profileId bson.ObjectId, commentId string) {
 	fmt.Println("updating")
 	s := session.Clone()
 	defer s.Close()
-	C := s.DB("manch").C("comment_strings")
+	C := s.DB("manch").C(COMMENT_STRINGS_MODEL)
 	count, _ := C.Find(bson.M{"profile_id": profileId}).Count()
 	if count > 0 {
 		C.Update(bson.M{"profile_id": profileId}, bson.M{

@@ -1,10 +1,15 @@
 package mongo
 
 import (
+	"notification-service/pkg/constants"
 	"fmt"
 	"time"
 
 	"github.com/globalsign/mgo/bson"
+)
+
+var (
+	USER_SCORES_MODEL = constants.ModelNames["USER_SCORES"]
 )
 
 type UserScore struct {
@@ -20,7 +25,7 @@ type UserScore struct {
 func CreateUserScore(userScore UserScore) {
 	s := session.Clone()
 	defer s.Close()
-	US := s.DB("manch").C("user_scores")
+	US := s.DB("manch").C(USER_SCORES_MODEL)
 	userScore.LastUpdated = time.Now()
 	userScore.Id = bson.NewObjectId()
 
@@ -44,7 +49,7 @@ func CreateUserScore(userScore UserScore) {
 func GetUserScoreById(id bson.ObjectId) UserScore {
 	s := session.Clone()
 	defer s.Close()
-	US := s.DB("manch").C("user_scores")
+	US := s.DB("manch").C(USER_SCORES_MODEL)
 	userScore := UserScore{}
 	US.Find(bson.M{"_id": id}).One(&userScore)
 	return userScore

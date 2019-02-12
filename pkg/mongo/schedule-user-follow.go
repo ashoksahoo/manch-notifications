@@ -1,10 +1,15 @@
 package mongo
 
 import (
+	"notification-service/pkg/constants"
 	"fmt"
 	"time"
 
 	"github.com/globalsign/mgo/bson"
+)
+
+var (
+	USER_FOLLOWS_SCHEDULEDS_MODEL = constants.ModelNames["USER_FOLLOWS_SCHEDULEDS"]
 )
 
 type Schedule struct {
@@ -25,7 +30,7 @@ type UserFollowScheduleModel struct {
 func AddFollowSchedule(document UserFollowScheduleModel) {
 	s := session.Clone()
 	defer s.Close()
-	F := s.DB("manch").C("user_follows_scheduleds")
+	F := s.DB("manch").C(USER_FOLLOWS_SCHEDULEDS_MODEL)
 	// fmt.Println("inserting document:", document)
 	err := F.Insert(document)
 	// fmt.Println("err", err)

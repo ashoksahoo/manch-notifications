@@ -80,7 +80,11 @@ func SendMessage(m ManchMessage, token string, notification mongo.NotificationMo
 	if m.Icon == "" {
 		m.Icon = "https://manch.app/img/new-logo.png"
 	}
-	m.MessageType = "T"
+
+	if notification.DisplayTemplate == constants.NotificationTemplate["TRANSACTIONAL"] {
+		m.MessageType = "T"
+	}
+
 	m.Purpose = notification.Purpose
 	m.Date = time.Now().String()
 
@@ -114,7 +118,7 @@ func SendMessage(m ManchMessage, token string, notification mongo.NotificationMo
 		// update push info
 		mongo.UpdateNotification(bson.M{"_id": notification.Id}, bson.M{
 			"push": mongo.PushMeta{
-				Status: constants.FAILED,
+				Status: constants.NotificationStatus["FAILED"],
 				FailReason: err.Error(),
 				CreatedAt: time.Now(),
 			},
@@ -125,7 +129,7 @@ func SendMessage(m ManchMessage, token string, notification mongo.NotificationMo
 		// update push info
 		mongo.UpdateNotification(bson.M{"_id": notification.Id}, bson.M{
 			"push": mongo.PushMeta{
-				Status: constants.SENT,
+				Status: constants.NotificationStatus["SENT"],
 				PushId: response,
 				CreatedAt: time.Now(),
 			},

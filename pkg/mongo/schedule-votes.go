@@ -1,10 +1,15 @@
 package mongo
 
 import (
+	"notification-service/pkg/constants"
 	"fmt"
 	"time"
 
 	"github.com/globalsign/mgo/bson"
+)
+
+var (
+	VOTE_SCHEDULEDS_MODEL = constants.ModelNames["VOTE_SCHEDULEDS"]
 )
 
 type VoteScheduleModelPost struct {
@@ -56,7 +61,7 @@ func CreateVotesSchedulePost(scheduleTime time.Time, rId bson.ObjectId, userProf
 func AddVoteSchedule(document VoteScheduleModelPost) {
 	s := session.Clone()
 	defer s.Close()
-	F := s.DB("manch").C("vote_scheduleds")
+	F := s.DB("manch").C(VOTE_SCHEDULEDS_MODEL)
 	err := F.Insert(document)
 	if err == nil {
 		fmt.Printf("inserted vote schedule: %+v\n", document)
@@ -69,7 +74,7 @@ func AddVoteSchedule(document VoteScheduleModelPost) {
 func RemoveVoteScheduleByResource(rId bson.ObjectId) {
 	s := session.Clone()
 	defer s.Close()
-	V := s.DB("manch").C("vote_scheduleds")
+	V := s.DB("manch").C(VOTE_SCHEDULEDS_MODEL)
 	info, err := V.RemoveAll(bson.M{"resource": rId})
 	if err != nil {
 		fmt.Println(err)

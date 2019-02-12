@@ -1,6 +1,7 @@
 package callbacks
 
 import (
+	"notification-service/pkg/constants"
 	"fmt"
 	"notification-service/pkg/firebase"
 	"notification-service/pkg/i18n"
@@ -76,11 +77,11 @@ func CommentSubscriberCB(subj, reply string, c *subscribers.Comment) {
 				Receiver:        participant,
 				Identifier:      identity,
 				Participants:    []bson.ObjectId{comment.Created.ProfileId},
-				DisplayTemplate: "transactional",
+				DisplayTemplate: constants.NotificationTemplate["TRANSACTIONAL"],
 				EntityGroupId:   c.Id,
 				ActionId:        comment.Id,
 				ActionType:      "comment",
-				Purpose:         "multi_reply",
+				Purpose:         constants.NotificationPurpose["MULTI_REPLY"],
 				Entities:        replyEntity,
 				NUUID:           "",
 			})
@@ -147,11 +148,11 @@ func CommentSubscriberCB(subj, reply string, c *subscribers.Comment) {
 			Receiver:        replyOnComment.Created.ProfileId,
 			Identifier:      replyOnComment.Id.Hex() + "_reply",
 			Participants:    []bson.ObjectId{comment.Created.ProfileId},
-			DisplayTemplate: "transactional",
+			DisplayTemplate: constants.NotificationTemplate["TRANSACTIONAL"],
 			EntityGroupId:   replyOnComment.Id.Hex(),
 			ActionId:        comment.Id,
 			ActionType:      "comment",
-			Purpose:         "reply",
+			Purpose:         constants.NotificationPurpose["REPLY"],
 			Entities:        replyEntity,
 			NUUID:           "",
 		})
@@ -223,11 +224,11 @@ func CommentSubscriberCB(subj, reply string, c *subscribers.Comment) {
 				Receiver:        participant,
 				Identifier:      identity,
 				Participants:    []bson.ObjectId{comment.Created.ProfileId},
-				DisplayTemplate: "transactional",
+				DisplayTemplate: constants.NotificationTemplate["TRANSACTIONAL"],
 				EntityGroupId:   c.Id,
 				ActionId:        comment.Id,
 				ActionType:      "comment",
-				Purpose:         "multi_comment",
+				Purpose:         constants.NotificationPurpose["MULTI_COMMENT"],
 				Entities:        commentEntity,
 				NUUID:           "",
 			})
@@ -285,11 +286,11 @@ func CommentSubscriberCB(subj, reply string, c *subscribers.Comment) {
 		Receiver:        postCreator.Id,
 		Identifier:      c.Id + "_comment",
 		Participants:    []bson.ObjectId{comment.Created.ProfileId},
-		DisplayTemplate: "transactional",
+		DisplayTemplate: constants.NotificationTemplate["TRANSACTIONAL"],
 		EntityGroupId:   c.Id,
 		ActionId:        comment.Id,
 		ActionType:      "comment",
-		Purpose:         "comment",
+		Purpose:         constants.NotificationPurpose["COMMENT"],
 		Entities:        commentEntity,
 		NUUID:           "",
 	})

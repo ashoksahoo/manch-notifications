@@ -2,9 +2,16 @@ package mongo
 
 import (
 	"fmt"
+	"notification-service/pkg/constants"
+	"notification-service/pkg/utils"
+	"os"
 	"time"
 
 	"github.com/globalsign/mgo/bson"
+)
+
+var (
+	USERS_MODEL = constants.ModelNames["USERS"]
 )
 
 type Profile struct {
@@ -31,12 +38,13 @@ type UserModel struct {
 	Profiles  []Profile     `json:"profiles" bson:"profiles"`
 	UserType  string        `json:"type" bson:"type"`
 	CreatedAt time.Time     `json:"createdAt" bson:"createdAt"`
+	Language  string        `json:"language" bson:"language"`
 }
 
 func GetUserById(Id string) UserModel {
 	s := session.Clone()
 	defer s.Close()
-	users := s.DB("manch").C("users")
+	users := s.DB("manch").C(USERS_MODEL)
 	user := UserModel{}
 	users.Find(bson.M{"_id": bson.ObjectIdHex(Id)}).One(&user)
 	//fmt.Printf("Mongo Query return for User %+v\n", user)
@@ -46,18 +54,18 @@ func GetUserById(Id string) UserModel {
 func GetUserByProfileId(ProfileId string) UserModel {
 	s := session.Clone()
 	defer s.Close()
-	users := s.DB("manch").C("users")
+	users := s.DB("manch").C(USERS_MODEL)
 	user := UserModel{}
 	users.Find(bson.M{"profiles._id": bson.ObjectIdHex(ProfileId)}).One(&user)
 	return user
 }
 
-func GetBotUsers() []UserModel {
+func GetBotUsers(language string) []UserModel {
 	s := session.Clone()
 	defer s.Close()
-	users := s.DB("manch").C("users")
+	users := s.DB("manch").C(USERS_MODEL)
 	allUsers := []UserModel{}
-	users.Find(bson.M{"type": "bot"}).All(&allUsers)
+	users.Find(bson.M{"type": "bot", "language": language}).All(&allUsers)
 	// fmt.Println("allusers: ", allUsers)
 	fmt.Println("total bot users", len(allUsers))
 	return allUsers
@@ -72,28 +80,31 @@ func GetBotUsers() []UserModel {
 func GetProfileById(Id bson.ObjectId) Profile {
 	s := session.Clone()
 	defer s.Close()
-	users := s.DB("manch").C("users")
+	users := s.DB("manch").C(USERS_MODEL)
 	user := UserModel{}
 	users.Find(bson.M{"profiles._id": Id}).Select(bson.M{"email": 1, "profiles.$": 1}).One(&user)
 	fmt.Printf("Mongo Query return for Profile %+v\n", user.Profiles)
 	return user.Profiles[0]
 }
 
-func GetBotProfilesIds() (int, [100]string) {
-	botUsers := GetBotUsers()
-	// array of bot profiles ids
-	var botProfilesIds [100]string
-	// no. of profiles counter
-	i := 0
-	for _, botUser := range botUsers {
-		profiles := botUser.Profiles
-		for _, profile := range profiles {
-			if i == 100 {
-				break
+func GetBotProfilesIds(language string) (int, []string) {
+	env := os.Getenv("env")
+	if env != "production" {
+		botUsers := GetBotUsers(language)
+		botProfilesIds := make([]string, 0, 1000)
+		i := 0
+		for _, botUser := range botUsers {
+			profiles := botUser.Profiles
+			for _, profile := range profiles {
+				if profile.Id.Hex() == constants.MANCH_OFFICIAL_PROFILE_HE || profile.Id.Hex() == constants.MANCH_OFFICIAL_PROFILE_TE {
+					continue
+				}
+				botProfilesIds = append(botProfilesIds, profile.Id.Hex())
+				i++
 			}
-			botProfilesIds[i] = profile.Id.Hex()
-			i++
 		}
+		return i, botProfilesIds
 	}
-	return i, botProfilesIds
+	botProfilesIds := utils.BotProfiles[language]
+	return len(botProfilesIds), botProfilesIds
 }
