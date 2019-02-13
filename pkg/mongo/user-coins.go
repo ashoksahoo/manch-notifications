@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"notification-service/pkg/constants"
 	"notification-service/pkg/utils"
-	"strconv"
 	"time"
 
 	"github.com/globalsign/mgo/bson"
@@ -20,10 +19,10 @@ type UserCoinsModel struct {
 	ProfileId   bson.ObjectId `json:"profile_id" bson:"profile_id"`
 	Action      string        `json:"action" bson:"action"`
 	CoinsEarned int           `json:"coins_earned" bson:"coins_earned"`
-	DayKey      int           `json:"day_key" bson:"day_key"`
-	WeekKey     int           `json:"week_key" bson:"week_key"`
-	MonthKey    int           `json:"month_key" bson:"month_key"`
-	YearKey     int           `json:"year_key" bson:"year_key"`
+	DayKey      string        `json:"day_key" bson:"day_key"`
+	WeekKey     string        `json:"week_key" bson:"week_key"`
+	MonthKey    string        `json:"month_key" bson:"month_key"`
+	YearKey     string        `json:"year_key" bson:"year_key"`
 	CreatedAt   time.Time     `json:"createdAt" bson:"createdAt"`
 	UpdatedAt   time.Time     `json:"updatedAt" bson:"updatedAt"`
 }
@@ -56,10 +55,15 @@ func CreateUserCoin(userCoins UserCoinsModel) {
 		return
 	}
 
-	key1 := userCoins.ProfileId.Hex() + "_" + strconv.Itoa(userCoins.DayKey)
-	key2 := userCoins.ProfileId.Hex() + "_" + strconv.Itoa(userCoins.WeekKey)
-	key3 := userCoins.ProfileId.Hex() + "_" + strconv.Itoa(userCoins.MonthKey)
-	key4 := userCoins.ProfileId.Hex() + "_" + strconv.Itoa(userCoins.YearKey)
+	// update User profiles coin
+	UpdateProfileById(userCoins.ProfileId, bson.M{
+		"$inc": bson.M{"profiles.$.total_coins": userCoins.CoinsEarned},
+	})
+
+	key1 := userCoins.ProfileId.Hex() + "_" + userCoins.DayKey
+	key2 := userCoins.ProfileId.Hex() + "_" + userCoins.WeekKey
+	key3 := userCoins.ProfileId.Hex() + "_" + userCoins.MonthKey
+	key4 := userCoins.ProfileId.Hex() + "_" + userCoins.YearKey
 
 	CreateUserLeaderBoard(key1, userCoins.ProfileId, userCoins.DayKey, userCoins.CoinsEarned)
 	CreateUserLeaderBoard(key2, userCoins.ProfileId, userCoins.WeekKey, userCoins.CoinsEarned)
@@ -67,7 +71,7 @@ func CreateUserCoin(userCoins UserCoinsModel) {
 	CreateUserLeaderBoard(key4, userCoins.ProfileId, userCoins.YearKey, userCoins.CoinsEarned)
 }
 
-func CreateUserLeaderBoard(key string, profileId bson.ObjectId, granularity, coins int) {
+func CreateUserLeaderBoard(key string, profileId bson.ObjectId, granularity string, coins int) {
 	s := session.Clone()
 	defer s.Close()
 	C := s.DB("manch").C(USER_LEADERBOARDS_MODEL)
@@ -79,7 +83,7 @@ func CreateUserLeaderBoard(key string, profileId bson.ObjectId, granularity, coi
 			"key":         key,
 			"profile_id":  profileId,
 			"granularity": granularity,
-			"createdAt": time.Now(),
+			"createdAt":   time.Now(),
 		},
 	})
 	if err != nil {

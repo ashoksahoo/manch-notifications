@@ -61,3 +61,10 @@ type SharePost struct {
 	ProfileId string `json:"profile_id"`
 	ShareCount int `json:"no_of_shares"`
 }
+
+type LiveTopicComment struct {
+	Id string `json:"_id"`
+	PostId string `json:"post_id"`
+	CommentId string `json:"comment_id"`
+	CreatedBy string `json:"created_by"`
+}

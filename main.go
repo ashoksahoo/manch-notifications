@@ -1,12 +1,11 @@
 package main
 
 import (
-	"notification-service/pkg/utils"
 	"fmt"
 	"net/http"
 	"notification-service/pkg/callbacks"
 	"notification-service/pkg/subscribers"
-	"time"
+	"notification-service/pkg/utils"
 
 	"notification-service/pkg/api"
 
@@ -36,9 +35,6 @@ func Routes() *chi.Mux {
 func main() {
 	router := Routes()
 	router.Get("/ping", func(w http.ResponseWriter, r *http.Request) {
-		tn := time.Now()
-		fmt.Println(utils.GetStartOfDay(tn))
-		fmt.Println(utils.GetEndOfDay(tn))
 		w.Write([]byte("pong"))
 	})
 
