@@ -50,21 +50,29 @@ type Subscription struct {
 type Share struct {
 	Id           string `json:"_id"`
 	GUID         string `json:"guid"`
-	ResourceId     string `json:"resource_id"`
+	ResourceId   string `json:"resource_id"`
 	ResourceType string `json:"resource_type"`
 	ProfileId    string `json:"profile_id"`
 }
 
 type SharePost struct {
-	Id string `json:"_id"`
-	GUID      string `json:"guid"`
-	ProfileId string `json:"profile_id"`
-	ShareCount int `json:"no_of_shares"`
+	Id         string `json:"_id"`
+	GUID       string `json:"guid"`
+	ProfileId  string `json:"profile_id"`
+	ShareCount int    `json:"no_of_shares"`
 }
 
 type LiveTopicComment struct {
-	Id string `json:"_id"`
-	PostId string `json:"post_id"`
-	CommentId string `json:"comment_id"`
-	CreatedBy string `json:"created_by"`
+	Id         string `json:"_id"`
+	PostId     string `json:"post_id"`
+	CommentId  string `json:"comment_id"`
+	CreatedBy  string `json:"created_by"`
+	IsReply    bool   `json:"is_reply"`
+	UpVotes    int    `json:"up_votes"`
+	ReplyCount int    `json:"reply_count"`
+}
+
+type LiveTopicsWinner struct {
+	Id      string   `json:"_id"`
+	Winners []string `json:"winners"`
 }

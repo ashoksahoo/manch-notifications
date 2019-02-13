@@ -5,7 +5,6 @@ import (
 	"net/http"
 	"notification-service/pkg/callbacks"
 	"notification-service/pkg/subscribers"
-	"notification-service/pkg/utils"
 
 	"notification-service/pkg/api"
 
@@ -76,6 +75,12 @@ func main() {
 
 	// received a Share event
 	subscribers.ShareSubscriber(callbacks.ShareSubscriberCB)
+
+	// received Live Topics Comment
+	subscribers.LiveTopicsCommentSubscriber(callbacks.LiveTopicsCommentSubscriberCB)
+	
+	// received live topics winners
+	subscribers.LiveTopicsWinnerSubscriber(callbacks.LiveTopicsWinnerSubscriberCB)
 
 	// listen on http server 5000
 	http.ListenAndServe(":5000", router)

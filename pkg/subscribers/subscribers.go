@@ -92,6 +92,14 @@ func ShareSubscriber(callback func(subj, reply string, m *Share))  {
 	go c.QueueSubscribe(subject("share"), queue(), callback)
 }
 
+func LiveTopicsCommentSubscriber(callback func(subj, reply string, m *LiveTopicComment))  {
+	go c.QueueSubscribe(subject("live-topics.comment"), queue(), callback)
+}
+
+func LiveTopicsWinnerSubscriber(callback func(subj, reply string, m * LiveTopicsWinner))  {
+	go c.QueueSubscribe(subject("live-topics.winners"), queue(), callback)
+}
+
 func init() {
 	if url == "" {
 		url = nats.DefaultURL
