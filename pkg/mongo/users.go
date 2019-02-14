@@ -108,3 +108,21 @@ func GetBotProfilesIds(language string) (int, []string) {
 	botProfilesIds := utils.BotProfiles[language]
 	return len(botProfilesIds), botProfilesIds
 }
+
+func UpdateProfileById(profileId bson.ObjectId, update bson.M)  {
+	s := session.Clone()
+	defer s.Close()
+
+	C := s.DB("manch").C(USERS_MODEL)
+
+	fmt.Println("update:", update)
+	fmt.Println("profile id is ", bson.M{"profiles._id": profileId})
+	err := C.Update(bson.M{"profiles._id": profileId}, update)
+
+	if err != nil {
+		fmt.Println("Error while updating profile", err)
+	} else {
+		fmt.Println("update profiles successfully")
+	}
+
+}

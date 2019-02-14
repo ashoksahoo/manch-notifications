@@ -11,6 +11,7 @@ require (
 	github.com/google/logger v0.0.0-20180208223940-54b4ae679a63
 	github.com/google/martian v2.1.0+incompatible // indirect
 	github.com/googleapis/gax-go v2.0.0+incompatible // indirect
+	github.com/jinzhu/now v0.0.0-20181116074157-8ec929ed50c3
 	github.com/kr/pretty v0.1.0 // indirect
 	github.com/nats-io/gnatsd v1.3.0 // indirect
 	github.com/nats-io/go-nats v1.6.0
