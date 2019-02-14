@@ -78,6 +78,60 @@ func GetCurrentDateKeys() (string, string, string, string) {
 	return "D" + dayKey, "W" + yearKey + weekKeyString, "M" + monthKey, "Y" + yearKey
 }
 
+func GetStartOfMonth() time.Time {
+	loc, _ := time.LoadLocation("Asia/Kolkata")
+	t := time.Now().In(loc)
+	year, month, _ := t.Date()
+	return time.Date(year, month, 1, 0, 0, 0, 0, t.Location())
+}
+
+func GetEndOfMonth() time.Time {
+	loc, _ := time.LoadLocation("Asia/Kolkata")
+	t := time.Now().In(loc)
+	firstday := time.Date(t.Year(), t.Month(), 1, 0, 0, 0, 0, time.Local)
+	lastday := firstday.AddDate(0, 1, 0).Add(time.Nanosecond * -1)
+	return lastday
+}
+
+func WeekStart(year, week int) time.Time {
+	// Start from the middle of the year:
+	loc, _ := time.LoadLocation("Asia/Kolkata")
+	t := time.Date(year, 7, 1, 0, 0, 0, 0, loc)
+
+	// Roll back to Monday:
+	if wd := t.Weekday(); wd == time.Sunday {
+		t = t.AddDate(0, 0, -6)
+	} else {
+		t = t.AddDate(0, 0, -int(wd)+1)
+	}
+
+	// Difference in weeks:
+	_, w := t.ISOWeek()
+	t = t.AddDate(0, 0, (week-w)*7)
+
+	return t
+}
+
+func WeekRange() (start, end time.Time) {
+	loc, _ := time.LoadLocation("Asia/Kolkata")
+	t := time.Now().In(loc)
+	_, week := t.ISOWeek()
+	start = WeekStart(t.Year(), week)
+	end = start.AddDate(0, 0, 6)
+	return
+}
+
+func GetStartOfYear() time.Time {
+	loc, _ := time.LoadLocation("Asia/Kolkata")
+	t := time.Now().In(loc)
+	y, _, _ := t.Date()
+	return time.Date(y, time.January, 1, 0, 0, 0, 0, t.Location())
+}
+
+func GetEndOfYear() time.Time {
+	return GetStartOfYear().AddDate(1, 0, 0).Add(-time.Nanosecond)
+}
+
 func GetStartOfDay(t time.Time) time.Time {
 	year, month, day := t.Date()
 	return time.Date(year, month, day, 0, 0, 0, 0, t.Location())
