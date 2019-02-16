@@ -78,7 +78,7 @@ func main() {
 
 	// received Live Topics Comment
 	subscribers.LiveTopicsCommentSubscriber(callbacks.LiveTopicsCommentSubscriberCB)
-	
+
 	// received live topics winners
 	subscribers.LiveTopicsWinnerSubscriber(callbacks.LiveTopicsWinnerSubscriberCB)
 

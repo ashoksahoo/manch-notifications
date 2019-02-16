@@ -36,6 +36,15 @@ func Contains(s []int, e int) bool {
 	return false
 }
 
+func ContainsStr(s []string, e string) bool {
+	for _, a := range s {
+		if a == e {
+			return true
+		}
+	}
+	return false
+}
+
 // Set Difference String: A - B
 func Difference(a, b []string) (diff []string) {
 	m := make(map[string]bool)
