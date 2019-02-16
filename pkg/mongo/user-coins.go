@@ -14,6 +14,14 @@ var (
 	USER_LEADERBOARDS_MODEL = constants.ModelNames["USER_LEADERBOARDS"]
 )
 
+var ManchProfiles = []string{
+	"5bc498ad9ca925186ffb64b0",
+	"5b5449a1e24cb4255b00ffb8",
+	"5c3c3bfd89ac4a794d45b14d",
+	"5c1c92c8eda9bd1771bcf0a7",
+	"5c2f90a86aeb6b6c7345dc33",
+}
+
 type UserCoinsModel struct {
 	Id          bson.ObjectId `json:"_id" bson:"_id,omitempty"`
 	ProfileId   bson.ObjectId `json:"profile_id" bson:"profile_id"`
@@ -40,6 +48,11 @@ type UserLeaderBoard struct {
 }
 
 func CreateUserCoin(userCoins UserCoinsModel) {
+
+	if utils.ContainsStr(ManchProfiles, userCoins.ProfileId.Hex()) {
+		return
+	}
+
 	dayKey, weekKey, monthKey, yearKey := utils.GetCurrentDateKeys()
 	userCoins.DayKey = dayKey
 	userCoins.WeekKey = weekKey
@@ -80,7 +93,7 @@ func CreateUserCoin(userCoins UserCoinsModel) {
 	CreateUserLeaderBoard(key2, userCoins.ProfileId, userCoins.WeekKey, userCoins.CoinsEarned, granularityWeekStart, granularityWeekEnd)
 	CreateUserLeaderBoard(key3, userCoins.ProfileId, userCoins.MonthKey, userCoins.CoinsEarned, granularityMonthStart, granularityMonthEnd)
 	CreateUserLeaderBoard(key4, userCoins.ProfileId, userCoins.YearKey, userCoins.CoinsEarned, granularityYearStart, granularityYearEnd)
-	
+
 }
 
 func CreateUserLeaderBoard(key string, profileId bson.ObjectId, granularity string, coins int, granularityStart, granularityEnd time.Time) {
@@ -91,9 +104,9 @@ func CreateUserLeaderBoard(key string, profileId bson.ObjectId, granularity stri
 	info, err := C.Upsert(bson.M{"key": key}, bson.M{
 		"$inc": bson.M{"coins": coins},
 		"$set": bson.M{
-			"updatedAt": time.Now(),
+			"updatedAt":         time.Now(),
 			"granularity_start": granularityStart,
-			"granularity_end": granularityEnd,
+			"granularity_end":   granularityEnd,
 		},
 		"$setOnInsert": bson.M{
 			"key":         key,
