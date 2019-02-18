@@ -20,6 +20,7 @@ var ManchProfiles = []string{
 	"5c3c3bfd89ac4a794d45b14d",
 	"5c1c92c8eda9bd1771bcf0a7",
 	"5c2f90a86aeb6b6c7345dc33",
+	"5c14bb2f5837a165cdead3a1",
 }
 
 type UserCoinsModel struct {
