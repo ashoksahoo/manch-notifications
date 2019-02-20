@@ -1,8 +1,8 @@
 package callbacks
 
 import (
-	"notification-service/pkg/constants"
 	"fmt"
+	"notification-service/pkg/constants"
 	"notification-service/pkg/firebase"
 	"notification-service/pkg/i18n"
 	"notification-service/pkg/mongo"
@@ -74,21 +74,27 @@ func UserFollowSubscriberCB(subj, reply string, uf *subscribers.Subscription) {
 		pnText := i18n.GetString(followsTo.Language, notifTextTemplate, data)
 		pnBigImage := i18n.GetString(followsTo.Language, notifImageTemplate, data)
 
+		htmlMsgText := i18n.GetHtmlString(followsTo.Language, notifTitleTemplate, data)
+
 		messageMeta := mongo.MessageMeta{
-			Template: "tenth_follower_title," + notifTextTemplate + "," + notifImageTemplate,
-			Data:     data,
+			TemplateName: "tenth_follower_title," + notifTextTemplate + "," + notifImageTemplate,
+			Template:     i18n.Strings[followsTo.Language][notifTitleTemplate],
+			Data:         data,
 		}
+		deepLink := "manch://profile/" + followsTo.Id.Hex()
 		// update notification message
 		mongo.UpdateNotification(bson.M{"_id": notification.Id}, bson.M{
 			"message":      pnTitle,
 			"message_meta": messageMeta,
+			"message_html": htmlMsgText,
+			"deep_link":    deepLink,
 		})
 
 		msg := firebase.ManchMessage{
 			Title:      pnTitle,
 			Message:    pnText,
 			BigPicture: pnBigImage,
-			DeepLink:   "manch://profile/" + followsTo.Id.Hex(),
+			DeepLink:   deepLink,
 			Id:         notification.NId,
 		}
 		fmt.Printf("\nGCM Message %+v\n", msg)
@@ -110,28 +116,33 @@ func UserFollowSubscriberCB(subj, reply string, uf *subscribers.Subscription) {
 	}
 
 	msgStr = i18n.GetString(followsTo.Language, templateName, data)
+	htmlMsgStr := i18n.GetHtmlString(followsTo.Language, templateName, data)
 	msgStr = strings.Replace(msgStr, "\"\" ", "", 1)
 	title := i18n.GetAppTitle(followsTo.Language)
 
 	messageMeta := mongo.MessageMeta{
-		Template: templateName,
-		Data:     data,
+		TemplateName: templateName,
+		Template:     i18n.Strings[followsTo.Language][templateName],
+		Data:         data,
 	}
+	deepLink := "manch://profile/" + followsTo.Id.Hex()
 	// update notification message
 	mongo.UpdateNotification(bson.M{"_id": notification.Id}, bson.M{
 		"message":      msgStr,
 		"message_meta": messageMeta,
+		"message_html": htmlMsgStr,
+		"deep_link":    deepLink,
 	})
 
 	msg := firebase.ManchMessage{
 		Title:    title,
 		Message:  msgStr,
-		DeepLink: "manch://profile/" + followsTo.Id.Hex(),
+		DeepLink: deepLink,
 		Id:       notification.NId,
 	}
 
 	followNumbers := []int{1, 2, 3, 5, 20, 30, 40, 50, 60, 70, 80, 90, 100, 150, 200, 300, 350, 400, 450, 500, 550, 600, 650, 700, 800, 850, 900, 950}
-	if utils.Contains(followNumbers, count + 1) || ((count + 1)%250 == 0) {
+	if utils.Contains(followNumbers, count+1) || ((count+1)%250 == 0) {
 		//firebase.SendMessage(msg, "frgp37gfvFg:APA91bHbnbfoX-bp3M_3k-ceD7E4fZ73fcmVL4b5DGB5cQn-fFEvfbj3aAI9g0wXozyApIb-6wGsJauf67auK1p3Ins5Ff7IXCN161fb5JJ5pfBnTZ4LEcRUatO6wimsbiS7EANoGDr4")
 		fmt.Printf("\nGCM Message %+v\n", msg)
 		if tokens != nil {

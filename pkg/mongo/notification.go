@@ -22,8 +22,9 @@ type Entity struct {
 }
 
 type MessageMeta struct {
-	Template string         `json:"template_name" bson:"template_name"`
-	Data     i18n.DataModel `json:"data" bson:"data"`
+	TemplateName string         `json:"template_name" bson:"template_name"`
+	Template     string         `json:"template" bson:"template"`
+	Data         i18n.DataModel `json:"data" bson:"data"`
 }
 
 type PushMeta struct {
@@ -33,6 +34,10 @@ type PushMeta struct {
 	CreatedAt  time.Time `json:"date" bson:"date"`
 }
 
+type PurposeIcon struct {
+	ResourceId string `json:"resource_id" bson:"resource_id"`
+	IconUrl string `json:"icon_url" bson:"icon_url"`
+}
 type NotificationModel struct {
 	Id              bson.ObjectId   `json:"_id,omitempty" bson:"_id,omitempty"`
 	Receiver        bson.ObjectId   `json:"receiver" bson:"receiver"`
@@ -53,6 +58,10 @@ type NotificationModel struct {
 	CreatedAt       time.Time       `json:"createdAt" bson:"createdAt"`
 	UpdatedAt       time.Time       `json:"updatedAt" bson:"updatedAt"`
 	Delivered       bool            `json:"delivered" bson:"delivered"`
+	DeepLink        string          `json:"deep_link" bson:"deep_link"`
+	MessageHtml     string          `json:"message_html" bson:"message_html"`
+	PlaceHolderIcon []string        `json:"place_holder_icons" bson:"place_holder_icons"`
+	PurposeIcon     PurposeIcon          `json:"purpose_icon" bson:"purpose_icon"`
 }
 
 func GenerateIdentifier(Id bson.ObjectId, t string) string {
@@ -107,6 +116,22 @@ func CreateNotification(notification NotificationModel) NotificationModel {
 		Delivered:       false,
 	}
 
+	// get participants avatar
+	placeHolderIcons := []string{}
+
+	for _, participantId := range notification.Participants {
+		participant := GetProfileById(participantId)
+		placeHolderIcons = append(placeHolderIcons, participant.Avatar)
+	}
+
+	n.PlaceHolderIcon = placeHolderIcons
+
+	// notification purpose icon
+	n.PurposeIcon = PurposeIcon{
+		ResourceId: constants.NotificationPurposeResource[n.Purpose],
+		IconUrl: constants.NotificationPurposeIcon[n.Purpose],
+	}
+
 	count, _ := N.Find(bson.M{"identifier": notification.Identifier, "is_read": notification.IsRead}).Count()
 	print(count)
 	if count > 0 {
@@ -141,14 +166,15 @@ func CreateNotification(notification NotificationModel) NotificationModel {
 
 func UpdateNotification(query, update bson.M) {
 	update["updatedAt"] = time.Now()
-	fmt.Println("query is ", query)
-	fmt.Println("update is", update)
+	fmt.Printf("notification query is %+v", query)
+	fmt.Printf("update is %+v", update)
+
 	s := session.Clone()
 	defer s.Close()
 	N := s.DB("manch").C(NOTIFICATION_V2_MODEL)
 	err := N.Update(query, bson.M{"$set": update})
 	if err != nil {
-		fmt.Println("Notification update error", err)	
+		fmt.Println("Notification update error", err)
 	}
 }
 
@@ -161,8 +187,7 @@ func GetNotificationByIdentifier(identifier string) (error, NotificationModel) {
 	return err, notif
 }
 
-// find, select, sort, skip, limit
-func GetNotificationByQuery(query bson.M) (error, []NotificationModel)  {
+func GetNotificationByQuery(query bson.M) (error, []NotificationModel) {
 	s := session.Clone()
 	defer s.Close()
 	fmt.Println("Query is ", query)
@@ -174,9 +199,17 @@ func GetNotificationByQuery(query bson.M) (error, []NotificationModel)  {
 		delete(query, "limit")
 		skip := query["skip"]
 		delete(query, "skip")
-		err = N.Find(query).Skip(skip.(int)).Limit(limit.(int)).All(&notifications)	
+		err = N.Find(query).Select(bson.M{
+			"participants":    0,
+			"entity_group_id": 0,
+			"entities":        0,
+		}).Skip(skip.(int)).Limit(limit.(int)).All(&notifications)
 	} else {
-		err = N.Find(query).All(&notifications)
+		err = N.Find(query).Select(bson.M{
+			"participants":    0,
+			"entity_group_id": 0,
+			"entities":        0,
+		}).All(&notifications)
 	}
 	return err, notifications
 }

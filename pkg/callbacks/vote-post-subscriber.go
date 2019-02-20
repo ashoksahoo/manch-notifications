@@ -1,8 +1,8 @@
 package callbacks
 
 import (
-	"notification-service/pkg/constants"
 	"fmt"
+	"notification-service/pkg/constants"
 	"notification-service/pkg/firebase"
 	"notification-service/pkg/i18n"
 	"notification-service/pkg/mongo"
@@ -55,10 +55,10 @@ func VotePostSubscriberCB(subj, reply string, v *subscribers.Vote) {
 
 	// create postCreator's coin
 	mongo.CreateUserCoin(mongo.UserCoinsModel{
-		ProfileId: post.Created.ProfileId,
+		ProfileId:   post.Created.ProfileId,
 		CoinsEarned: 1,
-		Action: "vote",
-	});
+		Action:      "vote",
+	})
 
 	if dir < 1 {
 		//Do not process downvotes and unvote
@@ -110,6 +110,7 @@ func VotePostSubscriberCB(subj, reply string, v *subscribers.Vote) {
 	}
 
 	msgStr = i18n.GetString(postCreator.Language, templateName, data)
+	htmlMsgStr := i18n.GetHtmlString(postCreator.Language, templateName, data)
 	if count > 25 {
 		msgStr = "❤️ " + msgStr
 	}
@@ -117,20 +118,24 @@ func VotePostSubscriberCB(subj, reply string, v *subscribers.Vote) {
 	title := i18n.GetAppTitle(postCreator.Language)
 
 	messageMeta := mongo.MessageMeta{
-		Template: templateName,
-		Data:     data,
+		TemplateName: templateName,
+		Template:     i18n.Strings[postCreator.Language][templateName],
+		Data:         data,
 	}
 	// update notification message
+	deepLink := "manch://posts/" + post.Id.Hex()
 	mongo.UpdateNotification(bson.M{"_id": notification.Id}, bson.M{
 		"message":      msgStr,
 		"message_meta": messageMeta,
+		"message_html": htmlMsgStr,
+		"deep_link":    deepLink,
 	})
 
 	msg := firebase.ManchMessage{
 		Title:    title,
 		Message:  msgStr,
 		Icon:     mongo.ExtractThumbNailFromPost(post),
-		DeepLink: "manch://posts/" + post.Id.Hex(),
+		DeepLink: deepLink,
 		Id:       notification.NId,
 	}
 

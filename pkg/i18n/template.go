@@ -40,3 +40,29 @@ func GetString(lang string, s string, d DataModel) string {
 	}
 
 }
+
+func GetHtmlString(lang string, s string, d DataModel) string {
+	var output bytes.Buffer
+	var tpl string
+	if HtmlStrings[lang] == nil {
+		lang = "en"
+	}
+	tpl = HtmlStrings[lang][s]
+	if tpl == "" {
+		tpl = HtmlStrings["en"][s]
+	}
+	if tpl == "" {
+		return ""
+	} else {
+		tmpl, err := template.New(lang + s).Parse(tpl)
+		if err != nil {
+			return ""
+		}
+		err = tmpl.Execute(&output, d)
+		if err != nil {
+			return ""
+		}
+		return output.String()
+	}
+
+}
