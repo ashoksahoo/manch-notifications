@@ -70,7 +70,7 @@ func LiveTopicsWinnerSubscriberCB(subj, reply string, W *subscribers.LiveTopicsW
 			Template: notifTitleTemplate,
 			Data:     data,
 		}
-		deepLink := "manch://live/" + W.Id
+		deepLink := "manch://live/top/" + W.Id
 		// update notification message
 		mongo.UpdateNotification(bson.M{"_id": notification.Id}, bson.M{
 			"message":      msgStrTitle,
@@ -134,7 +134,7 @@ func LiveTopicsWinnerSubscriberCB(subj, reply string, W *subscribers.LiveTopicsW
 			Template: notifTitleTemplate,
 			Data:     data,
 		}
-		deepLink := "manch://live/" + W.Id
+		deepLink := "manch://live/top/" + W.Id
 		// update notification message
 		mongo.UpdateNotification(bson.M{"_id": notification.Id}, bson.M{
 			"message":      msgStrTitle,
