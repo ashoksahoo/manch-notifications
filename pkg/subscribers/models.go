@@ -73,6 +73,9 @@ type LiveTopicComment struct {
 }
 
 type LiveTopicsWinner struct {
-	Id      string   `json:"_id"`
-	Winners []string `json:"winners"`
+	Id           string   `json:"_id"`
+	Title        string   `json:"title"`
+	BannerImage  string   `json:"banner_image"`
+	Winners      []string `json:"winners"`
+	Participants []string `json:"participants"`
 }
