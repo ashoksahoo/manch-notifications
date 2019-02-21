@@ -117,7 +117,7 @@ var Strings = map[string]map[string]string{
 		"live_topics_winner_text": "आपको मिलें हैं {{.Count}} Coins",
 
 		"live_topic_participants_title_1": "{{.Name}}, ये हैं आज की चर्चा के टॉप यूज़र्स",
-		"live_topic_participants_title_2": "{{.Name}}, आज की टॉप चर्चा के यूज़र्स की लिस्ट",
+		"live_topic_participants_title_2": "{{.Name}}, आज की चर्चा के टॉप यूज़र्स की लिस्ट",
 	},
 
 	"te": {
