@@ -158,6 +158,9 @@ func PostModeratedSubscriberCB(subj, reply string, p *subscribers.Post) {
 
 	// warning for 3rd & 4th ignore post
 	// block on every 5th ignore for 2^i days
+
+	blockedStatus := map[string]string{}
+
 	if post.PostLevel == "-2" {
 		// ignore from feed callback
 		PostRemovedSubscriberCB(subj, reply, p)
@@ -192,6 +195,9 @@ func PostModeratedSubscriberCB(subj, reply string, p *subscribers.Post) {
 					"blacklist.blocked_till": blockTill,
 				},
 			})
+			blockedStatus["status"] = "blocked"
+			blockedStatus["blocked_on"] = time.Now().String()
+			blockedStatus["blocked_till"] = time.Now().String()
 			send_notification = true
 		}
 	}
@@ -203,6 +209,12 @@ func PostModeratedSubscriberCB(subj, reply string, p *subscribers.Post) {
 			Message: "",
 			Namespace: "manch:D",
 			Id:      notification.NId,
+		}
+
+		if _, ok := blockedStatus["status"]; ok {
+			msg.Status = blockedStatus["status"]
+			msg.BlockedTill = blockedStatus["blocked_till"]
+			msg.BlockedOn = blockedStatus["blocked_on"]
 		}
 		if tokens != nil {
 			for _, token := range tokens {

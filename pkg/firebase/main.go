@@ -67,6 +67,9 @@ type ManchMessage struct {
 	CampaignId 		string `json:"mnc_acid" bson:"mnc_acid"`
 	TestVariation 	string `json:"mnc_atv" bson:"mnc_atv"`
 	Date 			string `json:"mnc_ad" bson:"mnc_ad"`
+	Status 			string `json:"status" bson:"status"`
+	BlockedTill 	string `json:"blocked_till" bson:"blocked_till"`
+	BlockedOn 		string `json:"blocked_on" bson:"blocked_on"`
 }
 
 func MessageBuilder(m ManchMessage) map[string]string {
