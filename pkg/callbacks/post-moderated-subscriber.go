@@ -1,6 +1,7 @@
 package callbacks
 
 import (
+	"strconv"
 	"fmt"
 	"math"
 	"math/rand"
@@ -195,9 +196,13 @@ func PostModeratedSubscriberCB(subj, reply string, p *subscribers.Post) {
 					"blacklist.blocked_till": blockTill,
 				},
 			})
+			
+			blockTillString := strconv.FormatInt(blockTill.Unix(), 10)
+			blockOnString := strconv.FormatInt(time.Now().Unix(), 10)
+
 			blockedStatus["status"] = "blocked"
-			blockedStatus["blocked_on"] = time.Now().String()
-			blockedStatus["blocked_till"] = time.Now().String()
+			blockedStatus["blocked_on"] = blockOnString
+			blockedStatus["blocked_till"] = blockTillString
 			send_notification = true
 		}
 	}
