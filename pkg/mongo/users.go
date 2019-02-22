@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/globalsign/mgo/bson"
+	"github.com/mitchellh/mapstructure"
 )
 
 var (
@@ -85,6 +86,41 @@ func GetProfileById(Id bson.ObjectId) Profile {
 	users.Find(bson.M{"profiles._id": Id}).Select(bson.M{"email": 1, "profiles.$": 1}).One(&user)
 	fmt.Printf("Mongo Query return for Profile %+v\n", user.Profiles)
 	return user.Profiles[0]
+}
+
+func GetProfilesByIds(Ids []string) []Profile {
+
+	profileIds := []bson.ObjectId{}
+
+	for _, id := range Ids {
+		profileIds = append(profileIds, bson.ObjectIdHex(id))
+	}
+
+	s := session.Clone()
+	defer s.Close()
+	usersCollection := s.DB("manch").C(USERS_MODEL)
+	pipe := usersCollection.Pipe([]bson.M{
+		{"$match": bson.M{"profiles._id": bson.M{"$in": profileIds}}},
+		{"$unwind": "$profiles"},
+		{"$match": bson.M{"profiles._id": bson.M{"$in": profileIds}}},
+		{"$project": bson.M{"profiles": 1}},
+	})
+	resp := []bson.M{}
+	err := pipe.All(&resp)
+	if err != nil {
+		fmt.Println("Error found while fetching profiles", err)
+		return []Profile{}
+	}
+	profiles := []Profile{}
+	for _, res := range resp {
+		profile := Profile{}
+		mapstructure.Decode(res["profiles"], &profile)
+		profiles = append(profiles, profile)
+	}
+	// TODO: Profile Id is not fetching
+	fmt.Println(profiles)
+	return profiles
+
 }
 
 func GetBotProfilesIds(language string) (int, []string) {

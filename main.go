@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"notification-service/pkg/callbacks"
+	"notification-service/pkg/mongo"
 	"notification-service/pkg/subscribers"
 
 	"notification-service/pkg/api"
@@ -34,6 +35,11 @@ func Routes() *chi.Mux {
 func main() {
 	router := Routes()
 	router.Get("/ping", func(w http.ResponseWriter, r *http.Request) {
+		a := []string{"5b3e6d27c5ed1f314379955e",
+			"5bc46be726fb9d76651fa597",
+			"5b3ece95ebecdb3163a009f0",
+			"5b3f217b17ce335d618bf0b6"}
+		mongo.GetProfilesByIds(a)
 		w.Write([]byte("pong"))
 	})
 

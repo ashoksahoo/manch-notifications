@@ -24,16 +24,22 @@ func LiveTopicsWinnerSubscriberCB(subj, reply string, W *subscribers.LiveTopicsW
 	fmt.Println("participants is", participantsIds)
 
 	coinsEarned := 500
-	for _, winnerId := range winners {
+
+	winnersProfiles := mongo.GetProfilesByIds(winners)
+	participantsProfiles := mongo.GetProfilesByIds(participantsIds)
+
+	for i, winnerId := range winners {
 		mongo.CreateUserCoin(mongo.UserCoinsModel{
 			ProfileId:   bson.ObjectIdHex(winnerId),
 			CoinsEarned: coinsEarned,
 			Action:      "live-topics.winner",
 		})
 
-		winner := mongo.GetProfileById(bson.ObjectIdHex(winnerId))
 
-		tokens := mongo.GetTokensByProfiles([]bson.ObjectId{winner.Id})
+		winner := winnersProfiles[i]
+
+		tokens := mongo.GetTokensByProfiles([]bson.ObjectId{bson.ObjectIdHex(winnerId)})
+
 
 		entities := []mongo.Entity{
 			{
@@ -42,9 +48,9 @@ func LiveTopicsWinnerSubscriberCB(subj, reply string, W *subscribers.LiveTopicsW
 			},
 		}
 		notification := mongo.CreateNotification(mongo.NotificationModel{
-			Receiver:        winner.Id,
-			Identifier:      winner.Id.Hex() + "_live_topic_winner",
-			Participants:    []bson.ObjectId{},
+			Receiver:        bson.ObjectIdHex(winnerId),
+			Identifier:      winnerId + "_live_topic_winner",
+			Participants:    []bson.ObjectId{bson.ObjectIdHex(winnerId)},
 			DisplayTemplate: constants.NotificationTemplate["TRANSACTIONAL"],
 			EntityGroupId:   W.Id,
 			ActionId:        bson.ObjectIdHex(W.Id),
@@ -95,10 +101,11 @@ func LiveTopicsWinnerSubscriberCB(subj, reply string, W *subscribers.LiveTopicsW
 
 	}
 
-	for _, participantId := range participantsIds {
-		participant := mongo.GetProfileById(bson.ObjectIdHex(participantId))
+	for i, participantId := range participantsIds {
 
-		tokens := mongo.GetTokensByProfiles([]bson.ObjectId{participant.Id})
+		participant := participantsProfiles[i]
+
+		tokens := mongo.GetTokensByProfiles([]bson.ObjectId{bson.ObjectIdHex(participantId)})
 
 		entities := []mongo.Entity{
 			{
@@ -107,9 +114,9 @@ func LiveTopicsWinnerSubscriberCB(subj, reply string, W *subscribers.LiveTopicsW
 			},
 		}
 		notification := mongo.CreateNotification(mongo.NotificationModel{
-			Receiver:        participant.Id,
-			Identifier:      participant.Id.Hex() + "_live_topic_winner",
-			Participants:    []bson.ObjectId{},
+			Receiver:        bson.ObjectIdHex(participantId),
+			Identifier:      participantId + "_live_topic_winner",
+			Participants:    []bson.ObjectId{bson.ObjectIdHex(participantId)},
 			DisplayTemplate: constants.NotificationTemplate["TRANSACTIONAL"],
 			EntityGroupId:   W.Id,
 			ActionId:        bson.ObjectIdHex(W.Id),
