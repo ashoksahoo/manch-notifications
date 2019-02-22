@@ -114,10 +114,13 @@ func GetProfilesByIds(Ids []string) []Profile {
 	profiles := []Profile{}
 	for _, res := range resp {
 		profile := Profile{}
+		id := res["profiles"].(bson.M)["_id"]
+		_id, _ := id.(bson.ObjectId)
+		profile.Id = _id
 		mapstructure.Decode(res["profiles"], &profile)
 		profiles = append(profiles, profile)
 	}
-	// TODO: Profile Id is not fetching
+
 	return profiles
 
 }
@@ -144,7 +147,7 @@ func GetBotProfilesIds(language string) (int, []string) {
 	return len(botProfilesIds), botProfilesIds
 }
 
-func UpdateProfileById(profileId bson.ObjectId, update bson.M)  {
+func UpdateProfileById(profileId bson.ObjectId, update bson.M) {
 	s := session.Clone()
 	defer s.Close()
 

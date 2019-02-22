@@ -26,18 +26,14 @@ func LiveTopicsWinnerSubscriberCB(subj, reply string, W *subscribers.LiveTopicsW
 	winnersProfiles := mongo.GetProfilesByIds(winners)
 	participantsProfiles := mongo.GetProfilesByIds(participantsIds)
 
-	for i, winnerId := range winners {
+	for _, winner := range winnersProfiles {
 		mongo.CreateUserCoin(mongo.UserCoinsModel{
-			ProfileId:   bson.ObjectIdHex(winnerId),
+			ProfileId:   winner.Id,
 			CoinsEarned: coinsEarned,
 			Action:      "live-topics.winner",
 		})
 
-
-		winner := winnersProfiles[i]
-
-		tokens := mongo.GetTokensByProfiles([]bson.ObjectId{bson.ObjectIdHex(winnerId)})
-
+		tokens := mongo.GetTokensByProfiles([]bson.ObjectId{winner.Id})
 
 		entities := []mongo.Entity{
 			{
@@ -46,9 +42,9 @@ func LiveTopicsWinnerSubscriberCB(subj, reply string, W *subscribers.LiveTopicsW
 			},
 		}
 		notification := mongo.CreateNotification(mongo.NotificationModel{
-			Receiver:        bson.ObjectIdHex(winnerId),
-			Identifier:      winnerId + "_live_topic_winner",
-			Participants:    []bson.ObjectId{bson.ObjectIdHex(winnerId)},
+			Receiver:        winner.Id,
+			Identifier:      winner.Id.Hex() + "_live_topic_winner",
+			Participants:    []bson.ObjectId{winner.Id},
 			DisplayTemplate: constants.NotificationTemplate["TRANSACTIONAL"],
 			EntityGroupId:   W.Id,
 			ActionId:        bson.ObjectIdHex(W.Id),
@@ -99,11 +95,9 @@ func LiveTopicsWinnerSubscriberCB(subj, reply string, W *subscribers.LiveTopicsW
 
 	}
 
-	for i, participantId := range participantsIds {
+	for _, participant := range participantsProfiles {
 
-		participant := participantsProfiles[i]
-
-		tokens := mongo.GetTokensByProfiles([]bson.ObjectId{bson.ObjectIdHex(participantId)})
+		tokens := mongo.GetTokensByProfiles([]bson.ObjectId{participant.Id})
 
 		entities := []mongo.Entity{
 			{
@@ -112,9 +106,9 @@ func LiveTopicsWinnerSubscriberCB(subj, reply string, W *subscribers.LiveTopicsW
 			},
 		}
 		notification := mongo.CreateNotification(mongo.NotificationModel{
-			Receiver:        bson.ObjectIdHex(participantId),
-			Identifier:      participantId + "_live_topic_winner",
-			Participants:    []bson.ObjectId{bson.ObjectIdHex(participantId)},
+			Receiver:        participant.Id,
+			Identifier:      participant.Id.Hex() + "_live_topic_winner",
+			Participants:    []bson.ObjectId{participant.Id},
 			DisplayTemplate: constants.NotificationTemplate["TRANSACTIONAL"],
 			EntityGroupId:   W.Id,
 			ActionId:        bson.ObjectIdHex(W.Id),
