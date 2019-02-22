@@ -20,8 +20,6 @@ func LiveTopicsWinnerSubscriberCB(subj, reply string, W *subscribers.LiveTopicsW
 	topicTitle := W.Title
 
 	fmt.Println("topic title", topicTitle)
-	fmt.Println("winners is", winners)
-	fmt.Println("participants is", participantsIds)
 
 	coinsEarned := 500
 

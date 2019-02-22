@@ -118,7 +118,6 @@ func GetProfilesByIds(Ids []string) []Profile {
 		profiles = append(profiles, profile)
 	}
 	// TODO: Profile Id is not fetching
-	fmt.Println(profiles)
 	return profiles
 
 }
