@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/globalsign/mgo/bson"
+	"github.com/mitchellh/mapstructure"
 )
 
 var (
@@ -87,6 +88,43 @@ func GetProfileById(Id bson.ObjectId) Profile {
 	return user.Profiles[0]
 }
 
+func GetProfilesByIds(Ids []string) []Profile {
+
+	profileIds := []bson.ObjectId{}
+
+	for _, id := range Ids {
+		profileIds = append(profileIds, bson.ObjectIdHex(id))
+	}
+
+	s := session.Clone()
+	defer s.Close()
+	usersCollection := s.DB("manch").C(USERS_MODEL)
+	pipe := usersCollection.Pipe([]bson.M{
+		{"$match": bson.M{"profiles._id": bson.M{"$in": profileIds}}},
+		{"$unwind": "$profiles"},
+		{"$match": bson.M{"profiles._id": bson.M{"$in": profileIds}}},
+		{"$project": bson.M{"profiles": 1}},
+	})
+	resp := []bson.M{}
+	err := pipe.All(&resp)
+	if err != nil {
+		fmt.Println("Error found while fetching profiles", err)
+		return []Profile{}
+	}
+	profiles := []Profile{}
+	for _, res := range resp {
+		profile := Profile{}
+		id := res["profiles"].(bson.M)["_id"]
+		_id, _ := id.(bson.ObjectId)
+		profile.Id = _id
+		mapstructure.Decode(res["profiles"], &profile)
+		profiles = append(profiles, profile)
+	}
+
+	return profiles
+
+}
+
 func GetBotProfilesIds(language string) (int, []string) {
 	env := os.Getenv("env")
 	if env != "production" {
@@ -109,7 +147,7 @@ func GetBotProfilesIds(language string) (int, []string) {
 	return len(botProfilesIds), botProfilesIds
 }
 
-func UpdateProfileById(profileId bson.ObjectId, update bson.M)  {
+func UpdateProfileById(profileId bson.ObjectId, update bson.M) {
 	s := session.Clone()
 	defer s.Close()
 
