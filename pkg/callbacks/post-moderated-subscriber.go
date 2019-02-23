@@ -116,6 +116,8 @@ func PostModeratedSubscriberCB(subj, reply string, p *subscribers.Post) {
 		Entities:        entities,
 		NUUID:           "",
 	})
+
+	blockedStatus := map[string]string{}
 	// warning for 1st and 2nd delete post
 	// block on every 3rd delete post
 	if post.PostLevel == "-1000" {
@@ -153,6 +155,12 @@ func PostModeratedSubscriberCB(subj, reply string, p *subscribers.Post) {
 					"blacklist.blocked_till": blockTill,
 				},
 			})
+			blockTillString := strconv.FormatInt(blockTill.Unix(), 10)
+			blockOnString := strconv.FormatInt(time.Now().Unix(), 10)
+
+			blockedStatus["status"] = "blocked"
+			blockedStatus["blocked_on"] = blockOnString
+			blockedStatus["blocked_till"] = blockTillString
 			send_notification = true
 		}
 	}
@@ -160,7 +168,6 @@ func PostModeratedSubscriberCB(subj, reply string, p *subscribers.Post) {
 	// warning for 3rd & 4th ignore post
 	// block on every 5th ignore for 2^i days
 
-	blockedStatus := map[string]string{}
 
 	if post.PostLevel == "-2" {
 		// ignore from feed callback
