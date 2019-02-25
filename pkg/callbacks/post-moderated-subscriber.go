@@ -104,7 +104,7 @@ func PostModeratedSubscriberCB(subj, reply string, p *subscribers.Post) {
 		// delete post callback
 		PostDeletedSubscriberCB(subj, reply, p)
 
-		query := bson.M{"created.profile_id": postCreator.Id, "deleted": true}
+		query := bson.M{"created.profile_id": postCreator.Id, "deleted": true, "post_level": "-1000"}
 		deleteCount := mongo.GetPostCountByQuery(query)
 		if deleteCount == 1 || deleteCount == 2 {
 			// Warn the user
