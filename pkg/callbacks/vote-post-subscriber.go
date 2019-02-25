@@ -1,8 +1,8 @@
 package callbacks
 
 import (
-	"notification-service/pkg/constants"
 	"fmt"
+	"notification-service/pkg/constants"
 	"notification-service/pkg/firebase"
 	"notification-service/pkg/i18n"
 	"notification-service/pkg/mongo"
@@ -55,10 +55,10 @@ func VotePostSubscriberCB(subj, reply string, v *subscribers.Vote) {
 
 	// create postCreator's coin
 	mongo.CreateUserCoin(mongo.UserCoinsModel{
-		ProfileId: post.Created.ProfileId,
+		ProfileId:   post.Created.ProfileId,
 		CoinsEarned: 1,
-		Action: "vote",
-	});
+		Action:      "vote",
+	})
 
 	if dir < 1 {
 		//Do not process downvotes and unvote

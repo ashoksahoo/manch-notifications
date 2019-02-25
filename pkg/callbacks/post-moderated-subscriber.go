@@ -3,7 +3,6 @@ package callbacks
 import (
 	"fmt"
 	"math"
-	"math/rand"
 	"notification-service/pkg/firebase"
 	"notification-service/pkg/i18n"
 	"notification-service/pkg/mongo"
@@ -14,7 +13,6 @@ import (
 
 	"github.com/globalsign/mgo/bson"
 )
-
 
 func PostModeratedSubscriberCB(subj, reply string, p *subscribers.Post) {
 	fmt.Printf("Received a post on subject %s! with Post %+v\n", subj, p)

@@ -16,14 +16,11 @@ type Media struct {
 	Thumbnail string `json:"thumbnail" bson:"thumbnail"`
 }
 
-<<<<<<< HEAD
 type BlockReason struct {
 	DeleteReason     string `json:"delete_reason" bson:"delete_reason"`
 	IgnoreFeedReason string `json:"ignore_from_feed_reason" bson:"ignore_from_feed_reason"`
 }
 
-=======
->>>>>>> master
 type PostModel struct {
 	Id             bson.ObjectId   `json:"_id" bson:"_id"`
 	Title          string          `json:"title" bson:"title"`
@@ -38,11 +35,8 @@ type PostModel struct {
 	IgnoreFromFeed bool            `json:"ignore_from_feed" bson:"ignore_from_feed"`
 	IgnoreReason   string          `json:"ignore_reason" bson:"ignore_reason"`
 	PostLevel      string          `json:"post_level" bson:"post_level"`
-<<<<<<< HEAD
 	Reason         BlockReason     `json:"reason" bson:"reason"`
-=======
 	Language       string          `json:"language" bson:"language"`
->>>>>>> master
 }
 
 func GetPost(Id bson.ObjectId) PostModel {

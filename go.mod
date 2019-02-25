@@ -7,8 +7,8 @@ require (
 	github.com/derekparker/delve v1.1.0 // indirect
 	github.com/globalsign/mgo v0.0.0-20181015135952-eeefdecb41b8
 	github.com/go-chi/chi v3.3.3+incompatible
-	github.com/go-delve/delve v1.1.0 // indirect
 	github.com/go-chi/render v1.0.1
+	github.com/go-delve/delve v1.1.0 // indirect
 	github.com/gofrs/uuid v3.1.0+incompatible
 	github.com/gomodule/redigo v2.0.0+incompatible
 	github.com/google/logger v0.0.0-20180208223940-54b4ae679a63
