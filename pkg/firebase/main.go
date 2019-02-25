@@ -70,6 +70,7 @@ type ManchMessage struct {
 	Status 			string `json:"status" bson:"status"`
 	BlockedTill 	string `json:"blocked_till" bson:"blocked_till"`
 	BlockedOn 		string `json:"blocked_on" bson:"blocked_on"`
+	Reason 			string `json:"reason" bson:"reason"`
 }
 
 func MessageBuilder(m ManchMessage) map[string]string {

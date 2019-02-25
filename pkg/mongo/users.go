@@ -20,6 +20,7 @@ type BlackList struct {
 	LastWarnedOn time.Time `json:"last_warned_on" bson:"last_warned_on"`
 	BlockedOn    time.Time `json:"blocked_on" bson:"blocked_on"`
 	BlockedTill  time.Time `json:"blocked_till" bson:"blocked_till"`
+	Reason       string    `json:"reason" bson:"reason"`
 }
 
 type Profile struct {

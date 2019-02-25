@@ -1,7 +1,6 @@
 package callbacks
 
 import (
-	"strconv"
 	"fmt"
 	"math"
 	"math/rand"
@@ -10,6 +9,7 @@ import (
 	"notification-service/pkg/mongo"
 	"notification-service/pkg/subscribers"
 	"notification-service/pkg/utils"
+	"strconv"
 	"time"
 
 	"github.com/globalsign/mgo/bson"
@@ -51,7 +51,6 @@ func PostModeratedSubscriberCB(subj, reply string, p *subscribers.Post) {
 	randomBotIndex := utils.Random(0, i)
 
 	postCreator := mongo.GetProfileById(post.Created.ProfileId)
-
 
 	// schedule auto comment on post if it is good
 	if post.PostLevel == "2" || post.PostLevel == "1" {
@@ -118,6 +117,7 @@ func PostModeratedSubscriberCB(subj, reply string, p *subscribers.Post) {
 	})
 
 	blockedStatus := map[string]string{}
+	var reason string
 	// warning for 1st and 2nd delete post
 	// block on every 3rd delete post
 	if post.PostLevel == "-1000" {
@@ -128,12 +128,17 @@ func PostModeratedSubscriberCB(subj, reply string, p *subscribers.Post) {
 		deleteCount := mongo.GetPostCountByQuery(query)
 		if deleteCount == 1 || deleteCount == 2 {
 			// Warn the user
+			reason = post.Reason.IgnoreFeedReason
+			if reason == "" {
+				reason = post.IgnoreReason
+			}
 			mongo.UpdateUser(bson.M{
 				"profiles._id": postCreator.Id,
 			}, bson.M{
 				"$set": bson.M{
 					"blacklist.status":         "warning",
 					"blacklist.last_warned_on": time.Now(),
+					"blacklist.reason":         reason,
 				},
 				"$inc": bson.M{"blacklist.warn_count": 1},
 			})
@@ -146,6 +151,13 @@ func PostModeratedSubscriberCB(subj, reply string, p *subscribers.Post) {
 			days := deleteCount / 3
 			blockForDays := math.Pow(float64(2), float64(days))
 			blockTill := time.Now().Local().Add(time.Hour * 24 * time.Duration(int64(blockForDays)))
+
+			reason = post.Reason.DeleteReason
+
+			if reason == "" {
+				reason = post.Reason.IgnoreFeedReason
+			}
+
 			mongo.UpdateUser(bson.M{
 				"profiles._id": postCreator.Id,
 			}, bson.M{
@@ -153,6 +165,7 @@ func PostModeratedSubscriberCB(subj, reply string, p *subscribers.Post) {
 					"blacklist.status":       "blocked",
 					"blacklist.blocked_on":   time.Now(),
 					"blacklist.blocked_till": blockTill,
+					"blacklist.reason":       reason,
 				},
 			})
 			blockTillString := strconv.FormatInt(blockTill.Unix(), 10)
@@ -168,7 +181,6 @@ func PostModeratedSubscriberCB(subj, reply string, p *subscribers.Post) {
 	// warning for 3rd & 4th ignore post
 	// block on every 5th ignore for 2^i days
 
-
 	if post.PostLevel == "-2" {
 		// ignore from feed callback
 		PostRemovedSubscriberCB(subj, reply, p)
@@ -176,6 +188,10 @@ func PostModeratedSubscriberCB(subj, reply string, p *subscribers.Post) {
 		query := bson.M{"created.profile_id": postCreator.Id, "ignore_from_feed": true, "deleted": false}
 		ignoreCount := mongo.GetPostCountByQuery(query)
 		if ignoreCount == 3 || ignoreCount == 4 {
+			reason = post.Reason.IgnoreFeedReason
+			if reason == "" {
+				reason = post.Reason.DeleteReason
+			}
 			// Warn the user
 			mongo.UpdateUser(bson.M{
 				"profiles._id": postCreator.Id,
@@ -183,6 +199,7 @@ func PostModeratedSubscriberCB(subj, reply string, p *subscribers.Post) {
 				"$set": bson.M{
 					"blacklist.status":         "warning",
 					"blacklist.last_warned_on": time.Now(),
+					"blacklist.reason":         reason,
 				},
 				"$inc": bson.M{"blacklist.warn_count": 1},
 			})
@@ -194,6 +211,10 @@ func PostModeratedSubscriberCB(subj, reply string, p *subscribers.Post) {
 			days := ignoreCount / 5
 			blockForDays := math.Pow(float64(2), float64(days))
 			blockTill := time.Now().Local().Add(time.Hour * 24 * time.Duration(blockForDays))
+			reason = post.Reason.DeleteReason
+			if reason == "" {
+				reason = post.Reason.IgnoreFeedReason
+			}
 			mongo.UpdateUser(bson.M{
 				"profiles._id": postCreator.Id,
 			}, bson.M{
@@ -201,9 +222,10 @@ func PostModeratedSubscriberCB(subj, reply string, p *subscribers.Post) {
 					"blacklist.status":       "blocked",
 					"blacklist.blocked_on":   time.Now(),
 					"blacklist.blocked_till": blockTill,
+					"blacklist.reason":       reason,
 				},
 			})
-			
+
 			blockTillString := strconv.FormatInt(blockTill.Unix(), 10)
 			blockOnString := strconv.FormatInt(time.Now().Unix(), 10)
 
@@ -217,10 +239,11 @@ func PostModeratedSubscriberCB(subj, reply string, p *subscribers.Post) {
 	if send_notification {
 		tokens := mongo.GetTokensByProfiles([]bson.ObjectId{post.Created.ProfileId})
 		msg := firebase.ManchMessage{
-			Title:   "",
-			Message: "",
+			Title:     "",
+			Message:   "",
 			Namespace: "manch:D",
-			Id:      notification.NId,
+			Id:        notification.NId,
+			Reason:    reason,
 		}
 
 		if _, ok := blockedStatus["status"]; ok {
