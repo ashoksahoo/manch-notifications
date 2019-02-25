@@ -8,11 +8,13 @@ require (
 	github.com/globalsign/mgo v0.0.0-20181015135952-eeefdecb41b8
 	github.com/go-chi/chi v3.3.3+incompatible
 	github.com/go-delve/delve v1.1.0 // indirect
+	github.com/go-chi/render v1.0.1
 	github.com/gofrs/uuid v3.1.0+incompatible
 	github.com/gomodule/redigo v2.0.0+incompatible
 	github.com/google/logger v0.0.0-20180208223940-54b4ae679a63
 	github.com/google/martian v2.1.0+incompatible // indirect
 	github.com/googleapis/gax-go v2.0.0+incompatible // indirect
+	github.com/jinzhu/now v0.0.0-20181116074157-8ec929ed50c3
 	github.com/kr/pretty v0.1.0 // indirect
 	github.com/mattn/go-isatty v0.0.4 // indirect
 	github.com/nats-io/gnatsd v1.3.0 // indirect

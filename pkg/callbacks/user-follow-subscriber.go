@@ -2,6 +2,7 @@ package callbacks
 
 import (
 	"fmt"
+	"notification-service/pkg/constants"
 	"notification-service/pkg/firebase"
 	"notification-service/pkg/i18n"
 	"notification-service/pkg/mongo"
@@ -44,11 +45,11 @@ func UserFollowSubscriberCB(subj, reply string, uf *subscribers.Subscription) {
 		Receiver:        followsTo.Id,
 		Identifier:      followsTo.Id.Hex() + "_follow",
 		Participants:    []bson.ObjectId{follower.Id},
-		DisplayTemplate: "transactional",
+		DisplayTemplate: constants.NotificationTemplate["TRANSACTIONAL"],
 		EntityGroupId:   userFollow.Id.Hex(),
 		ActionId:        userFollow.Id,
 		ActionType:      "userfollow",
-		Purpose:         "follow",
+		Purpose:         constants.NotificationPurpose["USER_FOLLOW"],
 		Entities:        entities,
 		NUUID:           "",
 	})
@@ -130,7 +131,7 @@ func UserFollowSubscriberCB(subj, reply string, uf *subscribers.Subscription) {
 	}
 
 	followNumbers := []int{1, 2, 3, 5, 20, 30, 40, 50, 60, 70, 80, 90, 100, 150, 200, 300, 350, 400, 450, 500, 550, 600, 650, 700, 800, 850, 900, 950}
-	if utils.Contains(followNumbers, count + 1) || ((count + 1)%250 == 0) {
+	if utils.Contains(followNumbers, count+1) || ((count+1)%250 == 0) {
 		//firebase.SendMessage(msg, "frgp37gfvFg:APA91bHbnbfoX-bp3M_3k-ceD7E4fZ73fcmVL4b5DGB5cQn-fFEvfbj3aAI9g0wXozyApIb-6wGsJauf67auK1p3Ins5Ff7IXCN161fb5JJ5pfBnTZ4LEcRUatO6wimsbiS7EANoGDr4")
 		fmt.Printf("\nGCM Message %+v\n", msg)
 		if tokens != nil {

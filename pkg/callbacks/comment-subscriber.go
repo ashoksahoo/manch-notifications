@@ -2,6 +2,7 @@ package callbacks
 
 import (
 	"fmt"
+	"notification-service/pkg/constants"
 	"notification-service/pkg/firebase"
 	"notification-service/pkg/i18n"
 	"notification-service/pkg/mongo"
@@ -76,11 +77,11 @@ func CommentSubscriberCB(subj, reply string, c *subscribers.Comment) {
 				Receiver:        participant,
 				Identifier:      identity,
 				Participants:    []bson.ObjectId{comment.Created.ProfileId},
-				DisplayTemplate: "transactional",
+				DisplayTemplate: constants.NotificationTemplate["TRANSACTIONAL"],
 				EntityGroupId:   c.Id,
 				ActionId:        comment.Id,
 				ActionType:      "comment",
-				Purpose:         "multi_reply",
+				Purpose:         constants.NotificationPurpose["MULTI_REPLY"],
 				Entities:        replyEntity,
 				NUUID:           "",
 			})
@@ -88,7 +89,7 @@ func CommentSubscriberCB(subj, reply string, c *subscribers.Comment) {
 			commentTitle := utils.TruncateTitle(replyOnComment.Content, 4)
 			tokens := mongo.GetTokensByProfiles([]bson.ObjectId{participant})
 			data := i18n.DataModel{
-				Name:  comment.Created.Name,
+				Name:    comment.Created.Name,
 				Comment: commentTitle,
 			}
 			var templateName, msgStr string
@@ -142,16 +143,15 @@ func CommentSubscriberCB(subj, reply string, c *subscribers.Comment) {
 		replyOnCommentCreator := mongo.GetProfileById(replyOnComment.Created.ProfileId)
 		// notification1 := mongo.CreateNotification(replyOnComment.Id, "comment", "comment", comment.Created.ProfileId)
 		count := mongo.GetReplierCount(replyOnComment.Id, replyOnComment.Created.ProfileId) - 1
-
 		notification1 := mongo.CreateNotification(mongo.NotificationModel{
 			Receiver:        replyOnComment.Created.ProfileId,
 			Identifier:      replyOnComment.Id.Hex() + "_reply",
 			Participants:    []bson.ObjectId{comment.Created.ProfileId},
-			DisplayTemplate: "transactional",
+			DisplayTemplate: constants.NotificationTemplate["TRANSACTIONAL"],
 			EntityGroupId:   replyOnComment.Id.Hex(),
 			ActionId:        comment.Id,
 			ActionType:      "comment",
-			Purpose:         "reply",
+			Purpose:         constants.NotificationPurpose["REPLY"],
 			Entities:        replyEntity,
 			NUUID:           "",
 		})
@@ -223,11 +223,11 @@ func CommentSubscriberCB(subj, reply string, c *subscribers.Comment) {
 				Receiver:        participant,
 				Identifier:      identity,
 				Participants:    []bson.ObjectId{comment.Created.ProfileId},
-				DisplayTemplate: "transactional",
+				DisplayTemplate: constants.NotificationTemplate["TRANSACTIONAL"],
 				EntityGroupId:   c.Id,
 				ActionId:        comment.Id,
 				ActionType:      "comment",
-				Purpose:         "multi_comment",
+				Purpose:         constants.NotificationPurpose["MULTI_COMMENT"],
 				Entities:        commentEntity,
 				NUUID:           "",
 			})
@@ -237,12 +237,12 @@ func CommentSubscriberCB(subj, reply string, c *subscribers.Comment) {
 			postTitle := utils.TruncateTitle(comment.Post.Title, 4)
 			data := i18n.DataModel{
 				Name:  comment.Created.Name,
-				Post: postTitle,
+				Post:  postTitle,
 				Count: participantCount - 1,
 			}
 			var templateName, msgStr string
 			if participantCount > 1 {
-				templateName = "comment_on_same_post_multi"	
+				templateName = "comment_on_same_post_multi"
 			} else {
 				templateName = "comment_on_same_post_one"
 			}
@@ -273,23 +273,37 @@ func CommentSubscriberCB(subj, reply string, c *subscribers.Comment) {
 	postCreator := mongo.GetProfileById(comment.Post.Created.ProfileId)
 	tokens := mongo.GetTokensByProfiles([]bson.ObjectId{comment.Post.Created.ProfileId})
 
+	// update commentCreator's coin
+	mongo.CreateUserCoin(mongo.UserCoinsModel{
+		ProfileId: comment.Created.ProfileId,
+		CoinsEarned: 5,
+		Action: "comment",
+	})
+
+	// update postCreator's coin
+	mongo.CreateUserCoin(mongo.UserCoinsModel{
+		ProfileId: postCreator.Id,
+		CoinsEarned: 5,
+		Action: "comment",
+	})
+
 	// update user score
 	mongo.CreateUserScore(mongo.UserScore{
-		ProfileId: comment.Created.ProfileId,
+		ProfileId:   comment.Created.ProfileId,
 		CommunityId: comment.Post.CommunityIds[0],
-		Score: 1,
-		UserType: comment.Created.UserType,
+		Score:       1,
+		UserType:    comment.Created.UserType,
 	})
 
 	notification := mongo.CreateNotification(mongo.NotificationModel{
 		Receiver:        postCreator.Id,
 		Identifier:      c.Id + "_comment",
 		Participants:    []bson.ObjectId{comment.Created.ProfileId},
-		DisplayTemplate: "transactional",
+		DisplayTemplate: constants.NotificationTemplate["TRANSACTIONAL"],
 		EntityGroupId:   c.Id,
 		ActionId:        comment.Id,
 		ActionType:      "comment",
-		Purpose:         "comment",
+		Purpose:         constants.NotificationPurpose["COMMENT"],
 		Entities:        commentEntity,
 		NUUID:           "",
 	})

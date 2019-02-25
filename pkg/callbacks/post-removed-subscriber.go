@@ -1,6 +1,7 @@
 package callbacks
 
 import (
+	"notification-service/pkg/constants"
 	"fmt"
 	"notification-service/pkg/firebase"
 	"notification-service/pkg/i18n"
@@ -18,13 +19,16 @@ func PostRemovedSubscriberCB(subj, reply string, p *subscribers.Post) {
 	if err != nil {
 		return
 	}
-	postCreator := mongo.GetProfileById(post.Created.ProfileId)
-
-	tokens := mongo.GetTokensByProfiles([]bson.ObjectId{post.Created.ProfileId})
 	
 	// Remove all vote and share scheduleds
 	mongo.RemoveVoteScheduleByResource(post.Id)
 	mongo.RemoveShareScheduleByResource(post.Id)
+
+	return
+	
+	postCreator := mongo.GetProfileById(post.Created.ProfileId)
+
+	tokens := mongo.GetTokensByProfiles([]bson.ObjectId{post.Created.ProfileId})
 
 	entities := []mongo.Entity{
 		{
@@ -37,11 +41,11 @@ func PostRemovedSubscriberCB(subj, reply string, p *subscribers.Post) {
 		Receiver:        postCreator.Id,
 		Identifier:      post.Id.Hex() + "_remove",
 		Participants:    []bson.ObjectId{postCreator.Id},
-		DisplayTemplate: "transactional",
+		DisplayTemplate: constants.NotificationTemplate["TRANSACTIONAL"],
 		EntityGroupId:   post.Id.Hex(),
 		ActionId:        post.Id,
 		ActionType:      "post",
-		Purpose:         "remove",
+		Purpose:         constants.NotificationPurpose["POST_REMOVE"],
 		Entities:        entities,
 		NUUID:           "",
 	})

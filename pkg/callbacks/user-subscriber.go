@@ -14,36 +14,19 @@ import (
 func UserSubscriberCB(subj, reply string, u *subscribers.User) {
 	fmt.Printf("Received a New User on subject %s! with User %+v\n", subj, u)
 	// create follow schedule for this user
-
-	// get all bot users
-	botUsers := mongo.GetBotUsers()
 	var resourceId bson.ObjectId
-
-	// array of bot profiles ids
-	var botProfilesIds [100]string
-
-	// no. of profiles counter
-	i := 0
-	for _, botUser := range botUsers {
-		profiles := botUser.Profiles
-		for _, profile := range profiles {
-			if i == 100 {
-				break
-			}
-			botProfilesIds[i] = profile.Id.Hex()
-			i++
-		}
-	}
-
-	// shuffle the bot profiles ids
-	// fmt.Println("bot profile ids before shuffle:", botProfilesIds)
-	rand.Seed(time.Now().UnixNano())
-	rand.Shuffle(i, func(i, j int) { botProfilesIds[i], botProfilesIds[j] = botProfilesIds[j], botProfilesIds[i] })
-	// fmt.Println("after shuffle:", botProfilesIds)
 
 	// get user from db
 	user := mongo.GetUserById(u.Id)
 	userProfileId := user.Profiles[0].Id
+
+	m, botProfilesHi := mongo.GetBotProfilesIds("hi")
+	n, botProfilesTe := mongo.GetBotProfilesIds("te")
+	n = m + n;
+	botProfilesIds := append(botProfilesHi, botProfilesTe...) 
+	// shuffle profiles
+	rand.Seed(time.Now().UnixNano())
+	rand.Shuffle(n, func(i, j int) { botProfilesIds[i], botProfilesIds[j] = botProfilesIds[j], botProfilesIds[i] })
 
 	// set user to resource
 	resourceId = userProfileId

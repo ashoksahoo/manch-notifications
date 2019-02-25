@@ -15,10 +15,6 @@ import (
 	"github.com/globalsign/mgo/bson"
 )
 
-const (
-	MANCH_OFFICIAL_TE = "5c3c3bfd89ac4a794d45b14d"
-	MANCH_OFFICIAL_HE = "5c1c92c8eda9bd1771bcf0a7"
-)
 
 func PostModeratedSubscriberCB(subj, reply string, p *subscribers.Post) {
 	fmt.Printf("Received a post on subject %s! with Post %+v\n", subj, p)
@@ -26,34 +22,18 @@ func PostModeratedSubscriberCB(subj, reply string, p *subscribers.Post) {
 	if err != nil {
 		return
 	}
-	// get all bot users
-	botUsers := mongo.GetBotUsers()
-	// array of bot profiles ids
-	var botProfilesIds [100]string
-	// no. of profiles counter
-	i := 0
-	for _, botUser := range botUsers {
-		profiles := botUser.Profiles
-		for _, profile := range profiles {
-			if i == 100 {
-				break
-			}
-			if profile.Id.Hex() == MANCH_OFFICIAL_HE || profile.Id.Hex() == MANCH_OFFICIAL_TE {
-				continue
-			}
-			botProfilesIds[i] = profile.Id.Hex()
-			i++
-		}
-	}
-	rand.Seed(time.Now().UnixNano())
-	rand.Shuffle(i, func(i, j int) { botProfilesIds[i], botProfilesIds[j] = botProfilesIds[j], botProfilesIds[i] })
 
-	randomBotIndex := utils.Random(0, i)
+	// i represents no of profiles
+	n, botProfilesIds := mongo.GetBotProfilesIds(post.Language)
+	randomBotIndex := utils.Random(0, n)
 
 	postCreator := mongo.GetProfileById(post.Created.ProfileId)
 
 	// schedule auto comment on post if it is good
 	if post.PostLevel == "2" || post.PostLevel == "1" {
+		if post.Language == "te" {
+			return
+		}
 		var dbCommentKeys []string
 		// get comment string from db
 		err, commentString := mongo.GetCommentStringsByProfileId(postCreator.Id)
@@ -89,7 +69,9 @@ func PostModeratedSubscriberCB(subj, reply string, p *subscribers.Post) {
 			UserType:  commentator.Type,
 		}
 		randomMinute := utils.Random(15, 30)
+		fmt.Println("random Minute", randomMinute)
 		scheduleTime := time.Now().Local().Add(time.Minute * time.Duration(randomMinute))
+		fmt.Println("schedule time", scheduleTime)
 		// schedule comments
 		mongo.CreateCommentSchedule(comment, post.Id, commentCreator, scheduleTime)
 		mongo.AddCommentStringToProfileId(postCreator.Id, keys[randomCommentKeyIndex])

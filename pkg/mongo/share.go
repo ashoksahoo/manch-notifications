@@ -1,12 +1,17 @@
 package mongo
 
 import (
+	"notification-service/pkg/constants"
 	"fmt"
 	"time"
 
 	"github.com/globalsign/mgo/bson"
 )
 
+var (
+	SHARES_SCHEDULEDS_MODEL = constants.ModelNames["SHARES_SCHEDULEDS"]
+	SHARES_MODEL = constants.ModelNames["SHARES"]
+)
 type ShareModel struct {
 	Id           bson.ObjectId `json:"_id" bson:"_id"`
 	ResourceId   bson.ObjectId `json:"resource_id" bson:"resource_id"`
@@ -62,7 +67,7 @@ func CreateShareSchedule(scheduleTime time.Time, rId bson.ObjectId, userProfileI
 func AddShareSchedule(document ShareScheduleModel) {
 	s := session.Clone()
 	defer s.Close()
-	F := s.DB("manch").C("shares_scheduleds")
+	F := s.DB("manch").C(SHARES_SCHEDULEDS_MODEL)
 	err := F.Insert(document)
 	if err == nil {
 		fmt.Printf("inserted share schedule: %+v\n", document)
@@ -75,11 +80,21 @@ func AddShareSchedule(document ShareScheduleModel) {
 func RemoveShareScheduleByResource(rId bson.ObjectId) {
 	s := session.Clone()
 	defer s.Close()
-	F := s.DB("manch").C("shares_scheduleds")
+	F := s.DB("manch").C(SHARES_SCHEDULEDS_MODEL)
 	info, err := F.RemoveAll(bson.M{"resource_id": rId})
 	if err != nil {
 		fmt.Println(err)
 	} else {
 		fmt.Println("removed info", info)
 	}
+}
+
+func CountShareByQuery(query bson.M) int{
+	s := session.Clone()
+	defer s.Close()
+
+	fmt.Println("query is ", query)
+	C := s.DB("manch").C(SHARES_MODEL)
+	n, _ := C.Find(query).Count()
+	return n
 }

@@ -1,9 +1,14 @@
 package mongo
 
 import (
+	"notification-service/pkg/constants"
 	"fmt"
 
 	"github.com/globalsign/mgo/bson"
+)
+
+var (
+	VOTES_MODEL = constants.ModelNames["VOTES"]
 )
 
 type VoteModelPost struct {
@@ -28,7 +33,7 @@ func (c CommentModel) GetVote(Id string) VoteModelComment {
 	defer s.Close()
 	vote := VoteModelComment{}
 	vote.Resource = c
-	V := s.DB("manch").C("votes")
+	V := s.DB("manch").C(VOTES_MODEL)
 	V.Find(bson.M{"_id": bson.ObjectIdHex(Id)}).One(&vote)
 	return vote
 }
@@ -38,7 +43,7 @@ func (p PostModel) GetVote(Id string) VoteModelPost {
 	defer s.Close()
 	vote := VoteModelPost{}
 	vote.Resource = p
-	V := s.DB("manch").C("votes")
+	V := s.DB("manch").C(VOTES_MODEL)
 	V.Find(bson.M{"_id": bson.ObjectIdHex(Id)}).One(&vote)
 	fmt.Printf("\nVote from DB %+v", vote)
 	return vote

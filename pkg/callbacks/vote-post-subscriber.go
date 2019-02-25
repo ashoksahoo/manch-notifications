@@ -1,6 +1,7 @@
 package callbacks
 
 import (
+	"notification-service/pkg/constants"
 	"fmt"
 	"notification-service/pkg/firebase"
 	"notification-service/pkg/i18n"
@@ -51,6 +52,14 @@ func VotePostSubscriberCB(subj, reply string, v *subscribers.Vote) {
 		fmt.Println("Self Vote")
 		return
 	}
+
+	// create postCreator's coin
+	mongo.CreateUserCoin(mongo.UserCoinsModel{
+		ProfileId: post.Created.ProfileId,
+		CoinsEarned: 1,
+		Action: "vote",
+	});
+
 	if dir < 1 {
 		//Do not process downvotes and unvote
 		mongo.RemoveParticipants((post.Id.Hex() + "_vote"), false, vote.Created.ProfileId)
@@ -74,11 +83,11 @@ func VotePostSubscriberCB(subj, reply string, v *subscribers.Vote) {
 		Receiver:        postCreator.Id,
 		Identifier:      post.Id.Hex() + "_vote",
 		Participants:    []bson.ObjectId{vote.Created.ProfileId},
-		DisplayTemplate: "transactional",
+		DisplayTemplate: constants.NotificationTemplate["TRANSACTIONAL"],
 		EntityGroupId:   post.Id.Hex(),
 		ActionId:        vote.Id,
 		ActionType:      "vote",
-		Purpose:         "vote",
+		Purpose:         constants.NotificationPurpose["VOTE"],
 		Entities:        entities,
 		NUUID:           "",
 	})

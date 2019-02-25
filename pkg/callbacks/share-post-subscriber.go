@@ -2,6 +2,7 @@ package callbacks
 
 import (
 	"fmt"
+	"notification-service/pkg/constants"
 	"strings"
 
 	"notification-service/pkg/firebase"
@@ -43,11 +44,11 @@ func SharePostSubscriberCB(subj, reply string, share *subscribers.SharePost) {
 		Receiver:        postCreator.Id,
 		Identifier:      post.Id.Hex() + "_share",
 		Participants:    []bson.ObjectId{profile.Id},
-		DisplayTemplate: "transactional",
+		DisplayTemplate: constants.NotificationTemplate["TRANSACTIONAL"],
 		EntityGroupId:   post.Id.Hex(),
 		ActionId:        post.Id,
 		ActionType:      "post",
-		Purpose:         "share",
+		Purpose:         constants.NotificationPurpose["POST_SHARE"],
 		Entities:        entities,
 		NUUID:           "",
 	})
