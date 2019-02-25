@@ -17,6 +17,7 @@ require (
 	github.com/jinzhu/now v0.0.0-20181116074157-8ec929ed50c3
 	github.com/kr/pretty v0.1.0 // indirect
 	github.com/mattn/go-isatty v0.0.4 // indirect
+	github.com/mitchellh/mapstructure v1.1.2
 	github.com/nats-io/gnatsd v1.3.0 // indirect
 	github.com/nats-io/go-nats v1.6.0
 	github.com/nats-io/nuid v1.0.0 // indirect

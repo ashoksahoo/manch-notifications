@@ -20,18 +20,18 @@ func LiveTopicsWinnerSubscriberCB(subj, reply string, W *subscribers.LiveTopicsW
 	topicTitle := W.Title
 
 	fmt.Println("topic title", topicTitle)
-	fmt.Println("winners is", winners)
-	fmt.Println("participants is", participantsIds)
 
 	coinsEarned := 500
-	for _, winnerId := range winners {
+
+	winnersProfiles := mongo.GetProfilesByIds(winners)
+	participantsProfiles := mongo.GetProfilesByIds(participantsIds)
+
+	for _, winner := range winnersProfiles {
 		mongo.CreateUserCoin(mongo.UserCoinsModel{
-			ProfileId:   bson.ObjectIdHex(winnerId),
+			ProfileId:   winner.Id,
 			CoinsEarned: coinsEarned,
 			Action:      "live-topics.winner",
 		})
-
-		winner := mongo.GetProfileById(bson.ObjectIdHex(winnerId))
 
 		tokens := mongo.GetTokensByProfiles([]bson.ObjectId{winner.Id})
 
@@ -44,7 +44,7 @@ func LiveTopicsWinnerSubscriberCB(subj, reply string, W *subscribers.LiveTopicsW
 		notification := mongo.CreateNotification(mongo.NotificationModel{
 			Receiver:        winner.Id,
 			Identifier:      winner.Id.Hex() + "_live_topic_winner",
-			Participants:    []bson.ObjectId{},
+			Participants:    []bson.ObjectId{winner.Id},
 			DisplayTemplate: constants.NotificationTemplate["TRANSACTIONAL"],
 			EntityGroupId:   W.Id,
 			ActionId:        bson.ObjectIdHex(W.Id),
@@ -95,8 +95,7 @@ func LiveTopicsWinnerSubscriberCB(subj, reply string, W *subscribers.LiveTopicsW
 
 	}
 
-	for _, participantId := range participantsIds {
-		participant := mongo.GetProfileById(bson.ObjectIdHex(participantId))
+	for _, participant := range participantsProfiles {
 
 		tokens := mongo.GetTokensByProfiles([]bson.ObjectId{participant.Id})
 
@@ -109,7 +108,7 @@ func LiveTopicsWinnerSubscriberCB(subj, reply string, W *subscribers.LiveTopicsW
 		notification := mongo.CreateNotification(mongo.NotificationModel{
 			Receiver:        participant.Id,
 			Identifier:      participant.Id.Hex() + "_live_topic_winner",
-			Participants:    []bson.ObjectId{},
+			Participants:    []bson.ObjectId{participant.Id},
 			DisplayTemplate: constants.NotificationTemplate["TRANSACTIONAL"],
 			EntityGroupId:   W.Id,
 			ActionId:        bson.ObjectIdHex(W.Id),
