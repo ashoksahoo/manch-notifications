@@ -8,7 +8,6 @@ import (
 	"notification-service/pkg/mongo"
 	"notification-service/pkg/subscribers"
 	"notification-service/pkg/utils"
-	"strconv"
 	"time"
 
 	"github.com/globalsign/mgo/bson"
@@ -148,8 +147,9 @@ func PostModeratedSubscriberCB(subj, reply string, p *subscribers.Post) {
 					"blacklist.reason":       reason,
 				},
 			})
-			blockTillString := strconv.FormatInt(blockTill.Unix(), 10)
-			blockOnString := strconv.FormatInt(time.Now().Unix(), 10)
+
+			blockTillString := blockTill.Format(time.RFC3339)
+			blockOnString := time.Now().Format(time.RFC3339)
 
 			blockedStatus["status"] = "blocked"
 			blockedStatus["blocked_on"] = blockOnString
@@ -206,8 +206,8 @@ func PostModeratedSubscriberCB(subj, reply string, p *subscribers.Post) {
 				},
 			})
 
-			blockTillString := strconv.FormatInt(blockTill.Unix(), 10)
-			blockOnString := strconv.FormatInt(time.Now().Unix(), 10)
+			blockTillString := blockTill.Format(time.RFC3339)
+			blockOnString := time.Now().Format(time.RFC3339)
 
 			blockedStatus["status"] = "blocked"
 			blockedStatus["blocked_on"] = blockOnString
