@@ -124,7 +124,7 @@ func PostModeratedSubscriberCB(subj, reply string, p *subscribers.Post) {
 			})
 			notification.Purpose = "user.warned"
 			blockedStatus["status"] = "warning"
-			blockedStatus["last_warned_on"] = lastwarnedOn.Format(time.RFC3339)
+			blockedStatus["last_warned_on"] = utils.ISOFormat(lastwarnedOn)
 			notification.Identifier = post.Id.Hex() + "_user_warned"
 			send_notification = true
 		} else if deleteCount%3 == 0 {
@@ -151,8 +151,8 @@ func PostModeratedSubscriberCB(subj, reply string, p *subscribers.Post) {
 				},
 			})
 
-			blockTillString := blockTill.Format(time.RFC3339)
-			blockOnString := blockedOn.Format(time.RFC3339)
+			blockTillString := utils.ISOFormat(blockTill)
+			blockOnString := utils.ISOFormat(blockedOn)
 
 			blockedStatus["status"] = "blocked"
 			blockedStatus["blocked_on"] = blockOnString
@@ -188,7 +188,7 @@ func PostModeratedSubscriberCB(subj, reply string, p *subscribers.Post) {
 				"$inc": bson.M{"blacklist.warn_count": 1},
 			})
 			notification.Purpose = "user.warned"
-			blockedStatus["last_warned_on"] = lastwarnedOn.Format(time.RFC3339)
+			blockedStatus["last_warned_on"] = utils.ISOFormat(lastwarnedOn)
 			blockedStatus["status"] = "warning"
 			notification.Identifier = post.Id.Hex() + ""
 			send_notification = true
@@ -213,8 +213,8 @@ func PostModeratedSubscriberCB(subj, reply string, p *subscribers.Post) {
 				},
 			})
 
-			blockTillString := blockTill.Format(time.RFC3339)
-			blockOnString := blockedOn.Format(time.RFC3339)
+			blockTillString := utils.ISOFormat(blockTill)
+			blockOnString := utils.ISOFormat(blockedOn)
 
 			blockedStatus["status"] = "blocked"
 			blockedStatus["blocked_on"] = blockOnString
