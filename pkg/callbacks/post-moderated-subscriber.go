@@ -105,7 +105,7 @@ func PostModeratedSubscriberCB(subj, reply string, p *subscribers.Post) {
 
 		query := bson.M{"created.profile_id": postCreator.Id, "deleted": true, "post_level": "-1000"}
 		deleteCount := mongo.GetPostCountByQuery(query)
-		if deleteCount == 1 || deleteCount == 2 {
+		if deleteCount == 1 || deleteCount == 2  || deleteCount==5 || deleteCount==8 {
 			// Warn the user
 			reason = post.Reason.IgnoreFeedReason
 			if reason == "" {
@@ -127,7 +127,7 @@ func PostModeratedSubscriberCB(subj, reply string, p *subscribers.Post) {
 			blockedStatus["last_warned_on"] = utils.ISOFormat(lastwarnedOn)
 			notification.Identifier = post.Id.Hex() + "_user_warned"
 			send_notification = true
-		} else if deleteCount%3 == 0 {
+		} else if deleteCount%10 == 0 {
 			// block for 2 ^ deleteCount/3 days
 			// manch:D, namespace & purpose
 			days := deleteCount / 3
