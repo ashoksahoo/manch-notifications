@@ -55,9 +55,6 @@ func main() {
 	// received user-follow
 	subscribers.UserFollowSubscriber(callbacks.UserFollowSubscriberCB)
 
-	// received post removed (soft delete)
-	subscribers.PostRemovedSubscriber(callbacks.PostRemovedSubscriberCB)
-
 	// received user-follow removed
 	subscribers.UserFollowRemovedSubscriber(callbacks.UserFollowRemovedSubscriberCB)
 
@@ -66,9 +63,6 @@ func main() {
 
 	// received share-post event
 	subscribers.SharePostSubscriber(callbacks.SharePostSubscriberCB)
-
-	// received post deleted event
-	subscribers.PostDeletedSubscriber(callbacks.PostDeletedSubscriberCB)
 
 	// received post moderation event
 	subscribers.PostModeratedSubscriber(callbacks.PostModeratedSubscriberCB)

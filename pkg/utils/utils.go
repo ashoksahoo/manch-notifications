@@ -150,3 +150,7 @@ func GetEndOfDay(t time.Time) time.Time {
 	year, month, day := t.Date()
 	return time.Date(year, month, day, 23, 59, 59, 999, t.Location())
 }
+
+func ISOFormat(t time.Time) string {
+	return t.Format("2006-01-02T15:04:05.000Z")
+}
