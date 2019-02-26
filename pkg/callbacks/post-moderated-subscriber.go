@@ -111,17 +111,20 @@ func PostModeratedSubscriberCB(subj, reply string, p *subscribers.Post) {
 			if reason == "" {
 				reason = post.IgnoreReason
 			}
+			lastwarnedOn := time.Now()
 			mongo.UpdateUser(bson.M{
 				"profiles._id": postCreator.Id,
 			}, bson.M{
 				"$set": bson.M{
 					"blacklist.status":         "warning",
-					"blacklist.last_warned_on": time.Now(),
+					"blacklist.last_warned_on": lastwarnedOn,
 					"blacklist.reason":         reason,
 				},
 				"$inc": bson.M{"blacklist.warn_count": 1},
 			})
 			notification.Purpose = "user.warned"
+			blockedStatus["status"] = "warning"
+			blockedStatus["last_warned_on"] = lastwarnedOn.Format(time.RFC3339)
 			notification.Identifier = post.Id.Hex() + "_user_warned"
 			send_notification = true
 		} else if deleteCount%3 == 0 {
@@ -136,20 +139,20 @@ func PostModeratedSubscriberCB(subj, reply string, p *subscribers.Post) {
 			if reason == "" {
 				reason = post.Reason.IgnoreFeedReason
 			}
-
+			blockedOn := time.Now()
 			mongo.UpdateUser(bson.M{
 				"profiles._id": postCreator.Id,
 			}, bson.M{
 				"$set": bson.M{
 					"blacklist.status":       "blocked",
-					"blacklist.blocked_on":   time.Now(),
+					"blacklist.blocked_on":   blockedOn,
 					"blacklist.blocked_till": blockTill,
 					"blacklist.reason":       reason,
 				},
 			})
 
 			blockTillString := blockTill.Format(time.RFC3339)
-			blockOnString := time.Now().Format(time.RFC3339)
+			blockOnString := blockedOn.Format(time.RFC3339)
 
 			blockedStatus["status"] = "blocked"
 			blockedStatus["blocked_on"] = blockOnString
@@ -172,18 +175,21 @@ func PostModeratedSubscriberCB(subj, reply string, p *subscribers.Post) {
 			if reason == "" {
 				reason = post.Reason.DeleteReason
 			}
+			lastwarnedOn := time.Now()
 			// Warn the user
 			mongo.UpdateUser(bson.M{
 				"profiles._id": postCreator.Id,
 			}, bson.M{
 				"$set": bson.M{
 					"blacklist.status":         "warning",
-					"blacklist.last_warned_on": time.Now(),
+					"blacklist.last_warned_on": lastwarnedOn,
 					"blacklist.reason":         reason,
 				},
 				"$inc": bson.M{"blacklist.warn_count": 1},
 			})
 			notification.Purpose = "user.warned"
+			blockedStatus["last_warned_on"] = lastwarnedOn.Format(time.RFC3339)
+			blockedStatus["status"] = "warning"
 			notification.Identifier = post.Id.Hex() + ""
 			send_notification = true
 		} else if ignoreCount%5 == 0 {
@@ -195,19 +201,20 @@ func PostModeratedSubscriberCB(subj, reply string, p *subscribers.Post) {
 			if reason == "" {
 				reason = post.Reason.IgnoreFeedReason
 			}
+			blockedOn := time.Now()
 			mongo.UpdateUser(bson.M{
 				"profiles._id": postCreator.Id,
 			}, bson.M{
 				"$set": bson.M{
 					"blacklist.status":       "blocked",
-					"blacklist.blocked_on":   time.Now(),
+					"blacklist.blocked_on":   blockedOn,
 					"blacklist.blocked_till": blockTill,
 					"blacklist.reason":       reason,
 				},
 			})
 
 			blockTillString := blockTill.Format(time.RFC3339)
-			blockOnString := time.Now().Format(time.RFC3339)
+			blockOnString := blockedOn.Format(time.RFC3339)
 
 			blockedStatus["status"] = "blocked"
 			blockedStatus["blocked_on"] = blockOnString
@@ -227,9 +234,13 @@ func PostModeratedSubscriberCB(subj, reply string, p *subscribers.Post) {
 		}
 
 		if _, ok := blockedStatus["status"]; ok {
+			if blockedStatus["status"] == "warned" {
+				msg.LastWarned = blockedStatus["last_warned_on"]
+			} else if blockedStatus["status"] == "blocked" {
+				msg.BlockedTill = blockedStatus["blocked_till"]
+				msg.BlockedOn = blockedStatus["blocked_on"]
+			}
 			msg.Status = blockedStatus["status"]
-			msg.BlockedTill = blockedStatus["blocked_till"]
-			msg.BlockedOn = blockedStatus["blocked_on"]
 		}
 		if tokens != nil {
 			for _, token := range tokens {
