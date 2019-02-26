@@ -234,7 +234,7 @@ func PostModeratedSubscriberCB(subj, reply string, p *subscribers.Post) {
 		}
 
 		if _, ok := blockedStatus["status"]; ok {
-			if blockedStatus["status"] == "warned" {
+			if blockedStatus["status"] == "warning" {
 				msg.LastWarned = blockedStatus["last_warned_on"]
 			} else if blockedStatus["status"] == "blocked" {
 				msg.BlockedTill = blockedStatus["blocked_till"]
