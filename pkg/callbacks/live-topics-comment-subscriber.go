@@ -15,25 +15,30 @@ func LiveTopicsCommentSubscriberCB(subj, reply string, comment *subscribers.Live
 	if comment.IsReply {
 		action = "live-topics.reply"
 	}
-	mongo.CreateUserCoin(mongo.UserCoinsModel{
-		ProfileId:   bson.ObjectIdHex(comment.CreatedBy),
-		CoinsEarned: 10,
-		Action:      action,
-	})
 
 	if comment.IsReply {
+		mongo.CreateUserCoin(mongo.UserCoinsModel{
+			ProfileId:   bson.ObjectIdHex(comment.CreatedBy),
+			CoinsEarned: 4,
+			Action:      action,
+		})
 	} else {
+		mongo.CreateUserCoin(mongo.UserCoinsModel{
+			ProfileId:   bson.ObjectIdHex(comment.CreatedBy),
+			CoinsEarned: 2,
+			Action:      action,
+		})
 		upVoteCoins := (2 * comment.UpVotes)
 		replyCoins := (10 * comment.ReplyCount)
 		mongo.CreateUserCoin(mongo.UserCoinsModel{
-			ProfileId: bson.ObjectIdHex(comment.CreatedBy),
+			ProfileId:   bson.ObjectIdHex(comment.CreatedBy),
 			CoinsEarned: upVoteCoins,
-			Action: "live-topics.comment.upvotes",
+			Action:      "live-topics.comment.upvotes",
 		})
 		mongo.CreateUserCoin(mongo.UserCoinsModel{
-			ProfileId: bson.ObjectIdHex(comment.CreatedBy),
+			ProfileId:   bson.ObjectIdHex(comment.CreatedBy),
 			CoinsEarned: replyCoins,
-			Action: "live-topics.comment.replies",
+			Action:      "live-topics.comment.replies",
 		})
 	}
 
