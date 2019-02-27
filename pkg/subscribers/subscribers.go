@@ -48,7 +48,6 @@ func PostModeratedSubscriber(callback func(subj, reply string, m *Post)) {
 	go c.QueueSubscribe(subject("post.moderated"), queue(), callback)
 }
 
-
 func CommentSubscriber(callback func(subj, reply string, m *Comment)) {
 	go c.QueueSubscribe(subject("comment.new"), queue(), callback)
 }
@@ -81,16 +80,20 @@ func SharePostSubscriber(callback func(subj, reply string, m *SharePost)) {
 	go c.QueueSubscribe(subject("share.post"), queue(), callback)
 }
 
-func ShareSubscriber(callback func(subj, reply string, m *Share))  {
+func ShareSubscriber(callback func(subj, reply string, m *Share)) {
 	go c.QueueSubscribe(subject("share"), queue(), callback)
 }
 
-func LiveTopicsCommentSubscriber(callback func(subj, reply string, m *LiveTopicComment))  {
+func LiveTopicsCommentSubscriber(callback func(subj, reply string, m *LiveTopicComment)) {
 	go c.QueueSubscribe(subject("live-topics.comment"), queue(), callback)
 }
 
-func LiveTopicsWinnerSubscriber(callback func(subj, reply string, m * LiveTopicsWinner))  {
+func LiveTopicsWinnerSubscriber(callback func(subj, reply string, m *LiveTopicsWinner)) {
 	go c.QueueSubscribe(subject("live-topics.winners"), queue(), callback)
+}
+
+func BlackListUserSubscriber(callback func(subj, reply string, m *BlackListProfile)) {
+	go c.QueueSubscribe(subject("user.blacklist"), queue(), callback)
 }
 
 func init() {

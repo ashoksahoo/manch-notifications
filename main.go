@@ -76,6 +76,8 @@ func main() {
 	// received live topics winners
 	subscribers.LiveTopicsWinnerSubscriber(callbacks.LiveTopicsWinnerSubscriberCB)
 
+	// received user blacklist update
+	subscribers.BlackListUserSubscriber(callbacks.BlackListUserSubscriberCB)
 	// listen on http server 5000
 	http.ListenAndServe(":5000", router)
 }
