@@ -1,6 +1,7 @@
 package callbacks
 
 import (
+	"notification-service/pkg/constants"
 	"fmt"
 	"notification-service/pkg/firebase"
 	"notification-service/pkg/mongo"
@@ -29,23 +30,25 @@ func BlackListUserSubscriberCB(subj, reply string, blacklist *subscribers.BlackL
 		DisplayTemplate: "transactional",
 		ActionId:        bson.ObjectIdHex(profileId),
 		ActionType:      "profile",
-		Purpose:         "user.blocked",
+		Purpose:         constants.NotificationPurpose["USER_BLOCKED"],
 		Entities:        entities,
 		NUUID:           "",
 	})
 
 	blockedStatus := map[string]string{}
-	if status == "blocked" {
-		blockedStatus["status"] = "blocked"
+	if status == constants.BlackListStatus["BLOCKED"] {
+		blockedStatus["status"] = constants.BlackListStatus["BLOCKED"]
 		blockedStatus["blocked_on"] = utils.ISOFormat(blacklist.BlockedOn)
 		blockedStatus["blocked_till"] = utils.ISOFormat(blacklist.BlockedTill)
-	} else if status == "warning" {
-		notification.Purpose = "user.warned"
-		blockedStatus["status"] = "warning"
+	} else if status == constants.BlackListStatus["WARNING"] {
+		notification.Purpose = constants.NotificationPurpose["USER_WARNED"]
+		blockedStatus["status"] = constants.BlackListStatus["WARNING"]
 		blockedStatus["last_warned_on"] = utils.ISOFormat(blacklist.LastWarnedOn)
 		notification.Identifier = profileId + "_user_warned"
-	} else if status == "unblocked" {
-		return
+	} else if status == constants.BlackListStatus["UN_BLOCKED"] {
+		notification.Purpose = constants.NotificationPurpose["USER_UNBLOCKED"]
+		blockedStatus["status"] = constants.BlackListStatus["UN_BLOCKED"]
+		notification.Identifier = profileId + "_user_unblocked"
 	}
 
 	tokens := mongo.GetTokensByProfiles([]bson.ObjectId{bson.ObjectIdHex(profileId)})
@@ -57,9 +60,9 @@ func BlackListUserSubscriberCB(subj, reply string, blacklist *subscribers.BlackL
 		Reason:    reason,
 	}
 
-	if blockedStatus["status"] == "warning" {
+	if blockedStatus["status"] == constants.BlackListStatus["WARNING"] {
 		msg.LastWarned = blockedStatus["last_warned_on"]
-	} else if blockedStatus["status"] == "blocked" {
+	} else if blockedStatus["status"] == constants.BlackListStatus["BLOCKED"] {
 		msg.BlockedTill = blockedStatus["blocked_till"]
 		msg.BlockedOn = blockedStatus["blocked_on"]
 	}

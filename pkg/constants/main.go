@@ -24,6 +24,9 @@ var NotificationPurpose = map[string]string{
 	"USER_FOLLOW":       "follow",            // user followed another another user
 	"VOTE":              "vote",              // vote on comment or post
 	"LIVE_TOPIC_WINNER": "live_topic_winner", // live topic winners
+	"USER_BLOCKED":      "user.blocked",      // user blocked
+	"USER_UNBLOCKED":    "user.unblocked",    // user unblocked
+	"USER_WARNED":       "user.warned",       // user warned
 }
 
 var NotificationTemplate = map[string]string{
@@ -54,4 +57,10 @@ var ModelNames = map[string]string{
 	"USER_SCORES":             "user_scores",
 	"USER_COINS":              "user_coins",
 	"USER_LEADERBOARDS":       "user_leaderboards",
+}
+
+var BlackListStatus = map[string]string{
+	"WARNING":    "warning",
+	"BLOCKED":    "blocked",
+	"UN_BLOCKED": "unblocked",
 }
