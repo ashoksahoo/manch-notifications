@@ -179,9 +179,12 @@ var Strings = map[string]map[string]string{
 		"tenth_follower_image_2": "https://s3.ap-south-1.amazonaws.com/manch-dev/notifications/10+Followers+Telugu+2.jpg",
 		"tenth_follower_image_3": "https://s3.ap-south-1.amazonaws.com/manch-dev/notifications/10+Followers+Telugu+3.jpg",
 
-		"live_topic_winners_title_1": "बधाई हो {{.Name}}, आपके ऊपर हो रही है Coins की वर्षा",
-		"live_topic_winners_title_2": "{{.Name}}, बधाई हो आज के लाइव चर्चा के आप हैं विजेता",
-		"live_topics_winner_text":    "आपको मिलें हैं {{.Count}} Coins",
+		"live_topic_winners_title_1": "congratulations {{.Name}} గారు, చిరుజల్లులలాంటి Coins మీకోసం",
+		"live_topic_winners_title_2": "congratulations {{.Name}} గారు,  ఈరోజు LIVE చర్చ విజేతలు మీరే",
+		"live_topics_winner_text": "మీరు {{.Count}} Coins గెలుచుకున్నారు",
+
+		"live_topic_participants_title_1": "{{.Name}} గారు ,  నేటి  LIVE చర్చ టాప్ యూజర్లు",
+		"live_topic_participants_title_2": "{{.Name}} గారు , నేటి  LIVE చర్చ టాప్ యూజర్ల వివరాలు",
 	},
 }
 
@@ -387,5 +390,12 @@ var HtmlStrings = map[string]map[string]string{
 		"tenth_follower_image_1": "https://s3.ap-south-1.amazonaws.com/manch-dev/notifications/10+Followers+Telugu+1.jpg",
 		"tenth_follower_image_2": "https://s3.ap-south-1.amazonaws.com/manch-dev/notifications/10+Followers+Telugu+2.jpg",
 		"tenth_follower_image_3": "https://s3.ap-south-1.amazonaws.com/manch-dev/notifications/10+Followers+Telugu+3.jpg",
+
+		"live_topic_winners_title_1": "congratulations <b>{{.Name}}</b> గారు, చిరుజల్లులలాంటి Coins మీకోసం",
+		"live_topic_winners_title_2": "congratulations <b>{{.Name}}</b> గారు,  ఈరోజు LIVE చర్చ విజేతలు మీరే",
+		"live_topics_winner_text": "మీరు <b>{{.Count}}</b> Coins గెలుచుకున్నారు",
+
+		"live_topic_participants_title_1": "<b>{{.Name}}</b> గారు ,  నేటి  LIVE చర్చ టాప్ యూజర్లు",
+		"live_topic_participants_title_2": "<b>{{.Name}}</b> గారు , నేటి  LIVE చర్చ టాప్ యూజర్ల వివరాలు",
 	},
 }
