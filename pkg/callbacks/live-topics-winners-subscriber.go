@@ -65,16 +65,20 @@ func LiveTopicsWinnerSubscriberCB(subj, reply string, W *subscribers.LiveTopicsW
 		notifTitleTemplate := notifTitles[randomIndex]
 		msgStrTitle := i18n.GetString(winner.Language, notifTitleTemplate, data)
 		msgStrText := i18n.GetString(winner.Language, "live_topics_winner_text", data)
+		htmlMsgStr := i18n.GetHtmlString(winner.Language, notifTitleTemplate, data)
 
 		messageMeta := mongo.MessageMeta{
-			Template: notifTitleTemplate,
-			Data:     data,
+			Template:     i18n.Strings[winner.Language][notifTitleTemplate],
+			TemplateName: notifTitleTemplate,
+			Data:         data,
 		}
 		deepLink := "manch://live/top/" + W.Id
 		// update notification message
 		mongo.UpdateNotification(bson.M{"_id": notification.Id}, bson.M{
 			"message":      msgStrTitle,
 			"message_meta": messageMeta,
+			"message_html": htmlMsgStr,
+			"deep_link":    deepLink,
 		})
 
 		msg := firebase.ManchMessage{
@@ -128,16 +132,20 @@ func LiveTopicsWinnerSubscriberCB(subj, reply string, W *subscribers.LiveTopicsW
 
 		notifTitleTemplate := notifTitles[randomIndex]
 		msgStrTitle := i18n.GetString(participant.Language, notifTitleTemplate, data)
+		htmlMsgStr := i18n.GetHtmlString(participant.Language, notifTitleTemplate, data)
 
 		messageMeta := mongo.MessageMeta{
-			Template: notifTitleTemplate,
-			Data:     data,
+			Template:     i18n.Strings[participant.Language][notifTitleTemplate],
+			TemplateName: notifTitleTemplate,
+			Data:         data,
 		}
 		deepLink := "manch://live/top/" + W.Id
 		// update notification message
 		mongo.UpdateNotification(bson.M{"_id": notification.Id}, bson.M{
 			"message":      msgStrTitle,
 			"message_meta": messageMeta,
+			"message_html": htmlMsgStr,
+			"deep_link":    deepLink,
 		})
 
 		msg := firebase.ManchMessage{
