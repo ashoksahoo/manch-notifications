@@ -53,12 +53,12 @@ func VotePostSubscriberCB(subj, reply string, v *subscribers.Vote) {
 		return
 	}
 
-	// create postCreator's coin
-	mongo.CreateUserCoin(mongo.UserCoinsModel{
-		ProfileId:   post.Created.ProfileId,
-		CoinsEarned: 1,
-		Action:      "vote",
-	})
+	// // create postCreator's coin
+	// mongo.CreateUserCoin(mongo.UserCoinsModel{
+	// 	ProfileId:   post.Created.ProfileId,
+	// 	CoinsEarned: 1,
+	// 	Action:      "vote",
+	// })
 
 	if dir < 1 {
 		//Do not process downvotes and unvote

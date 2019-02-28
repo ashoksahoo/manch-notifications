@@ -8,8 +8,24 @@ import (
 	"time"
 
 	"github.com/globalsign/mgo/bson"
+	"github.com/mitchellh/mapstructure"
 )
 
+type Stats struct {
+	PosLevel1 int `json:"pos_level_1_posts" bson:"pos_level_1_posts"`
+	PosLevel2 int `json:"pos_level_2_posts" bson:"pos_level_2_posts"`
+	NegLevel1 int `json:"neg_level_1_posts" bson:"neg_level_1_posts"`
+	NegLevel2 int `json:"neg_level_2_posts" bson:"neg_level_2_posts"`
+}
+
+type BlackList struct {
+	Status       string    `json:"status" bson:"status"`
+	WarnCount    string    `json:"warn_count" bson:"warn_count"`
+	LastWarnedOn time.Time `json:"last_warned_on" bson:"last_warned_on"`
+	BlockedOn    time.Time `json:"blocked_on" bson:"blocked_on"`
+	BlockedTill  time.Time `json:"blocked_till" bson:"blocked_till"`
+	Reason       string    `json:"reason" bson:"reason"`
+}
 var (
 	USERS_MODEL = constants.ModelNames["USERS"]
 )
@@ -87,6 +103,43 @@ func GetProfileById(Id bson.ObjectId) Profile {
 	return user.Profiles[0]
 }
 
+func GetProfilesByIds(Ids []string) []Profile {
+
+	profileIds := []bson.ObjectId{}
+
+	for _, id := range Ids {
+		profileIds = append(profileIds, bson.ObjectIdHex(id))
+	}
+
+	s := session.Clone()
+	defer s.Close()
+	usersCollection := s.DB("manch").C(USERS_MODEL)
+	pipe := usersCollection.Pipe([]bson.M{
+		{"$match": bson.M{"profiles._id": bson.M{"$in": profileIds}}},
+		{"$unwind": "$profiles"},
+		{"$match": bson.M{"profiles._id": bson.M{"$in": profileIds}}},
+		{"$project": bson.M{"profiles": 1}},
+	})
+	resp := []bson.M{}
+	err := pipe.All(&resp)
+	if err != nil {
+		fmt.Println("Error found while fetching profiles", err)
+		return []Profile{}
+	}
+	profiles := []Profile{}
+	for _, res := range resp {
+		profile := Profile{}
+		id := res["profiles"].(bson.M)["_id"]
+		_id, _ := id.(bson.ObjectId)
+		profile.Id = _id
+		mapstructure.Decode(res["profiles"], &profile)
+		profiles = append(profiles, profile)
+	}
+
+	return profiles
+
+}
+
 func GetBotProfilesIds(language string) (int, []string) {
 	env := os.Getenv("env")
 	if env != "production" {
@@ -109,7 +162,7 @@ func GetBotProfilesIds(language string) (int, []string) {
 	return len(botProfilesIds), botProfilesIds
 }
 
-func UpdateProfileById(profileId bson.ObjectId, update bson.M)  {
+func UpdateProfileById(profileId bson.ObjectId, update bson.M) {
 	s := session.Clone()
 	defer s.Close()
 
@@ -125,4 +178,14 @@ func UpdateProfileById(profileId bson.ObjectId, update bson.M)  {
 		fmt.Println("update profiles successfully")
 	}
 
+}
+
+func UpdateUser(query, update bson.M) {
+	s := session.Clone()
+	defer s.Close()
+	users := s.DB("manch").C("users")
+	err := users.Update(query, update)
+	if err != nil {
+		fmt.Println(err, query, update)
+	}
 }

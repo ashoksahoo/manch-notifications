@@ -1,5 +1,9 @@
 package subscribers
 
+import (
+	"time"
+)
+
 type Post struct {
 	Id          string   `json:"_id"`
 	GUID        string   `json:"guid"`
@@ -73,6 +77,18 @@ type LiveTopicComment struct {
 }
 
 type LiveTopicsWinner struct {
-	Id      string   `json:"_id"`
-	Winners []string `json:"winners"`
+	Id           string   `json:"_id"`
+	Title        string   `json:"title"`
+	BannerImage  string   `json:"banner_image"`
+	Winners      []string `json:"winners"`
+	Participants []string `json:"participants"`
+}
+
+type BlackListProfile struct {
+	ProfileId    string    `json:"profile_id"`
+	Status       string    `json:"status"`
+	BlockedOn    time.Time `json:"blocked_on"`
+	BlockedTill  time.Time `json:"blocked_till"`
+	Reason       string    `json:"reason"`
+	LastWarnedOn time.Time `json:"last_warned_on"`
 }

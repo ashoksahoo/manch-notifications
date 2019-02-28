@@ -16,6 +16,11 @@ type Media struct {
 	Thumbnail string `json:"thumbnail" bson:"thumbnail"`
 }
 
+type BlockReason struct {
+	DeleteReason     string `json:"delete_reason" bson:"delete_reason"`
+	IgnoreFeedReason string `json:"ignore_from_feed_reason" bson:"ignore_from_feed_reason"`
+}
+
 type PostModel struct {
 	Id             bson.ObjectId   `json:"_id" bson:"_id"`
 	Title          string          `json:"title" bson:"title"`
@@ -30,6 +35,7 @@ type PostModel struct {
 	IgnoreFromFeed bool            `json:"ignore_from_feed" bson:"ignore_from_feed"`
 	IgnoreReason   string          `json:"ignore_reason" bson:"ignore_reason"`
 	PostLevel      string          `json:"post_level" bson:"post_level"`
+	Reason         BlockReason     `json:"reason" bson:"reason"`
 	Language       string          `json:"language" bson:"language"`
 }
 
@@ -59,4 +65,25 @@ func ExtractThumbNailFromPost(post PostModel) (thumb string) {
 		thumb = post.MediaUrls[0].Thumbnail
 	}
 	return
+}
+
+func GetPostByQuery(query bson.M) (error, PostModel) {
+	s := session.Clone()
+	defer s.Close()
+	post := PostModel{}
+	P := s.DB("manch").C("posts")
+	err := P.Find(query).One(&post)
+	fmt.Println("error", err)
+	return err, post
+}
+
+func GetPostCountByQuery(query bson.M) int {
+	s := session.Clone()
+	defer s.Close()
+	P := s.DB("manch").C("posts")
+	n, err := P.Find(query).Count()
+	if err != nil {
+		return 0
+	}
+	return n
 }

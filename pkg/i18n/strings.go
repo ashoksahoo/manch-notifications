@@ -107,10 +107,17 @@ var Strings = map[string]map[string]string{
 		"tenth_follower_image_1": "https://s3.ap-south-1.amazonaws.com/manch-dev/notifications/10+Followers+Hindi.jpeg",
 		"tenth_follower_image_2": "https://s3.ap-south-1.amazonaws.com/manch-dev/notifications/10+Followers+Hindi.jpeg",
 		"tenth_follower_image_3": "https://s3.ap-south-1.amazonaws.com/manch-dev/notifications/10+Followers+Hindi.jpeg",
-		"tenth_follower_title":   "बधाई हो <b>{{.Name}}</b> जी आपके <b>{{.Count}}</b> फ़ॉलोअर्स हो गए हैं !! 🎉",
+		"tenth_follower_title":   "बधाई हो {{.Name}} जी आपके {{.Count}} फ़ॉलोअर्स हो गए हैं !! 🎉",
 		"tenth_follower_text_1":  "और फ़ॉलोअर्स बनाने के लिए मंच पर चर्चा में शामिल हों ",
 		"tenth_follower_text_2":  "आपके फ़ॉलोअर्स चाहते है आप मंच पर चर्चा करें ",
 		"tenth_follower_text_3":  "वे चाहते हैं की आप कुछ पोस्ट या कमेंट करें  ",
+
+		"live_topic_winners_title_1": "बधाई हो {{.Name}}, आपके ऊपर हो रही है Coins की वर्षा",
+		"live_topic_winners_title_2": "{{.Name}}, बधाई हो आज के लाइव चर्चा के आप हैं विजेता",
+		"live_topics_winner_text": "आपको मिलें हैं {{.Count}} Coins",
+
+		"live_topic_participants_title_1": "{{.Name}}, ये हैं आज की चर्चा के टॉप यूज़र्स",
+		"live_topic_participants_title_2": "{{.Name}}, आज की चर्चा के टॉप यूज़र्स की लिस्ट",
 	},
 
 	"te": {
@@ -171,6 +178,10 @@ var Strings = map[string]map[string]string{
 		"tenth_follower_image_1": "https://s3.ap-south-1.amazonaws.com/manch-dev/notifications/10+Followers+Telugu+1.jpg",
 		"tenth_follower_image_2": "https://s3.ap-south-1.amazonaws.com/manch-dev/notifications/10+Followers+Telugu+2.jpg",
 		"tenth_follower_image_3": "https://s3.ap-south-1.amazonaws.com/manch-dev/notifications/10+Followers+Telugu+3.jpg",
+
+		"live_topic_winners_title_1": "बधाई हो {{.Name}}, आपके ऊपर हो रही है Coins की वर्षा",
+		"live_topic_winners_title_2": "{{.Name}}, बधाई हो आज के लाइव चर्चा के आप हैं विजेता",
+		"live_topics_winner_text": "आपको मिलें हैं {{.Count}} Coins",
 	},
 }
 

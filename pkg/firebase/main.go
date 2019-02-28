@@ -32,6 +32,8 @@ String MSG_CHANNEL_ID = "mnc_cid";
 String MSG_COLLAPSE_KEY = "mnc_ck";
 String MSG_PRIORITY = "mnc_pr";
 String MSG_ACTIONS = "mnc_acts";
+// name space of the notifiction :  has to be manch:D(for data messages) or manch:N
+String MSG_NAME_SPACE = "mnc_ns";
 // notification "type" attribute  [ P(promotional) T(Transactional) ]
 String MSG_TYPE = "mnc_at";
 // notification purpose attribute  [ C(campaign), TC(txn comment), TL(Txn Like) etc.   ]
@@ -65,6 +67,11 @@ type ManchMessage struct {
 	CampaignId 		string `json:"mnc_acid" bson:"mnc_acid"`
 	TestVariation 	string `json:"mnc_atv" bson:"mnc_atv"`
 	Date 			string `json:"mnc_ad" bson:"mnc_ad"`
+	Status 			string `json:"status" bson:"status"`
+	BlockedTill 	string `json:"blocked_till" bson:"blocked_till"`
+	BlockedOn 		string `json:"blocked_on" bson:"blocked_on"`
+	Reason 			string `json:"reason" bson:"reason"`
+	LastWarned 		string `json:"last_warned_on" bson:"last_warned_on"`
 }
 
 func MessageBuilder(m ManchMessage) map[string]string {
@@ -76,7 +83,9 @@ func MessageBuilder(m ManchMessage) map[string]string {
 
 func SendMessage(m ManchMessage, token string, notification mongo.NotificationModel) {
 	// See documentation on defining a message payload.
-	m.Namespace = "manch:N"
+	if m.Namespace == "" {
+		m.Namespace = "manch:N"
+	}
 	if m.Icon == "" {
 		m.Icon = "https://manch.app/img/new-logo.png"
 	}
