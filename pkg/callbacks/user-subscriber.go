@@ -11,6 +11,12 @@ import (
 	"github.com/globalsign/mgo/bson"
 )
 
+func scheduleWelcomeMessage(user mongo.UserModel) {
+	scheduleTime := time.Now().Add(time.Duration(10)*time.Minute)
+	whatsappSchedule := mongo.CreateWhatsAppSchedule(user, scheduleTime)
+	mongo.AddWhatsAppSchedule(whatsappSchedule)
+}
+
 func UserSubscriberCB(subj, reply string, u *subscribers.User) {
 	fmt.Printf("Received a New User on subject %s! with User %+v\n", subj, u)
 	// create follow schedule for this user
@@ -20,10 +26,13 @@ func UserSubscriberCB(subj, reply string, u *subscribers.User) {
 	user := mongo.GetUserById(u.Id)
 	userProfileId := user.Profiles[0].Id
 
+	// schedule welcome message
+	scheduleWelcomeMessage(user)
+
 	m, botProfilesHi := mongo.GetBotProfilesIds("hi")
 	n, botProfilesTe := mongo.GetBotProfilesIds("te")
-	n = m + n;
-	botProfilesIds := append(botProfilesHi, botProfilesTe...) 
+	n = m + n
+	botProfilesIds := append(botProfilesHi, botProfilesTe...)
 	// shuffle profiles
 	rand.Seed(time.Now().UnixNano())
 	rand.Shuffle(n, func(i, j int) { botProfilesIds[i], botProfilesIds[j] = botProfilesIds[j], botProfilesIds[i] })

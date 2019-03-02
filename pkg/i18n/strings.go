@@ -114,10 +114,18 @@ var Strings = map[string]map[string]string{
 
 		"live_topic_winners_title_1": "बधाई हो {{.Name}}, आपके ऊपर हो रही है Coins की वर्षा",
 		"live_topic_winners_title_2": "{{.Name}}, बधाई हो आज के लाइव चर्चा के आप हैं विजेता",
-		"live_topics_winner_text": "आपको मिलें हैं {{.Count}} Coins",
+		"live_topics_winner_text":    "आपको मिलें हैं {{.Count}} Coins",
 
 		"live_topic_participants_title_1": "{{.Name}}, ये हैं आज की चर्चा के टॉप यूज़र्स",
 		"live_topic_participants_title_2": "{{.Name}}, आज की चर्चा के टॉप यूज़र्स की लिस्ट",
+
+		"welcome_message": `नमस्कार {{.Name}} :pray::skin-tone-2:,
+
+		मंच से जुड़ने के लिए धन्यवाद् :bouquet::bouquet:।
+		मंच भारत में बना, भारतीयों के लिए बना पहला हिंदी एप है :flag-in::flag-in:।
+		हमारा उद्देश्य सारे भारतीयों को जोड़ना है।
+		आप हैं हमारे लिए खास। इसलिए हम आपको दे रहें हैं 50 Coins :moneybag::moneybag:।
+		Coins का लाभ लेने के लिए इस मैसेज का रिप्लाई करें।:innocent::innocent:`,
 	},
 
 	"te": {
@@ -181,7 +189,7 @@ var Strings = map[string]map[string]string{
 
 		"live_topic_winners_title_1": "बधाई हो {{.Name}}, आपके ऊपर हो रही है Coins की वर्षा",
 		"live_topic_winners_title_2": "{{.Name}}, बधाई हो आज के लाइव चर्चा के आप हैं विजेता",
-		"live_topics_winner_text": "आपको मिलें हैं {{.Count}} Coins",
+		"live_topics_winner_text":    "आपको मिलें हैं {{.Count}} Coins",
 	},
 }
 
