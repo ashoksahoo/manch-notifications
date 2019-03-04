@@ -11,12 +11,6 @@ import (
 	"github.com/globalsign/mgo/bson"
 )
 
-func scheduleWelcomeMessage(user mongo.UserModel) {
-	scheduleTime := time.Now().Add(time.Duration(10)*time.Minute)
-	whatsappSchedule := mongo.CreateWhatsAppSchedule(user, scheduleTime)
-	mongo.AddWhatsAppSchedule(whatsappSchedule)
-}
-
 func UserSubscriberCB(subj, reply string, u *subscribers.User) {
 	fmt.Printf("Received a New User on subject %s! with User %+v\n", subj, u)
 	// create follow schedule for this user
@@ -25,9 +19,6 @@ func UserSubscriberCB(subj, reply string, u *subscribers.User) {
 	// get user from db
 	user := mongo.GetUserById(u.Id)
 	userProfileId := user.Profiles[0].Id
-
-	// schedule welcome message
-	scheduleWelcomeMessage(user)
 
 	m, botProfilesHi := mongo.GetBotProfilesIds("hi")
 	n, botProfilesTe := mongo.GetBotProfilesIds("te")
