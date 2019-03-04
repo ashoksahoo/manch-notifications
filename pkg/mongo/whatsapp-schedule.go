@@ -13,15 +13,20 @@ var (
 	WHATSAPP_SCHEDULE_MODEL = constants.ModelNames["WHATSAPP_SCHEDULEDS"]
 )
 
+type WhatsAppMessageBody struct {
+	MessagePlatform string        `json:"messagePlatform" bson:"messagePlatform"`
+	MessageType     string        `json:"messsageType" bson:"messsageType"`
+	Number          string        `json:"number" bson:"number"`
+	Message         string        `json:"message bson:"message"`
+}
+
 type WhatsappSchedule struct {
-	Id           bson.ObjectId `json:"_id" bson:"_id"`
-	UserId       bson.ObjectId `json:"user_id" bson:"user_id"`
-	MobileNumber string        `json:"mobile_number" bson:"mobile_number"`
-	Profile      Profile       `json:"profile" bson:"profile"`
-	Message      string        `json:"message" bson:"message"`
-	Schedule     Schedule      `json:"schedule" bson:"schedule"`
-	CreatedAt    time.Time     `json:"createdAt" bson:"createdAt"`
-	UpdatedAt    time.Time     `json:"updatedAt" bson:"updatedAt"`
+	Id          bson.ObjectId       `json:"_id" bson:"_id"`
+	ProfileId   bson.ObjectId       `json:"profile_id" bson:"profile_id"`
+	MessageBody WhatsAppMessageBody `json:"message_body" bson:"message_body"`
+	Schedule    Schedule            `json:"schedule" bson:"schedule"`
+	CreatedAt   time.Time           `json:"createdAt" bson:"createdAt"`
+	UpdatedAt   time.Time           `json:"updatedAt" bson:"updatedAt"`
 }
 
 func CreateWhatsAppSchedule(user UserModel, scheduleTime time.Time) WhatsappSchedule {
@@ -42,17 +47,23 @@ func CreateWhatsAppSchedule(user UserModel, scheduleTime time.Time) WhatsappSche
 		Scheduletime: scheduleTime,
 		Created:      c,
 	}
-
-	message := i18n.Strings[profile.Language]["welcome_message"]
+	data := i18n.DataModel{
+		Name: "",
+	}
+	message := i18n.GetString(profile.Language, "welcome_message", data)
+	messageBody := WhatsAppMessageBody{
+		MessagePlatform: "WHATSAPP",
+		MessageType:     "TEXT",
+		Number:          "91" + user.Phone,
+		Message:         message,
+	}
 	return WhatsappSchedule{
-		Id:           bson.NewObjectId(),
-		UserId:       user.Id,
-		MobileNumber: user.Phone,
-		Profile:      profile,
-		Message:      message,
-		Schedule:     s,
-		CreatedAt:    currentTime,
-		UpdatedAt:    currentTime,
+		Id:          bson.NewObjectId(),
+		ProfileId:   profile.Id,
+		MessageBody: messageBody,
+		Schedule:    s,
+		CreatedAt:   currentTime,
+		UpdatedAt:   currentTime,
 	}
 }
 
