@@ -15,8 +15,9 @@ var (
 
 type WhatsappSchedule struct {
 	Id           bson.ObjectId `json:"_id" bson:"_id"`
+	UserId       bson.ObjectId `json:"user_id" bson:"user_id"`
 	MobileNumber string        `json:"mobile_number" bson:"mobile_number"`
-	ProfileId    bson.ObjectId `json:"profile_id" bson:"profile_id"`
+	Profile      Profile       `json:"profile" bson:"profile"`
 	Message      string        `json:"message" bson:"message"`
 	Schedule     Schedule      `json:"schedule" bson:"schedule"`
 	CreatedAt    time.Time     `json:"createdAt" bson:"createdAt"`
@@ -41,14 +42,13 @@ func CreateWhatsAppSchedule(user UserModel, scheduleTime time.Time) WhatsappSche
 		Scheduletime: scheduleTime,
 		Created:      c,
 	}
-	data := i18n.DataModel{
-		Name: profile.Name,
-	}
-	message := i18n.GetString(profile.Language, "welcome_message", data)
+
+	message := i18n.Strings[profile.Language]["welcome_message"]
 	return WhatsappSchedule{
 		Id:           bson.NewObjectId(),
+		UserId:       user.Id,
 		MobileNumber: user.Phone,
-		ProfileId:    user.Profiles[0].Id,
+		Profile:      profile,
 		Message:      message,
 		Schedule:     s,
 		CreatedAt:    currentTime,

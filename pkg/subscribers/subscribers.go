@@ -60,6 +60,10 @@ func UserSubscriber(callback func(subj, reply string, m *User)) {
 	go c.QueueSubscribe(subject("user.new"), queue(), callback)
 }
 
+func UserCreatedSubscriber(callback func(subj, reply string, m *User))  {
+	go c.QueueSubscribe(subject("user.created"), queue(), callback)
+}
+
 func VotePostSubscriber(callback func(subj, reply string, m *Vote)) {
 	go c.QueueSubscribe(subject("vote.post"), queue(), callback)
 }
