@@ -103,9 +103,9 @@ func VotePostSubscriberCB(subj, reply string, v *subscribers.Vote) {
 
 	var msgStr string
 	var templateName string
-	if count == 1 {
+	if count == 0 {
 		templateName = "post_like_one"
-	} else if count == 2 {
+	} else if count == 1 {
 		templateName = "post_like_two"
 		// get other upvoter and udpate data.Name2
 		votes := mongo.GetAllVoteByQuery(bson.M{
@@ -117,7 +117,7 @@ func VotePostSubscriberCB(subj, reply string, v *subscribers.Vote) {
 			data.Name2 = profile.Name
 			notification.Participants = append(notification.Participants, profileId)
 		}
-	} else if count == 3 {
+	} else if count == 2 {
 		templateName = "post_like_three"
 		// get other two upvoters and update data.Name2 and data.Name3
 		votes := mongo.GetAllVoteByQuery(bson.M{
@@ -171,7 +171,7 @@ func VotePostSubscriberCB(subj, reply string, v *subscribers.Vote) {
 
 	upvoteNumbers := []int{1, 2, 5, 10, 25, 50, 75, 100}
 
-	if utils.Contains(upvoteNumbers, count) {
+	if utils.Contains(upvoteNumbers, count + 1) {
 		fmt.Printf("\nGCM Message %+v\n", msg)
 		if tokens != nil {
 			for _, token := range tokens {
