@@ -57,6 +57,7 @@ var ModelNames = map[string]string{
 	"USER_SCORES":             "user_scores",
 	"USER_COINS":              "user_coins",
 	"USER_LEADERBOARDS":       "user_leaderboards",
+	"WHATSAPP_SCHEDULEDS":     "whatsapp_scheduleds",
 }
 
 var BlackListStatus = map[string]string{

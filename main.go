@@ -78,6 +78,10 @@ func main() {
 
 	// received user blacklist update
 	subscribers.BlackListUserSubscriber(callbacks.BlackListUserSubscriberCB)
+
+	// received new user created
+	subscribers.UserCreatedSubscriber(callbacks.UserCreatedSubscriberCB)
+
 	// listen on http server 5000
 	http.ListenAndServe(":5000", router)
 }
