@@ -93,6 +93,7 @@ func VotePostSubscriberCB(subj, reply string, v *subscribers.Vote) {
 	}
 
 	count := post.UpVotes
+	fmt.Println("post upvotes:", count)
 
 	postTitle := utils.TruncateTitle(post.Title, 4)
 	data := i18n.DataModel{
@@ -114,15 +115,10 @@ func VotePostSubscriberCB(subj, reply string, v *subscribers.Vote) {
 		})
 		fmt.Printf("all upvotes for template post_like_two \n %+v\n", votes)
 		if len(votes) > 0 {
-			fmt.Println("upvote length is greater than 0")
 			profileId := votes[0].Created.ProfileId
-			fmt.Println("profile id is", profileId)
 			profile := mongo.GetProfileById(profileId)
-			fmt.Println("profile is ", profile)
 			data.Name2 = profile.Name
-			fmt.Printf("udpated data is %+v", data)
 			notification.Participants = append(notification.Participants, profileId)
-			fmt.Println("after updating participants is", notification.Participants);
 		}
 	} else if count == 2 {
 		templateName = "post_like_three"
@@ -146,7 +142,6 @@ func VotePostSubscriberCB(subj, reply string, v *subscribers.Vote) {
 	}
 
 	notification = mongo.CreateNotification(notification)
-	fmt.Println("notification created")
 	msgStr = i18n.GetString(postCreator.Language, templateName, data)
 	htmlMsgStr := i18n.GetHtmlString(postCreator.Language, templateName, data)
 	if count > 25 {

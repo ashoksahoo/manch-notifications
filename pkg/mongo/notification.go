@@ -133,7 +133,6 @@ func CreateNotification(notification NotificationModel) NotificationModel {
 	}
 
 	n.PlaceHolderIcon = placeHolderIcons
-	fmt.Println("place holder icon now is ", n.PlaceHolderIcon)
 	// notification purpose icon
 	n.PurposeIcon = PurposeIcon{
 		ResourceId: constants.NotificationPurposeResource[n.Purpose],
