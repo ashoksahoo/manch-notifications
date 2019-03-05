@@ -15,7 +15,7 @@ type VoteModelPost struct {
 	Id           bson.ObjectId `json:"_id" bson:"_id"`
 	ResourceType string        `json:"resource_type" bson:"resource_type"`
 	Resource     PostModel
-	ResourceId   bson.ObjectId `json:"resource_id" bson:"resource_id"`
+	ResourceId   bson.ObjectId `json:"resource" bson:"resource"`
 	Created      Creator       `json:"created" bson:"created"`
 	Value        int           `json:"vote" bson:"vote"`
 }
@@ -50,6 +50,7 @@ func (p PostModel) GetVote(Id string) VoteModelPost {
 }
 
 func GetAllVoteByQuery(query bson.M) []VoteModelPost {
+	fmt.Println("query for get all vote", query)
 	s := session.Clone()
 	defer s.Close()
 	V := s.DB("manch").C(VOTES_MODEL)
