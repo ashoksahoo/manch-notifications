@@ -48,3 +48,12 @@ func (p PostModel) GetVote(Id string) VoteModelPost {
 	fmt.Printf("\nVote from DB %+v", vote)
 	return vote
 }
+
+func GetAllVoteByQuery(query bson.M) []VoteModelPost {
+	s := session.Clone()
+	defer s.Close()
+	V := s.DB("manch").C(VOTES_MODEL)
+	votes := []VoteModelPost{}
+	V.Find(query).All(&votes)
+	return votes
+}

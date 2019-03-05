@@ -121,9 +121,14 @@ func CreateNotification(notification NotificationModel) NotificationModel {
 
 	// get participants avatar
 	placeHolderIcons := []string{}
-
+	participantsIdsString := []string{}
+	// convert objectid to string for participants
 	for _, participantId := range notification.Participants {
-		participant := GetProfileById(participantId)
+		participantsIdsString = append(participantsIdsString, participantId.Hex())
+	}
+
+	participants := GetProfilesByIds(participantsIdsString)
+	for _, participant := range participants {
 		placeHolderIcons = append(placeHolderIcons, participant.Avatar)
 	}
 
