@@ -10,8 +10,9 @@ import (
 )
 
 var (
-	USER_COINS_MODEL        = constants.ModelNames["USER_COINS"]
-	USER_LEADERBOARDS_MODEL = constants.ModelNames["USER_LEADERBOARDS"]
+	USER_COINS_MODEL          = constants.ModelNames["USER_COINS"]
+	USER_LEADERBOARDS_MODEL   = constants.ModelNames["USER_LEADERBOARDS"]
+	USER_COINS_SCHEDULE_MODEL = constants.ModelNames["USER_COINS_SCHEDULE_MODEL"]
 )
 
 var ManchProfiles = []string{
@@ -46,6 +47,21 @@ type UserLeaderBoard struct {
 	Coins            int           `json:"coins" bson:"coins"`
 	CreatedAt        time.Time     `json:"createdAt" bson:"updatedAt"`
 	UpdatedAt        time.Time     `json:"updatedAt" bson:"updatedAt"`
+}
+
+type UserCoinsModelScheduleModel struct {
+	Id          bson.ObjectId `json:"_id" bson:"_id,omitempty"`
+	ProfileId   bson.ObjectId `json:"profile_id" bson:"profile_id"`
+	Action      string        `json:"action" bson:"action"`
+	CoinsEarned int           `json:"coins_earned" bson:"coins_earned"`
+	DayKey      string        `json:"day_key" bson:"day_key"`
+	WeekKey     string        `json:"week_key" bson:"week_key"`
+	MonthKey    string        `json:"month_key" bson:"month_key"`
+	YearKey     string        `json:"year_key" bson:"year_key"`
+	CreatedAt   time.Time     `json:"createdAt" bson:"createdAt"`
+	UpdatedAt   time.Time     `json:"updatedAt" bson:"updatedAt"`
+	Schedule    Schedule      `json:"schedule" bson:"schedule"`
+	Created     Creator       `json:"created" bson:"created"`
 }
 
 func CreateUserCoin(userCoins UserCoinsModel) {
@@ -95,6 +111,47 @@ func CreateUserCoin(userCoins UserCoinsModel) {
 	CreateUserLeaderBoard(key3, userCoins.ProfileId, userCoins.MonthKey, userCoins.CoinsEarned, granularityMonthStart, granularityMonthEnd)
 	CreateUserLeaderBoard(key4, userCoins.ProfileId, userCoins.YearKey, userCoins.CoinsEarned, granularityYearStart, granularityYearEnd)
 
+}
+
+func CreateUserCoinSchedule(userCoinsSchedule UserCoinsModelScheduleModel, scheduleTime time.Time) {
+
+	if utils.ContainsStr(ManchProfiles, userCoinsSchedule.ProfileId.Hex()) {
+		return
+	}
+
+	profile := GetProfileById(userCoinsSchedule.ProfileId)
+	c := Creator{
+		Id:        bson.NewObjectId(),
+		ProfileId: profile.Id,
+		Name:      profile.Name,
+		Avatar:    profile.Avatar,
+		UserType:  profile.Type,
+	}
+
+	schedule := Schedule{
+		Id:           bson.NewObjectId(),
+		Scheduletime: scheduleTime,
+		Created:      c,
+	}
+
+	dayKey, weekKey, monthKey, yearKey := utils.GetCurrentDateKeys()
+	userCoinsSchedule.DayKey = dayKey
+	userCoinsSchedule.WeekKey = weekKey
+	userCoinsSchedule.MonthKey = monthKey
+	userCoinsSchedule.YearKey = yearKey
+	userCoinsSchedule.CreatedAt = time.Now()
+	userCoinsSchedule.UpdatedAt = time.Now()
+
+	userCoinsSchedule.Schedule = schedule
+	userCoinsSchedule.Created = c
+
+	s := session.Clone()
+	defer s.Close()
+	C := s.DB("manch").C(USER_COINS_SCHEDULE_MODEL)
+	err := C.Insert(userCoinsSchedule)
+	if err != nil {
+		fmt.Println("Error while inserting userCoins")
+	}
 }
 
 func CreateUserLeaderBoard(key string, profileId bson.ObjectId, granularity string, coins int, granularityStart, granularityEnd time.Time) {

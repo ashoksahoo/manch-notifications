@@ -14,9 +14,15 @@ func UserCreatedSubscriberCB(subj, reply string, u *subscribers.User) {
 
 	// schedule welcome message
 	scheduleTime := time.Now().Add(time.Duration(10) * time.Minute)
+	userCoinScheduleTime := time.Now().Add(time.Duration(15) * time.Minute)
 	whatsappSchedule := mongo.CreateWhatsAppSchedule(user, scheduleTime)
 	fmt.Printf("whatsapp schedule \n%+v\n\n", whatsappSchedule)
 	mongo.AddWhatsAppSchedule(whatsappSchedule)
 
+	mongo.CreateUserCoinSchedule(mongo.UserCoinsModelScheduleModel{
+		ProfileId:   user.Profiles[0].Id,
+		Action:      "whatsapp_welcome",
+		CoinsEarned: 50,
+	}, userCoinScheduleTime)
 	fmt.Printf("Processed a New User created on subject %s! with User Id %s\n", subj, u.Id)
 }
