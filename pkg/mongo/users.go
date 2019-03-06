@@ -26,6 +26,7 @@ type BlackList struct {
 	BlockedTill  time.Time `json:"blocked_till" bson:"blocked_till"`
 	Reason       string    `json:"reason" bson:"reason"`
 }
+
 var (
 	USERS_MODEL = constants.ModelNames["USERS"]
 )
@@ -37,6 +38,7 @@ type Profile struct {
 	Language      string        `json:"language"`
 	FollowerCount int           `json:"no_of_followers" bson:"no_of_followers"`
 	Type          string        `json:"type" bson:"type"`
+	RandomName    bool          `json:"random_name" bson:"random_name"`
 }
 
 type Creator struct {
