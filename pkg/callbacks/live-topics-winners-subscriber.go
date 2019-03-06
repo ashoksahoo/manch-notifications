@@ -21,7 +21,7 @@ func LiveTopicsWinnerSubscriberCB(subj, reply string, W *subscribers.LiveTopicsW
 
 	fmt.Println("topic title", topicTitle)
 
-	coinsEarned := 500
+	coinsEarned := 300
 
 	winnersProfiles := mongo.GetProfilesByIds(winners)
 	participantsProfiles := mongo.GetProfilesByIds(participantsIds)
