@@ -63,7 +63,7 @@ type NotificationModel struct {
 	MessageHtml           string          `json:"message_html" bson:"message_html"`
 	PlaceHolderIcon       []string        `json:"place_holder_icons" bson:"place_holder_icons"`
 	PurposeIcon           PurposeIcon     `json:"purpose_icon" bson:"purpose_icon"`
-	NotificationUpdatedAt time.Time       `json:"notification_updatedAt" bson:"notification_updatedAt"`
+	NotificationUpdatedAt time.Time       `json:"notification_updated_at" bson:"notification_updated_at"`
 }
 
 func GenerateIdentifier(Id bson.ObjectId, t string) string {
@@ -150,7 +150,7 @@ func CreateNotification(notification NotificationModel) NotificationModel {
 			nuuid = value.String()
 		}
 		N.Upsert(bson.M{"identifier": notification.Identifier, "is_read": notification.IsRead}, bson.M{
-			"$set":         bson.M{"updatedAt": time.Now(), "notification_updatedAt": time.Now(), "place_holder_icons": n.PlaceHolderIcon},
+			"$set":         bson.M{"updatedAt": time.Now(), "notification_updated_at": time.Now(), "place_holder_icons": n.PlaceHolderIcon},
 			"$addToSet":    bson.M{"participants": notification.Participants[0]},
 			"$setOnInsert": bson.M{"nuuid": nuuid},
 		})
