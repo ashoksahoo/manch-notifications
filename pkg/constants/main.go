@@ -74,7 +74,7 @@ var ModelNames = map[string]string{
 	"USER_SCORE":              "user_score",
 	"COMMENT_STRINGS":         "comment_strings",
 	"COMMENT_SCHEDULEDS":      "comment_scheduleds",
-	"NOTIFICATION_V2":         "notificationsv2",
+	"NOTIFICATION_V2":         "notificationsv3",
 	"USER_FOLLOWS_SCHEDULEDS": "user_follows_scheduleds",
 	"VOTE_SCHEDULEDS":         "vote_scheduleds",
 	"SHARES_SCHEDULEDS":       "shares_scheduleds",
