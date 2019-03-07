@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"notification-service/pkg/mongo"
+	"notification-service/pkg/utils"
 	"strconv"
 
 	"github.com/globalsign/mgo/bson"
@@ -48,6 +49,40 @@ func GetAllNotification(w http.ResponseWriter, r *http.Request) {
 	}
 	bsonQuery["skip"] = skip
 	bsonQuery["limit"] = limit
+	_, filterOk := queries["filters"]
+	if filterOk {
+		filterString := queries["filters"]
+		var filters map[string]interface{}
+		json.Unmarshal([]byte(filterString[0]), &filters)
+		for field, value := range filters {
+			filterValue := bson.M{}
+			operators := value.(map[string]interface{})
+			for operator, operatorValue := range operators {
+				filterValue[operator] = utils.ParseISOToTime(operatorValue.(string))
+			}
+			bsonQuery[field] = filterValue
+		}
+		delete(queries, "filters")
+	}
+
+	_, sortOk := queries["sort"]
+	if sortOk {
+		sortQuery := queries["sort"]
+		sortStringArray := []string{}
+		var sort map[string]interface{}
+		json.Unmarshal([]byte(sortQuery[0]), &sort)
+		for field, value := range sort {
+			sortString := field
+			if int(value.(float64)) == -1 {
+				sortString = "-" + sortString
+			}
+			sortStringArray = append(sortStringArray, sortString)
+		}
+		fmt.Println("sort string array", sortStringArray)
+		bsonQuery["sort"] = sortStringArray
+		delete(queries, "sort")
+	}
+
 	for k, v := range queries {
 		if bson.IsObjectIdHex(v[0]) {
 			bsonQuery[k] = bson.ObjectIdHex(v[0])

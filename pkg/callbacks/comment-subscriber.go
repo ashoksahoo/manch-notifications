@@ -92,28 +92,33 @@ func CommentSubscriberCB(subj, reply string, c *subscribers.Comment) {
 				Name:    comment.Created.Name,
 				Comment: commentTitle,
 			}
-			var templateName, msgStr string
+			var templateName, msgStr, htmlMsgStr string
 			templateName = "reply_on_same_comment_one"
 
 			msgStr = i18n.GetString(receiver.Language, templateName, data)
+			htmlMsgStr = i18n.GetHtmlString(receiver.Language, templateName, data)
 			msgStr = strings.Replace(msgStr, "\"\" ", "", 1)
 			title := i18n.GetAppTitle(receiver.Language)
 
 			messageMeta := mongo.MessageMeta{
-				Template: templateName,
-				Data:     data,
+				TemplateName: templateName,
+				Template:     i18n.Strings[receiver.Language][templateName],
+				Data:         data,
 			}
+			deepLink := "manch://posts/" + comment.PostId.Hex()
 			// update notification message
 			mongo.UpdateNotification(bson.M{"_id": notif.Id}, bson.M{
 				"message":      msgStr,
 				"message_meta": messageMeta,
+				"message_html": htmlMsgStr,
+				"deep_link":    deepLink,
 			})
 
 			msg := firebase.ManchMessage{
 				Title:      title,
 				Message:    msgStr,
 				Icon:       mongo.ExtractThumbNailFromPost(comment.Post),
-				DeepLink:   "manch://posts/" + comment.PostId.Hex(),
+				DeepLink:   deepLink,
 				BadgeCount: strconv.Itoa(comment.Post.CommentCount),
 				Id:         notif.NId,
 			}
@@ -166,7 +171,7 @@ func CommentSubscriberCB(subj, reply string, c *subscribers.Comment) {
 			Count:   count,
 		}
 
-		var msgStr1 string
+		var msgStr1, htmlMsgStr1 string
 		var templateName string
 		if count > 0 {
 			templateName = "comment_reply_multi"
@@ -176,23 +181,28 @@ func CommentSubscriberCB(subj, reply string, c *subscribers.Comment) {
 
 		msgStr1 = i18n.GetString(replyOnCommentCreator.Language, templateName, data1)
 		msgStr1 = strings.Replace(msgStr1, "\"\" ", "", 1)
+		htmlMsgStr1 = i18n.GetHtmlString(replyOnCommentCreator.Language, templateName, data1)
 		title := i18n.GetAppTitle(replyOnCommentCreator.Language)
 
 		messageMeta := mongo.MessageMeta{
-			Template: templateName,
-			Data:     data1,
+			TemplateName: templateName,
+			Template:     i18n.Strings[replyOnCommentCreator.Language][templateName],
+			Data:         data1,
 		}
+		deepLink := "manch://posts/" + comment.PostId.Hex()
 		// update notification message
 		mongo.UpdateNotification(bson.M{"_id": notification1.Id}, bson.M{
 			"message":      msgStr1,
 			"message_meta": messageMeta,
+			"message_html": htmlMsgStr1,
+			"deep_link":    deepLink,
 		})
 
 		msg := firebase.ManchMessage{
 			Title:      title,
 			Message:    msgStr1,
 			Icon:       mongo.ExtractThumbNailFromPost(comment.Post),
-			DeepLink:   "manch://posts/" + comment.PostId.Hex(),
+			DeepLink:   deepLink,
 			BadgeCount: strconv.Itoa(replyOnComment.CommentCount),
 			Id:         notification1.NId,
 		}
@@ -240,7 +250,7 @@ func CommentSubscriberCB(subj, reply string, c *subscribers.Comment) {
 				Post:  postTitle,
 				Count: participantCount - 1,
 			}
-			var templateName, msgStr string
+			var templateName, msgStr, htmlMsgStr string
 			if participantCount > 1 {
 				templateName = "comment_on_same_post_multi"
 			} else {
@@ -248,16 +258,22 @@ func CommentSubscriberCB(subj, reply string, c *subscribers.Comment) {
 			}
 
 			msgStr = i18n.GetString(receiver.Language, templateName, data)
+			htmlMsgStr = i18n.GetHtmlString(receiver.Language, templateName, data)
 			msgStr = strings.Replace(msgStr, "\"\" ", "", 1)
 
 			messageMeta := mongo.MessageMeta{
-				Template: templateName,
-				Data:     data,
+				TemplateName: templateName,
+				Template:     i18n.Strings[receiver.Language][templateName],
+				Data:         data,
 			}
+
+			// TODO: update deep link
+
 			// update notification message
 			mongo.UpdateNotification(bson.M{"_id": notif.Id}, bson.M{
 				"message":      msgStr,
 				"message_meta": messageMeta,
+				"message_html": htmlMsgStr,
 			})
 
 			fmt.Printf("Notification created for multi comments with id %s", notif.Id.Hex())
@@ -315,7 +331,7 @@ func CommentSubscriberCB(subj, reply string, c *subscribers.Comment) {
 		Post:  postTitle,
 	}
 
-	var msgStr string
+	var msgStr, htmlMsgStr string
 	var templateName string
 	if uniqueCommentator > 1 {
 		templateName = "comment_multi"
@@ -324,6 +340,7 @@ func CommentSubscriberCB(subj, reply string, c *subscribers.Comment) {
 	}
 
 	msgStr = i18n.GetString(postCreator.Language, templateName, data)
+	htmlMsgStr = i18n.GetHtmlString(postCreator.Language, templateName, data)
 	if uniqueCommentator > 25 {
 		msgStr = "👏 " + msgStr
 	}
@@ -331,20 +348,24 @@ func CommentSubscriberCB(subj, reply string, c *subscribers.Comment) {
 	title := i18n.GetAppTitle(postCreator.Language)
 
 	messageMeta := mongo.MessageMeta{
-		Template: templateName,
-		Data:     data,
+		TemplateName: templateName,
+		Template:     i18n.Strings[postCreator.Language][templateName],
+		Data:         data,
 	}
+	deepLink := "manch://posts/" + comment.PostId.Hex()
 	// update notification message
 	mongo.UpdateNotification(bson.M{"_id": notification.Id}, bson.M{
 		"message":      msgStr,
 		"message_meta": messageMeta,
+		"message_html": htmlMsgStr,
+		"deep_link":    deepLink,
 	})
 
 	msg := firebase.ManchMessage{
 		Title:      title,
 		Message:    msgStr,
 		Icon:       mongo.ExtractThumbNailFromPost(comment.Post),
-		DeepLink:   "manch://posts/" + comment.PostId.Hex(),
+		DeepLink:   deepLink,
 		BadgeCount: strconv.Itoa(comment.Post.CommentCount),
 		Id:         notification.NId,
 	}

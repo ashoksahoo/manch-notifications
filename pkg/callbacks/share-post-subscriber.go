@@ -57,30 +57,35 @@ func SharePostSubscriberCB(subj, reply string, share *subscribers.SharePost) {
 		Name:  profile.Name,
 		Count: count,
 	}
-	var msgStr string
+	var msgStr, htmlMsgStr string
 	templates := []string{"share_post_multi", "share_post_multi_1", "share_post_multi_2", "share_post_multi_3"}
 	randomIndex := utils.Random(0, 4)
 	templateName := templates[randomIndex]
 
 	msgStr = i18n.GetString(postCreator.Language, templateName, data)
+	htmlMsgStr = i18n.GetHtmlString(postCreator.Language, templateName, data)
 	msgStr = strings.Replace(msgStr, "\"\" ", "", 1)
 	title := i18n.GetAppTitle(postCreator.Language)
 
 	messageMeta := mongo.MessageMeta{
-		Template: templateName,
-		Data:     data,
+		TemplateName: templateName,
+		Template:     i18n.Strings[postCreator.Language][templateName],
+		Data:         data,
 	}
+	deepLink := "manch://posts/" + post.Id.Hex()
 	// update notification message
 	mongo.UpdateNotification(bson.M{"_id": notification.Id}, bson.M{
 		"message":      msgStr,
 		"message_meta": messageMeta,
+		"message_html": htmlMsgStr,
+		"deep_link":    deepLink,
 	})
 
 	msg := firebase.ManchMessage{
 		Title:    title,
 		Message:  msgStr,
 		Icon:     mongo.ExtractThumbNailFromPost(post),
-		DeepLink: "manch://posts/" + post.Id.Hex(),
+		DeepLink: deepLink,
 		Id:       notification.NId,
 	}
 	//firebase.SendMessage(msg, "frgp37gfvFg:APA91bHbnbfoX-bp3M_3k-ceD7E4fZ73fcmVL4b5DGB5cQn-fFEvfbj3aAI9g0wXozyApIb-6wGsJauf67auK1p3Ins5Ff7IXCN161fb5JJ5pfBnTZ4LEcRUatO6wimsbiS7EANoGDr4")

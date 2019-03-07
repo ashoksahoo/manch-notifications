@@ -1,8 +1,8 @@
 package callbacks
 
 import (
-	"notification-service/pkg/constants"
 	"fmt"
+	"notification-service/pkg/constants"
 	"notification-service/pkg/firebase"
 	"notification-service/pkg/i18n"
 	"notification-service/pkg/mongo"
@@ -19,20 +19,20 @@ func PostRemovedSubscriberCB(subj, reply string, p *subscribers.Post) {
 	if err != nil {
 		return
 	}
-	
+
 	// Remove all vote and share scheduleds
 	mongo.RemoveVoteScheduleByResource(post.Id)
 	mongo.RemoveShareScheduleByResource(post.Id)
 
 	return
-	
+
 	postCreator := mongo.GetProfileById(post.Created.ProfileId)
 
 	tokens := mongo.GetTokensByProfiles([]bson.ObjectId{post.Created.ProfileId})
 
 	entities := []mongo.Entity{
 		{
-			EntityId: post.Id,
+			EntityId:   post.Id,
 			EntityType: "post",
 		},
 	}
@@ -60,28 +60,33 @@ func PostRemovedSubscriberCB(subj, reply string, p *subscribers.Post) {
 		Post:         postTitle,
 		DeleteReason: deleteReason,
 	}
-	var msgStr string
+	var msgStr, htmlMsgStr string
 	templateName := "post_removed"
 	msgStr = i18n.GetString(language, templateName, data)
+	htmlMsgStr = i18n.GetHtmlString(language, templateName, data)
 	fmt.Println(msgStr)
 	title := i18n.GetAppTitle(language)
 	msgStr = strings.Replace(msgStr, "\"\" ", "", 1)
 
 	messageMeta := mongo.MessageMeta{
-		Template: templateName,
-		Data: data,
+		TemplateName: templateName,
+		Template:     i18n.Strings[language][templateName],
+		Data:         data,
 	}
+	deepLink := "manch://posts/terms_" + post.Id.Hex()
 	// update notification message
 	mongo.UpdateNotification(bson.M{"_id": notification.Id}, bson.M{
-		"message": msgStr,
+		"message":      msgStr,
 		"message_meta": messageMeta,
+		"message_html": htmlMsgStr,
+		"deep_link":    deepLink,
 	})
 
 	msg := firebase.ManchMessage{
 		Title:    title,
 		Message:  msgStr,
 		Icon:     mongo.ExtractThumbNailFromPost(post),
-		DeepLink: "manch://posts/terms_" + post.Id.Hex(),
+		DeepLink: deepLink,
 		Id:       notification.NId,
 	}
 

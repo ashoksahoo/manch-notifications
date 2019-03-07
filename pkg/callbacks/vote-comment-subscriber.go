@@ -1,8 +1,8 @@
 package callbacks
 
 import (
-	"notification-service/pkg/constants"
 	"fmt"
+	"notification-service/pkg/constants"
 	"notification-service/pkg/firebase"
 	"notification-service/pkg/i18n"
 	"notification-service/pkg/mongo"
@@ -48,18 +48,18 @@ func VoteCommentSubscriberCB(subj, reply string, v *subscribers.Vote) {
 	}
 	commentCreator := mongo.GetProfileById(comment.Created.ProfileId)
 	// notification := mongo.CreateNotification(comment.Id, "like", "comment", vote.Created.ProfileId)
-	
+
 	entities := []mongo.Entity{
 		{
-			EntityId: comment.Post.Id,
+			EntityId:   comment.Post.Id,
 			EntityType: "post",
 		},
 		{
-			EntityId: comment.Id,
+			EntityId:   comment.Id,
 			EntityType: "comment",
 		},
 		{
-			EntityId: vote.Id,
+			EntityId:   vote.Id,
 			EntityType: "vote",
 		},
 	}
@@ -91,28 +91,34 @@ func VoteCommentSubscriberCB(subj, reply string, v *subscribers.Vote) {
 	if comment.UpVotes > 1 {
 		templateName = "comment_like_multi"
 	} else {
-		templateName = "comment_like_one"		
+		templateName = "comment_like_one"
 	}
 
 	msgStr = i18n.GetString(commentCreator.Language, templateName, data)
+	htmlMsgStr := i18n.GetHtmlString(commentCreator.Language, templateName, data)
 	msgStr = strings.Replace(msgStr, "\"\" ", "", 1)
 	title := i18n.GetAppTitle(commentCreator.Language)
 
 	messageMeta := mongo.MessageMeta{
-		Template: templateName,
-		Data: data,
+		TemplateName: templateName,
+		Template:     i18n.Strings[commentCreator.Language][templateName],
+		Data:         data,
 	}
+
+	deepLink := "manch://posts/" + comment.PostId.Hex()
 	// update notification message
 	mongo.UpdateNotification(bson.M{"_id": notification.Id}, bson.M{
-		"message": msgStr,
+		"message":      msgStr,
 		"message_meta": messageMeta,
+		"message_html": htmlMsgStr,
+		"deep_link":    deepLink,
 	})
 
 	msg := firebase.ManchMessage{
 		Title:    title,
 		Message:  msgStr,
 		Icon:     mongo.ExtractThumbNailFromPost(post),
-		DeepLink: "manch://posts/" + comment.PostId.Hex(),
+		DeepLink: deepLink,
 		Id:       notification.NId,
 	}
 

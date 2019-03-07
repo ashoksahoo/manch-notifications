@@ -29,6 +29,30 @@ var NotificationPurpose = map[string]string{
 	"USER_WARNED":       "user.warned",       // user warned
 }
 
+var NotificationPurposeResource = map[string]string{
+	"comment":           "ic_nc_comment", // comment on a post
+	"reply":             "ic_nc_comment", // reply to comments
+	"multi_reply":       "ic_nc_comment", // Someone else also replied to a comment
+	"multi_comment":     "ic_nc_comment", // Someone else also comment on a post
+	"remove":            "ic_nc_remove",  // post removed from feed
+	"share":             "ic_nc_share",   // post shared
+	"follow":            "ic_nc_follow",  // user followed another another user
+	"vote":              "ic_nc_vote",    // vote on comment or post
+	"live_topic_winner": "ic_nc_trophy",  // live topic winners notification
+}
+
+var NotificationPurposeIcon = map[string]string{
+	"comment":           "https://s3.ap-south-1.amazonaws.com/manch-dev/app-resource-icons/ic_n_comment-min.png",     // comment on a post
+	"reply":             "https://s3.ap-south-1.amazonaws.com/manch-dev/app-resource-icons/ic_n_comment-min.png",     // reply to comments
+	"multi_reply":       "https://s3.ap-south-1.amazonaws.com/manch-dev/app-resource-icons/ic_n_comment-min.png",     // Someone else also replied to a comment
+	"multi_comment":     "https://s3.ap-south-1.amazonaws.com/manch-dev/app-resource-icons/ic_n_comment-min.png",     // Someone else also comment on a post
+	"remove":            "https://s3.ap-south-1.amazonaws.com/manch-dev/app-resource-icons/ic_n_default_mic-min.png", // post removed from feed
+	"share":             "https://s3.ap-south-1.amazonaws.com/manch-dev/app-resource-icons/ic_n_default_mic-min.png", // post shared
+	"follow":            "https://s3.ap-south-1.amazonaws.com/manch-dev/app-resource-icons/ic_n_follow-min.png",      // user followed another another user
+	"vote":              "https://s3.ap-south-1.amazonaws.com/manch-dev/app-resource-icons/ic_n_like-min.png",        // vote on comment or post
+	"live_topic_winner": "https://s3.ap-south-1.amazonaws.com/manch-dev/app-resource-icons/ic_n_trophy-min.png",      // live topics winners notification
+}
+
 var NotificationTemplate = map[string]string{
 	"TRANSACTIONAL": "transactional",
 	"PROMOTIONAL":   "promotional",
@@ -50,7 +74,7 @@ var ModelNames = map[string]string{
 	"USER_SCORE":              "user_score",
 	"COMMENT_STRINGS":         "comment_strings",
 	"COMMENT_SCHEDULEDS":      "comment_scheduleds",
-	"NOTIFICATION_V2":         "notificationsv2",
+	"NOTIFICATION_V2":         "notificationsv3",
 	"USER_FOLLOWS_SCHEDULEDS": "user_follows_scheduleds",
 	"VOTE_SCHEDULEDS":         "vote_scheduleds",
 	"SHARES_SCHEDULEDS":       "shares_scheduleds",

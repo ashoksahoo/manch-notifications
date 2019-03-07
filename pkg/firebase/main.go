@@ -119,12 +119,17 @@ func SendMessage(m ManchMessage, token string, notification mongo.NotificationMo
 	// Send a message to the device corresponding to the provided
 	// registration token.
 	response, err := client.Send(ctx, message)
+
+	fmt.Println("response from firebase is:", response)
+	fmt.Println("error is:", err)
+
 	if err != nil {
 		//log.Fatalln(err)
 		fmt.Println("Error:", err, token)
 		// delete token
 		mongo.DeleteToken(token)
 		// update push info
+		fmt.Println("update")
 		mongo.UpdateNotification(bson.M{"_id": notification.Id}, bson.M{
 			"push": mongo.PushMeta{
 				Status: constants.NotificationStatus["FAILED"],
