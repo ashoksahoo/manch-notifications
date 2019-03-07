@@ -38,7 +38,7 @@ var NotificationPurposeResource = map[string]string{
 	"share":             "ic_nc_share",         // post shared
 	"follow":            "ic_nc_follow",        // user followed another another user
 	"vote":              "ic_nc_vote",          // vote on comment or post
-	"live_topic_winner": "ic_troffy",           // live topic winners notification
+	"live_topic_winner": "ic_nc_trophy",           // live topic winners notification
 }
 
 var NotificationPurposeIcon = map[string]string{
