@@ -36,6 +36,8 @@ func PostSubscriberCB(subj, reply string, p *subscribers.Post) {
 		no_of_votes = utils.Random(20, 25)
 	} else if p.CreatorType == "super_level_1" {
 		no_of_votes = utils.Random(20, 25)
+	} else if p.CreatorType == "verified_level_1" {
+		no_of_votes = utils.Random(20, 25)
 	} else {
 		no_of_votes = utils.Random(5, 10)
 	}
