@@ -267,13 +267,13 @@ func CommentSubscriberCB(subj, reply string, c *subscribers.Comment) {
 				Data:         data,
 			}
 
-			// TODO: update deep link
-
+			deepLink := "manch://posts/" + comment.PostId.Hex()
 			// update notification message
 			mongo.UpdateNotification(bson.M{"_id": notif.Id}, bson.M{
 				"message":      msgStr,
 				"message_meta": messageMeta,
 				"message_html": htmlMsgStr,
+				"deep_link":    deepLink,
 			})
 
 			fmt.Printf("Notification created for multi comments with id %s", notif.Id.Hex())
@@ -291,16 +291,16 @@ func CommentSubscriberCB(subj, reply string, c *subscribers.Comment) {
 
 	// update commentCreator's coin
 	mongo.CreateUserCoin(mongo.UserCoinsModel{
-		ProfileId: comment.Created.ProfileId,
+		ProfileId:   comment.Created.ProfileId,
 		CoinsEarned: 2,
-		Action: "comment",
+		Action:      "comment",
 	})
 
 	// update postCreator's coin
 	mongo.CreateUserCoin(mongo.UserCoinsModel{
-		ProfileId: postCreator.Id,
+		ProfileId:   postCreator.Id,
 		CoinsEarned: 3,
-		Action: "comment",
+		Action:      "comment",
 	})
 
 	// update user score
