@@ -2,7 +2,6 @@ package callbacks
 
 import (
 	"fmt"
-	"math"
 	"notification-service/pkg/firebase"
 	"notification-service/pkg/i18n"
 	"notification-service/pkg/mongo"
@@ -105,7 +104,7 @@ func PostModeratedSubscriberCB(subj, reply string, p *subscribers.Post) {
 
 		query := bson.M{"created.profile_id": postCreator.Id, "deleted": true, "post_level": "-1000"}
 		deleteCount := mongo.GetPostCountByQuery(query)
-		if deleteCount == 1 || deleteCount == 2  || deleteCount==5 || deleteCount==8 {
+		if deleteCount == 1 || deleteCount == 2 || deleteCount == 5 || deleteCount == 8 {
 			// Warn the user
 			reason = post.Reason.IgnoreFeedReason
 			if reason == "" {
@@ -130,34 +129,34 @@ func PostModeratedSubscriberCB(subj, reply string, p *subscribers.Post) {
 		} else if deleteCount%10 == 0 {
 			// block for 2 ^ deleteCount/3 days
 			// manch:D, namespace & purpose
-			days := deleteCount / 3
-			blockForDays := math.Pow(float64(2), float64(days))
-			blockTill := time.Now().Local().Add(time.Hour * 24 * time.Duration(int64(blockForDays)))
+			// days := deleteCount / 3
+			// blockForDays := math.Pow(float64(2), float64(days))
+			// blockTill := time.Now().Local().Add(time.Hour * 24 * time.Duration(int64(blockForDays)))
 
-			reason = post.Reason.DeleteReason
+			// reason = post.Reason.DeleteReason
 
-			if reason == "" {
-				reason = post.Reason.IgnoreFeedReason
-			}
-			blockedOn := time.Now()
-			mongo.UpdateUser(bson.M{
-				"profiles._id": postCreator.Id,
-			}, bson.M{
-				"$set": bson.M{
-					"blacklist.status":       "blocked",
-					"blacklist.blocked_on":   blockedOn,
-					"blacklist.blocked_till": blockTill,
-					"blacklist.reason":       reason,
-				},
-			})
+			// if reason == "" {
+			// 	reason = post.Reason.IgnoreFeedReason
+			// }
+			// blockedOn := time.Now()
+			// mongo.UpdateUser(bson.M{
+			// 	"profiles._id": postCreator.Id,
+			// }, bson.M{
+			// 	"$set": bson.M{
+			// 		"blacklist.status":       "blocked",
+			// 		"blacklist.blocked_on":   blockedOn,
+			// 		"blacklist.blocked_till": blockTill,
+			// 		"blacklist.reason":       reason,
+			// 	},
+			// })
 
-			blockTillString := utils.ISOFormat(blockTill)
-			blockOnString := utils.ISOFormat(blockedOn)
+			// blockTillString := utils.ISOFormat(blockTill)
+			// blockOnString := utils.ISOFormat(blockedOn)
 
-			blockedStatus["status"] = "blocked"
-			blockedStatus["blocked_on"] = blockOnString
-			blockedStatus["blocked_till"] = blockTillString
-			send_notification = true
+			// blockedStatus["status"] = "blocked"
+			// blockedStatus["blocked_on"] = blockOnString
+			// blockedStatus["blocked_till"] = blockTillString
+			// send_notification = true
 		}
 	}
 
@@ -194,32 +193,32 @@ func PostModeratedSubscriberCB(subj, reply string, p *subscribers.Post) {
 			send_notification = true
 		} else if ignoreCount%5 == 0 {
 			// block for 2 ^ ignoreCount / 5 days
-			days := ignoreCount / 5
-			blockForDays := math.Pow(float64(2), float64(days))
-			blockTill := time.Now().Local().Add(time.Hour * 24 * time.Duration(blockForDays))
-			reason = post.Reason.DeleteReason
-			if reason == "" {
-				reason = post.Reason.IgnoreFeedReason
-			}
-			blockedOn := time.Now()
-			mongo.UpdateUser(bson.M{
-				"profiles._id": postCreator.Id,
-			}, bson.M{
-				"$set": bson.M{
-					"blacklist.status":       "blocked",
-					"blacklist.blocked_on":   blockedOn,
-					"blacklist.blocked_till": blockTill,
-					"blacklist.reason":       reason,
-				},
-			})
+			// days := ignoreCount / 5
+			// blockForDays := math.Pow(float64(2), float64(days))
+			// blockTill := time.Now().Local().Add(time.Hour * 24 * time.Duration(blockForDays))
+			// reason = post.Reason.DeleteReason
+			// if reason == "" {
+			// 	reason = post.Reason.IgnoreFeedReason
+			// }
+			// blockedOn := time.Now()
+			// mongo.UpdateUser(bson.M{
+			// 	"profiles._id": postCreator.Id,
+			// }, bson.M{
+			// 	"$set": bson.M{
+			// 		"blacklist.status":       "blocked",
+			// 		"blacklist.blocked_on":   blockedOn,
+			// 		"blacklist.blocked_till": blockTill,
+			// 		"blacklist.reason":       reason,
+			// 	},
+			// })
 
-			blockTillString := utils.ISOFormat(blockTill)
-			blockOnString := utils.ISOFormat(blockedOn)
+			// blockTillString := utils.ISOFormat(blockTill)
+			// blockOnString := utils.ISOFormat(blockedOn)
 
-			blockedStatus["status"] = "blocked"
-			blockedStatus["blocked_on"] = blockOnString
-			blockedStatus["blocked_till"] = blockTillString
-			send_notification = true
+			// blockedStatus["status"] = "blocked"
+			// blockedStatus["blocked_on"] = blockOnString
+			// blockedStatus["blocked_till"] = blockTillString
+			// send_notification = true
 		}
 	}
 
