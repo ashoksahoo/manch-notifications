@@ -82,6 +82,9 @@ func main() {
 	// received new user created
 	subscribers.UserCreatedSubscriber(callbacks.UserCreatedSubscriberCB)
 
+	// received new milestone
+	subscribers.MileStoneSubscriber(callbacks.MileStoneSubscriberCB)
+
 	// listen on http server 5000
 	http.ListenAndServe(":5000", router)
 }

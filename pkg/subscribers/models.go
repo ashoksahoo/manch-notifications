@@ -92,3 +92,8 @@ type BlackListProfile struct {
 	Reason       string    `json:"reason"`
 	LastWarnedOn time.Time `json:"last_warned_on"`
 }
+
+type MileStone struct {
+	ProfileId string `json:"profile_id"`
+	MileStone string `json:"milestone"`
+}

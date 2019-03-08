@@ -60,7 +60,7 @@ func UserSubscriber(callback func(subj, reply string, m *User)) {
 	go c.QueueSubscribe(subject("user.new"), queue(), callback)
 }
 
-func UserCreatedSubscriber(callback func(subj, reply string, m *User))  {
+func UserCreatedSubscriber(callback func(subj, reply string, m *User)) {
 	go c.QueueSubscribe(subject("user.created"), queue(), callback)
 }
 
@@ -98,6 +98,10 @@ func LiveTopicsWinnerSubscriber(callback func(subj, reply string, m *LiveTopicsW
 
 func BlackListUserSubscriber(callback func(subj, reply string, m *BlackListProfile)) {
 	go c.QueueSubscribe(subject("user.blacklist"), queue(), callback)
+}
+
+func MileStoneSubscriber(callback func(subj, reply string, m *MileStone))  {
+	go c.QueueSubscribe(subject("new.milestone"), queue(), callback)
 }
 
 func init() {
