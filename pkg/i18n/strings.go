@@ -129,6 +129,8 @@ var Strings = map[string]map[string]string{
 Coins का लाभ लेने के लिए इस मैसेज का रिप्लाई करें।😇😇
 
 - मंच परिवार`,
+
+		"100_coin_milestone": "Congratulations {{.Name}}, on your century,keep discussing to earn more",
 	},
 
 	"te": {
@@ -192,7 +194,7 @@ Coins का लाभ लेने के लिए इस मैसेज क�
 
 		"live_topic_winners_title_1": "congratulations {{.Name}} గారు, చిరుజల్లులలాంటి Coins మీకోసం",
 		"live_topic_winners_title_2": "congratulations {{.Name}} గారు,  ఈరోజు LIVE చర్చ విజేతలు మీరే",
-		"live_topics_winner_text": "మీరు {{.Count}} Coins గెలుచుకున్నారు",
+		"live_topics_winner_text":    "మీరు {{.Count}} Coins గెలుచుకున్నారు",
 
 		"live_topic_participants_title_1": "{{.Name}} గారు ,  నేటి  LIVE చర్చ టాప్ యూజర్లు",
 		"live_topic_participants_title_2": "{{.Name}} గారు , నేటి  LIVE చర్చ టాప్ యూజర్ల వివరాలు",
@@ -205,6 +207,8 @@ Manch, ఇండియా లో మొదటి తెలుగు ఆప్ �
 Coins  పొందుటకు ఈ మెసేజ్ కి రిప్లై చేయండి. 
 
 - Manch టీం`,
+
+		"100_coin_milestone": "Congratulations {{.Name}}, on your century,keep discussing to earn more",
 	},
 }
 
@@ -350,6 +354,9 @@ var HtmlStrings = map[string]map[string]string{
 
 		"live_topic_participants_title_1": "<b>{{.Name}}</b>, ये हैं आज की चर्चा के टॉप यूज़र्स",
 		"live_topic_participants_title_2": "<b>{{.Name}}</b>, आज की चर्चा के टॉप यूज़र्स की लिस्ट",
+
+		"100_coin_milestone": "Congratulations <b>{{.Name}}</b>, on your century,keep discussing to earn more",
+
 	},
 
 	"te": {
@@ -413,9 +420,11 @@ var HtmlStrings = map[string]map[string]string{
 
 		"live_topic_winners_title_1": "congratulations <b>{{.Name}}</b> గారు, చిరుజల్లులలాంటి Coins మీకోసం",
 		"live_topic_winners_title_2": "congratulations <b>{{.Name}}</b> గారు,  ఈరోజు LIVE చర్చ విజేతలు మీరే",
-		"live_topics_winner_text": "మీరు <b>{{.Count}}</b> Coins గెలుచుకున్నారు",
+		"live_topics_winner_text":    "మీరు <b>{{.Count}}</b> Coins గెలుచుకున్నారు",
 
 		"live_topic_participants_title_1": "<b>{{.Name}}</b> గారు ,  నేటి  LIVE చర్చ టాప్ యూజర్లు",
 		"live_topic_participants_title_2": "<b>{{.Name}}</b> గారు , నేటి  LIVE చర్చ టాప్ యూజర్ల వివరాలు",
+
+		"100_coin_milestone": "Congratulations <b>{{.Name}}</b>, on your century,keep discussing to earn more",		
 	},
 }

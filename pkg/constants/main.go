@@ -15,18 +15,19 @@ var NotificationStatus = map[string]string{
 }
 
 var NotificationPurpose = map[string]string{
-	"COMMENT":           "comment",           // comment on a post
-	"REPLY":             "reply",             // reply to comments
-	"MULTI_REPLY":       "multi_reply",       // Someone else also replied to a comment
-	"MULTI_COMMENT":     "multi_comment",     // Someone else also comment on a post
-	"POST_REMOVE":       "remove",            // post removed from feed
-	"POST_SHARE":        "share",             // post shared
-	"USER_FOLLOW":       "follow",            // user followed another another user
-	"VOTE":              "vote",              // vote on comment or post
-	"LIVE_TOPIC_WINNER": "live_topic_winner", // live topic winners
-	"USER_BLOCKED":      "user.blocked",      // user blocked
-	"USER_UNBLOCKED":    "user.unblocked",    // user unblocked
-	"USER_WARNED":       "user.warned",       // user warned
+	"COMMENT":            "comment",            // comment on a post
+	"REPLY":              "reply",              // reply to comments
+	"MULTI_REPLY":        "multi_reply",        // Someone else also replied to a comment
+	"MULTI_COMMENT":      "multi_comment",      // Someone else also comment on a post
+	"POST_REMOVE":        "remove",             // post removed from feed
+	"POST_SHARE":         "share",              // post shared
+	"USER_FOLLOW":        "follow",             // user followed another another user
+	"VOTE":               "vote",               // vote on comment or post
+	"LIVE_TOPIC_WINNER":  "live_topic_winner",  // live topic winners
+	"USER_BLOCKED":       "user.blocked",       // user blocked
+	"USER_UNBLOCKED":     "user.unblocked",     // user unblocked
+	"USER_WARNED":        "user.warned",        // user warned
+	"100_COIN_MILESTONE": "100_coin_milestone", // 100 coin milestone achieved
 }
 
 var NotificationPurposeResource = map[string]string{
@@ -59,29 +60,29 @@ var NotificationTemplate = map[string]string{
 }
 
 var ModelNames = map[string]string{
-	"USERS":                   "users",
-	"POSTS":                   "posts",
-	"COMMUNITIES":             "communities",
-	"COMMENTS":                "comments",
-	"VOTES":                   "votes",
-	"RESOURCE_SCORE":          "RESOURCE_SCORE",
-	"USER_FOLLOWS":            "user_follows",
-	"SHARES":                  "shares",
-	"FCM_TOKENS":              "fcm_tokens",
-	"EVENTS":                  "events",
-	"EXPLORABLE_ENTITIES":     "explorable_entities",
-	"MEDIA_SOURCES":           "media_sources",
-	"USER_SCORE":              "user_score",
-	"COMMENT_STRINGS":         "comment_strings",
-	"COMMENT_SCHEDULEDS":      "comment_scheduleds",
-	"NOTIFICATION_V2":         "notificationsv3",
-	"USER_FOLLOWS_SCHEDULEDS": "user_follows_scheduleds",
-	"VOTE_SCHEDULEDS":         "vote_scheduleds",
-	"SHARES_SCHEDULEDS":       "shares_scheduleds",
-	"USER_SCORES":             "user_scores",
-	"USER_COINS":              "user_coins",
-	"USER_LEADERBOARDS":       "user_leaderboards",
-	"WHATSAPP_SCHEDULEDS":     "whatsapp_scheduleds",
+	"USERS":                     "users",
+	"POSTS":                     "posts",
+	"COMMUNITIES":               "communities",
+	"COMMENTS":                  "comments",
+	"VOTES":                     "votes",
+	"RESOURCE_SCORE":            "RESOURCE_SCORE",
+	"USER_FOLLOWS":              "user_follows",
+	"SHARES":                    "shares",
+	"FCM_TOKENS":                "fcm_tokens",
+	"EVENTS":                    "events",
+	"EXPLORABLE_ENTITIES":       "explorable_entities",
+	"MEDIA_SOURCES":             "media_sources",
+	"USER_SCORE":                "user_score",
+	"COMMENT_STRINGS":           "comment_strings",
+	"COMMENT_SCHEDULEDS":        "comment_scheduleds",
+	"NOTIFICATION_V2":           "notificationsv3",
+	"USER_FOLLOWS_SCHEDULEDS":   "user_follows_scheduleds",
+	"VOTE_SCHEDULEDS":           "vote_scheduleds",
+	"SHARES_SCHEDULEDS":         "shares_scheduleds",
+	"USER_SCORES":               "user_scores",
+	"USER_COINS":                "user_coins",
+	"USER_LEADERBOARDS":         "user_leaderboards",
+	"WHATSAPP_SCHEDULEDS":       "whatsapp_scheduleds",
 	"USER_COINS_SCHEDULE_MODEL": "user_coins_scheduleds",
 }
 
@@ -89,4 +90,11 @@ var BlackListStatus = map[string]string{
 	"WARNING":    "warning",
 	"BLOCKED":    "blocked",
 	"UN_BLOCKED": "unblocked",
+}
+
+var MileStones = map[string]string{
+	"100_COIN_MILESTONE": "100",
+	"1000_COIN_MILESTONE": "1000",
+	"10000_COIN_MILESTONE": "10000",
+	"25000_COIN_MILESTONE": "25000",
 }
