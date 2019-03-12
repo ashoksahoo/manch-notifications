@@ -24,6 +24,15 @@ func PostSubscriberCB(subj, reply string, p *subscribers.Post) {
 
 	// update user score for new post
 	_, post := mongo.GetPostById(p.Id)
+
+	// create community stats
+	mongo.CreateCommunityStats(mongo.CommunityStatsModel{
+		CommunityId: post.CommunityIds[0],
+		Action:      "post",
+		EntityId:    post.Id,
+		EntityType:  "post",
+	})
+
 	mongo.CreateUserScore(mongo.UserScore{
 		ProfileId:   post.Created.ProfileId,
 		CommunityId: post.CommunityIds[0],
