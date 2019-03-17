@@ -46,7 +46,16 @@ func VotePostSubscriberCB(subj, reply string, v *subscribers.Vote) {
 	if err != nil {
 		return
 	}
+
 	vote := post.GetVote(v.Id)
+
+	mongo.CreateCommunityStats(mongo.CommunityStatsModel{
+		CommunityId: post.CommunityIds[0],
+		Action:      "vote",
+		EntityId:    vote.Id,
+		EntityType:  "vote",
+	})
+
 	if vote.Created.ProfileId == post.Created.ProfileId {
 		//Self Vote
 		fmt.Println("Self Vote")

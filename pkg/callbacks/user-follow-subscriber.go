@@ -23,6 +23,15 @@ func UserFollowSubscriberCB(subj, reply string, uf *subscribers.Subscription) {
 
 	if uf.ResourceType != "user" {
 		fmt.Println("Not a user resource follows")
+		if uf.ResourceType == "community" {
+			// create community stats
+			mongo.CreateCommunityStats(mongo.CommunityStatsModel{
+				CommunityId: bson.ObjectIdHex(uf.Resource),
+				Action:      "community-follow",
+				EntityId:    bson.ObjectIdHex(uf.ProfileId),
+				EntityType:  "user",
+			})
+		}
 		return
 	}
 

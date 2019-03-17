@@ -45,7 +45,7 @@ func (p PostModel) GetVote(Id string) VoteModelPost {
 	vote.Resource = p
 	V := s.DB("manch").C(VOTES_MODEL)
 	V.Find(bson.M{"_id": bson.ObjectIdHex(Id)}).One(&vote)
-	fmt.Printf("\nVote from DB %+v", vote)
+	fmt.Printf("\nVote from DB %+v\n\n", vote)
 	return vote
 }
 
