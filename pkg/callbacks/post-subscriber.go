@@ -31,6 +31,7 @@ func PostSubscriberCB(subj, reply string, p *subscribers.Post) {
 		Action:      "post",
 		EntityId:    post.Id,
 		EntityType:  "post",
+		ProfileId:	post.Created.ProfileId,
 	})
 
 	mongo.CreateUserScore(mongo.UserScore{

@@ -54,6 +54,7 @@ func VotePostSubscriberCB(subj, reply string, v *subscribers.Vote) {
 		Action:      "vote",
 		EntityId:    vote.Id,
 		EntityType:  "vote",
+		ProfileId: post.Created.ProfileId,
 	})
 
 	if vote.Created.ProfileId == post.Created.ProfileId {

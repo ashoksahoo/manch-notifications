@@ -39,7 +39,8 @@ type CommunityModel struct {
 type CommunityStatsModel struct {
 	Id           bson.ObjectId     `json:"_id,omitempty" bson:"_id,omitempty"`
 	CommunityId  bson.ObjectId     `json:"community_id" bson:"community_id"`
-	Type         string            `json:"type" bson:"type"`
+	Type         string            `json:"type" bson:"D"`
+	Language     string            `json:"language" bson:"language"`
 	InterestId   bson.ObjectId     `json:"interest_id" bson:"interest_id"`
 	DirectParent CommunityParent   `json:"direct_parent" bson:"direct_parent"`
 	Parents      []CommunityParent `json:"parents" bson:"parents"`
@@ -48,6 +49,7 @@ type CommunityStatsModel struct {
 	EntityType   string            `json:"entity_type" bson:"entity_type"`
 	CreatedAt    time.Time         `json:"createdAt" bson:"createdAt"`
 	UpdatedAt    time.Time         `json:"updatedAt" bson:"updatedAt"`
+	ProfileId    bson.ObjectId     `json:"profile_id" bson:"profile_id"`
 }
 
 func GetCommunityById(Id string) CommunityModel {
@@ -78,11 +80,13 @@ func CreateCommunityStats(communityStats CommunityStatsModel) {
 			communityStats.InterestId = parent.CommunityId
 		}
 	}
+	now:= time.Now()
 	communityStats.Type = community.Type
 	communityStats.DirectParent = community.DirectParent
 	communityStats.Parents = community.Parents
-	communityStats.CreatedAt = time.Now()
-	communityStats.UpdatedAt = time.Now()
+	communityStats.CreatedAt = now
+	communityStats.UpdatedAt = now
+	communityStats.Language = community.Language
 
 	fmt.Printf("community stats %+v\n\n", communityStats)
 	err := C.Insert(communityStats)

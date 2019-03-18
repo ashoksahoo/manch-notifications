@@ -30,6 +30,7 @@ func UserFollowSubscriberCB(subj, reply string, uf *subscribers.Subscription) {
 				Action:      "community-follow",
 				EntityId:    bson.ObjectIdHex(uf.ProfileId),
 				EntityType:  "user",
+				ProfileId: bson.ObjectIdHex(uf.ProfileId),
 			})
 		}
 		return
