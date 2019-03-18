@@ -39,7 +39,7 @@ type CommunityModel struct {
 type CommunityStatsModel struct {
 	Id           bson.ObjectId     `json:"_id,omitempty" bson:"_id,omitempty"`
 	CommunityId  bson.ObjectId     `json:"community_id" bson:"community_id"`
-	Type         string            `json:"type" bson:"D"`
+	Type         string            `json:"type" bson:"type"`
 	Language     string            `json:"language" bson:"language"`
 	InterestId   bson.ObjectId     `json:"interest_id" bson:"interest_id"`
 	DirectParent CommunityParent   `json:"direct_parent" bson:"direct_parent"`
@@ -80,7 +80,7 @@ func CreateCommunityStats(communityStats CommunityStatsModel) {
 			communityStats.InterestId = parent.CommunityId
 		}
 	}
-	now:= time.Now()
+	now := time.Now()
 	communityStats.Type = community.Type
 	communityStats.DirectParent = community.DirectParent
 	communityStats.Parents = community.Parents
