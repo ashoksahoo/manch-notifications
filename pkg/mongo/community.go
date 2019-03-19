@@ -75,11 +75,7 @@ func CreateCommunityStats(communityStats CommunityStatsModel) {
 	defer s.Close()
 	C := s.DB("manch").C(COMMUNITIES_STATS_MODEL)
 	community := GetCommunityById(communityStats.CommunityId.Hex())
-	for _, parent := range community.Parents {
-		if parent.Type == "interest" {
-			communityStats.InterestId = parent.CommunityId
-		}
-	}
+	communityStats.InterestId = community.DirectParent.CommunityId
 	now := time.Now()
 	communityStats.Type = community.Type
 	communityStats.DirectParent = community.DirectParent
