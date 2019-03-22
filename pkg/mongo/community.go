@@ -20,6 +20,16 @@ type CommunityParent struct {
 	Scope       string        `json:"scope" bson:"scope"`
 }
 
+type Actor struct {
+	ProfileId bson.ObjectId `json:"profile_id" bson:"profile_id"`
+	Name      string        `json:"name" bson:"name"`
+	Date      time.Time     `json:"date" bson:"date"`
+	Avatar    string        `json:"avatar" bson:"avatar"`
+	AppDate   time.Time     `json:"app_date" bson:"app_date"`
+	Tz        string        `json:"tz" bson:"tz"`
+	Type      string        `json:"type" bson:"type"`
+}
+
 type CommunityModel struct {
 	Id           bson.ObjectId     `json:"_id" bson:"_id"`
 	Name         string            `json:"name" bson:"name"`
@@ -32,8 +42,9 @@ type CommunityModel struct {
 	Order        string            `json:"order" bson:"order"`
 	Parents      []CommunityParent `json:"parents" bson:"parents"`
 	DirectParent CommunityParent   `json:"direct_parent" bson:"direct_parent"`
-	status       string            `json:"status" bson:"status"`
-	visibility   string            `json:"visibility" bson:"visibility"`
+	Status       string            `json:"status" bson:"status"`
+	Visibility   string            `json:"visibility" bson:"visibility"`
+	Admins       []Actor           `json:"admins" bson:"admins"`
 }
 
 type CommunityStatsModel struct {

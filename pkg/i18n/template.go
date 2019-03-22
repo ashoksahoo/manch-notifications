@@ -13,6 +13,7 @@ type DataModel struct {
 	Post         string `json:"post" bson:"post"`
 	Comment      string `json:"comment" bson:"comment"`
 	DeleteReason string `json:"deletereason" bson:"deletereason"`
+	Community    string `json:"community" bson:"community"`
 }
 
 func GetString(lang string, s string, d DataModel) string {

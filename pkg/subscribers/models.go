@@ -92,3 +92,15 @@ type BlackListProfile struct {
 	Reason       string    `json:"reason"`
 	LastWarnedOn time.Time `json:"last_warned_on"`
 }
+
+type Community struct {
+	Id             string `json:"_id"`
+	GUID           string `json:"guid"`
+	Type           string `json:"type"`
+	Name           string `json:"name"`
+	Icon           string `json:"icon"`
+	Language       string `json:"language"`
+	Status         string `json:"status"`
+	Visibility     string `json:"visibility"`
+	FollowersCount int    `json:"no_of_followers"`
+}

@@ -80,6 +80,10 @@ func UserFollowRemovedSubscriber(callback func(subj, reply string, m *Subscripti
 	go c.QueueSubscribe(subject("user.follow.removed"), queue(), callback)
 }
 
+func UserFollowApprovedSubscriber(callback func(subj, reply string, m *Subscription))  {
+	go c.QueueSubscribe(subject("user.follow.approved"), queue(), callback)
+}
+
 func SharePostSubscriber(callback func(subj, reply string, m *SharePost)) {
 	go c.QueueSubscribe(subject("share.post"), queue(), callback)
 }
@@ -98,6 +102,10 @@ func LiveTopicsWinnerSubscriber(callback func(subj, reply string, m *LiveTopicsW
 
 func BlackListUserSubscriber(callback func(subj, reply string, m *BlackListProfile)) {
 	go c.QueueSubscribe(subject("user.blacklist"), queue(), callback)
+}
+
+func CommunityFollowersUpdateSubscriber(callback func(subj, reply string, m *Community))  {
+	go c.QueueSubscribe(subject("community.followers.update"), queue(), callback)
 }
 
 func init() {
