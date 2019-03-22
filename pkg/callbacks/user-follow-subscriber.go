@@ -61,7 +61,7 @@ func UserFollowSubscriberCB(subj, reply string, uf *subscribers.Subscription) {
 					Community: community.Name,
 				}
 				var templateName string
-				if community.Visibility == "protected" || community.Visibility == "private" {
+				if community.Visibility == "protected" {
 					templateName = "join_manch_request_private"
 				} else {
 					templateName = "join_manch_request_public"
