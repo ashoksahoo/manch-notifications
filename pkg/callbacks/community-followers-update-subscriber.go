@@ -7,7 +7,6 @@ import (
 	"notification-service/pkg/i18n"
 	"notification-service/pkg/mongo"
 	"notification-service/pkg/subscribers"
-	"strings"
 
 	"github.com/globalsign/mgo/bson"
 )
@@ -47,9 +46,10 @@ func CommunityFollowersUpdateCB(subj, reply string, C *subscribers.Community) {
 			Community: community.Name,
 		}
 
-		var purpose, templateName string
+		var purpose, templateName, templateText string
 		if C.FollowersCount == 10 {
-			templateName = "manch_10_members"
+			templateName = "manch_10_members_title"
+			templateText = "manch_10_members_text"
 			purpose = constants.NotificationPurpose["MANCH_10_MEMBERS"]
 		} else if C.FollowersCount == 100 {
 			templateName = "manch_100_members"
@@ -57,11 +57,16 @@ func CommunityFollowersUpdateCB(subj, reply string, C *subscribers.Community) {
 		}
 		deepLink := ""
 		for _, adminProfile := range adminProfiles {
-			msgStr := i18n.GetString(adminProfile.Language, templateName, data)
-			htmlMsgStr := i18n.GetHtmlString(adminProfile.Language, templateName, data)
-			msgStr = strings.Replace(msgStr, "\"\" ", "", 1)
-			title := i18n.GetAppTitle(adminProfile.Language)
-
+			var htmlMsgStr, msgStr, title string
+			if C.FollowersCount == 10 {
+				msgStr = i18n.GetString(adminProfile.Language, templateText, data)
+				htmlMsgStr = i18n.GetHtmlString(adminProfile.Language, templateName, data)
+				title = i18n.GetString(adminProfile.Language, templateName, data)
+			} else {
+				msgStr = i18n.GetString(adminProfile.Language, templateName, data)
+				htmlMsgStr = i18n.GetHtmlString(adminProfile.Language, templateName, data)
+				title = i18n.GetAppTitle(adminProfile.Language)
+			}
 			messageMeta := mongo.MessageMeta{
 				TemplateName: templateName,
 				Template:     i18n.Strings[adminProfile.Language][templateName],
