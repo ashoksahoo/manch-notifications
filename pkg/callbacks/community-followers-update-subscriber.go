@@ -18,14 +18,17 @@ func CommunityFollowersUpdateCB(subj, reply string, C *subscribers.Community) {
 			fmt.Println("Recovered in subscribers.CommunityFollowersUpdateCB", r)
 		}
 	}()
-
+	fmt.Println("followers count is ", C.FollowersCount)
 	if C.FollowersCount != 10 || C.FollowersCount != 100 {
+		fmt.Println("returning followers count is not 10 and 100")
 		return
 	}
 
 	community := mongo.GetCommunityById(C.Id)
 
 	if community.Type == "m_manch" {
+
+		fmt.Println("community type is", community.Type)
 		admins := community.Admins
 		adminProfilesIds := []string{}
 
@@ -48,6 +51,7 @@ func CommunityFollowersUpdateCB(subj, reply string, C *subscribers.Community) {
 
 		var purpose, templateName, templateText string
 		if C.FollowersCount == 10 {
+			fmt.Println("updating template name for 10the followers")
 			templateName = "manch_10_members_title"
 			templateText = "manch_10_members_text"
 			purpose = constants.NotificationPurpose["MANCH_10_MEMBERS"]
@@ -67,6 +71,8 @@ func CommunityFollowersUpdateCB(subj, reply string, C *subscribers.Community) {
 				htmlMsgStr = i18n.GetHtmlString(adminProfile.Language, templateName, data)
 				title = i18n.GetAppTitle(adminProfile.Language)
 			}
+			fmt.Println("message str is ", msgStr)
+			fmt.Println("title is", title)
 			messageMeta := mongo.MessageMeta{
 				TemplateName: templateName,
 				Template:     i18n.Strings[adminProfile.Language][templateName],
