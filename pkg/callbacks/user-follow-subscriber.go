@@ -37,7 +37,7 @@ func UserFollowSubscriberCB(subj, reply string, uf *subscribers.Subscription) {
 
 			community := mongo.GetCommunityById(uf.Resource)
 
-			if community.Type == "m_manch" && community.Visibility == "protected" {
+			if community.Type == "m_manch"{
 				admins := community.Admins
 				userRequested := mongo.GetProfileById(bson.ObjectIdHex(uf.ProfileId))
 
