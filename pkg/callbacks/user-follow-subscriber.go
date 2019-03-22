@@ -60,8 +60,12 @@ func UserFollowSubscriberCB(subj, reply string, uf *subscribers.Subscription) {
 					Name:      userRequested.Name,
 					Community: community.Name,
 				}
-
-				templateName := "join_manch_request"
+				var templateName string
+				if community.Visibility == "protected" || community.Visibility == "private" {
+					templateName = "join_manch_request_private"
+				} else {
+					templateName = "join_manch_request_public"
+				}
 				deepLink := ""
 				for _, adminProfile := range adminProfiles {
 					msgStr := i18n.GetString(adminProfile.Language, templateName, data)
