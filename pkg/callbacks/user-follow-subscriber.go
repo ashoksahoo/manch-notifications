@@ -81,7 +81,7 @@ func UserFollowSubscriberCB(subj, reply string, uf *subscribers.Subscription) {
 					purpose := constants.NotificationPurpose["JOIN_MANCH_REQUEST"]
 					notification := mongo.CreateNotification(mongo.NotificationModel{
 						Receiver:        adminProfile.Id,
-						Identifier:      adminProfile.Id.Hex() + purpose,
+						Identifier:      userRequested.Id.Hex() + adminProfile.Id.Hex() + purpose,
 						Participants:    []bson.ObjectId{adminProfile.Id},
 						DisplayTemplate: constants.NotificationTemplate["TRANSACTIONAL"],
 						EntityGroupId:   community.Id.Hex(),
