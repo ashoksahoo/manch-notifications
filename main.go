@@ -88,6 +88,9 @@ func main() {
 	// received follower update on community
 	subscribers.CommunityFollowersUpdateSubscriber(callbacks.CommunityFollowersUpdateCB)
 
+	// received status updated on community
+	subscribers.CommunityStatusUpdatedSubscriber(callbacks.CommunityStatusUpdatedCB)
+
 	// listen on http server 5000
 	http.ListenAndServe(":5000", router)
 }

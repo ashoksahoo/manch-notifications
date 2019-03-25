@@ -11,18 +11,16 @@ import (
 	"github.com/globalsign/mgo/bson"
 )
 
-func CommunityFollowersUpdateCB(subj, reply string, C *subscribers.Community) {
-	fmt.Printf("Received a Community followers update on subject %s! with vote %+v\n", subj, C)
+func CommunityStatusUpdatedCB(subj, reply string, C *subscribers.Community) {
+	fmt.Printf("Received a Community Status update on subject %s! with Community %+v\n", subj, C)
 	defer func() {
 		if r := recover(); r != nil {
-			fmt.Println("Recovered in subscribers.CommunityFollowersUpdateCB", r)
+			fmt.Println("Recovered in subscribers.CommunityStatusUpdatedCB", r)
 		}
 	}()
-	fmt.Println("followers count is ", C.FollowersCount)
 
-	if C.FollowersCount == 100 && C.Type == "m_manch" {
+	if C.Status == constants.CommunityStatus["ACTIVATED"] && C.Type == "m_manch" {
 		community := mongo.GetCommunityById(C.Id)
-
 		fmt.Println("community type is", community.Type)
 		admins := community.Admins
 		adminProfilesIds := []string{}
@@ -44,15 +42,17 @@ func CommunityFollowersUpdateCB(subj, reply string, C *subscribers.Community) {
 			Community: community.Name,
 		}
 
-		var purpose, templateName string
-		templateName = "manch_100_members"
-		purpose = constants.NotificationPurpose["MANCH_100_MEMBERS"]
+		var purpose, templateName, templateText string
+
+		templateName = "manch_activation_title"
+		templateText = "manch_activation_text"
+		purpose = constants.NotificationPurpose["MANCH_ACTIVATION"]
 		deepLink := ""
 		for _, adminProfile := range adminProfiles {
 			var htmlMsgStr, msgStr, title string
-			msgStr = i18n.GetString(adminProfile.Language, templateName, data)
+			msgStr = i18n.GetString(adminProfile.Language, templateText, data)
 			htmlMsgStr = i18n.GetHtmlString(adminProfile.Language, templateName, data)
-			title = i18n.GetAppTitle(adminProfile.Language)
+			title = i18n.GetString(adminProfile.Language, templateName, data)
 			fmt.Println("message str is ", msgStr)
 			fmt.Println("title is", title)
 			messageMeta := mongo.MessageMeta{
@@ -96,8 +96,9 @@ func CommunityFollowersUpdateCB(subj, reply string, C *subscribers.Community) {
 			}
 
 		}
+
 	}
 
-	fmt.Printf("Processed a community followers update on subject %s! with vote Id %s\n", subj, C.Id)
+	fmt.Printf("Processed a Community Status Update on subject %s! with Id %s\n", subj, C.Id)
 
 }
