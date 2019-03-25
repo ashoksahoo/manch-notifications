@@ -47,7 +47,7 @@ func CommunityFollowersUpdateCB(subj, reply string, C *subscribers.Community) {
 		var purpose, templateName string
 		templateName = "manch_100_members"
 		purpose = constants.NotificationPurpose["MANCH_100_MEMBERS"]
-		deepLink := ""
+		deepLink := "manch://manch/" + community.Id.Hex()
 		for _, adminProfile := range adminProfiles {
 			var htmlMsgStr, msgStr, title string
 			msgStr = i18n.GetString(adminProfile.Language, templateName, data)

@@ -47,7 +47,7 @@ func CommunityStatusUpdatedCB(subj, reply string, C *subscribers.Community) {
 		templateName = "manch_activation_title"
 		templateText = "manch_activation_text"
 		purpose = constants.NotificationPurpose["MANCH_ACTIVATION"]
-		deepLink := ""
+		deepLink := "manch://manch/" + community.Id.Hex()
 		for _, adminProfile := range adminProfiles {
 			var htmlMsgStr, msgStr, title string
 			msgStr = i18n.GetString(adminProfile.Language, templateText, data)
