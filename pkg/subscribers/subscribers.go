@@ -112,6 +112,10 @@ func CommunityStatusUpdatedSubscriber(callback func(subj, reply string, m *Commu
 	go c.QueueSubscribe(subject("community.status.updated"), queue(), callback)
 }
 
+func LiveTopicsPollResultSubscriber(callback func(subj, reply string, m *LiveTopicPoll)) {
+	go c.QueueSubscribe(subject("live-topics.polls.result"), queue(), callback)
+}
+
 func init() {
 	if url == "" {
 		url = nats.DefaultURL
