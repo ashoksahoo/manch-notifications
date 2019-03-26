@@ -108,8 +108,8 @@ type Community struct {
 type LiveTopicPoll struct {
 	TopicId       string `json:"topic_id"`
 	ParticipantId string `json:"participant_id"`
-	AnswerId      int    `json:"answer_id"`
-	AnswerText    string `json:"answer_text"`
+	UserAnswerId      int    `json:"user_answer_id"`
+	UserAnswerText    string `json:"user_answer_text"`
 	ResultId      int    `json:"result_id"`
 	CoinsEarned   int    `json:"coins_earned"`
 	CoinsLost     int    `json:"coins_lost"`

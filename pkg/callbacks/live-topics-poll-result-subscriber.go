@@ -19,7 +19,7 @@ func LiveTopicsPollResultCB(subj, reply string, data *subscribers.LiveTopicPoll)
 	key := data.ParticipantId + "_" + granularity
 
 	var coins int
-	if data.AnswerId == data.ResultId {
+	if data.UserAnswerId == data.ResultId {
 		coins = data.CoinsEarned
 	} else {
 		coins = data.CoinsLost
