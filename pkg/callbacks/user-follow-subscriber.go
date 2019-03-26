@@ -26,11 +26,12 @@ func UserFollowSubscriberCB(subj, reply string, uf *subscribers.Subscription) {
 		if uf.ResourceType == "community" {
 			// create community stats
 			mongo.CreateCommunityStats(mongo.CommunityStatsModel{
-				CommunityId: bson.ObjectIdHex(uf.Resource),
-				Action:      "community-follow",
-				EntityId:    bson.ObjectIdHex(uf.ProfileId),
-				EntityType:  "user",
-				ProfileId:   bson.ObjectIdHex(uf.ProfileId),
+				CommunityId:    bson.ObjectIdHex(uf.Resource),
+				Action:         "community-follow",
+				EntityId:       bson.ObjectIdHex(uf.ProfileId),
+				EntityType:     "user",
+				ProfileId:      bson.ObjectIdHex(uf.ProfileId),
+				FollowersCount: 1,
 			})
 
 			// send join manch notification to admins for closed m-manch

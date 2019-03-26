@@ -12,14 +12,10 @@ import (
 func LiveTopicsPollResultCB(subj, reply string, data *subscribers.LiveTopicPoll) {
 	fmt.Printf("Received a live topics poll result on subject %s! with Data %+v\n", subj, data)
 
-	// mongo.CreateUserCoin(mongo.UserCoinsModel{
-	// 	ProfileId:   bson.ObjectIdHex(comment.CreatedBy),
-	// 	CoinsEarned: upVoteCoins,
-	// 	Action:      "live-topics.comment.upvotes",
-	// })
 	granularity := "ipl"
-	granularityStart := time.Now() // TODO: fix granularity start and end
-	granularityEnd := time.Now()
+	loc, _ := time.LoadLocation("Asia/Kolkata")
+	granularityStart := time.Date(2019, 3, 23, 20, 0, 0, 0, loc)
+	granularityEnd := time.Date(2019, 5, 19, 11, 59, 59, 999, loc)
 	key := data.ParticipantId + "_" + granularity
 
 	var coins int
