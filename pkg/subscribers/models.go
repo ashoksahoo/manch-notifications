@@ -104,3 +104,13 @@ type Community struct {
 	Visibility     string `json:"visibility"`
 	FollowersCount int    `json:"no_of_followers"`
 }
+
+type LiveTopicPoll struct {
+	TopicId       string `json:"topic_id"`
+	ParticipantId string `json:"participant_id"`
+	UserAnswerId      int    `json:"user_answer_id"`
+	UserAnswerText    string `json:"user_answer_text"`
+	ResultId      int    `json:"result_id"`
+	CoinsEarned   int    `json:"coins_earned"`
+	CoinsLost     int    `json:"coins_lost"`
+}

@@ -16,8 +16,8 @@ func PostSubscriberCB(subj, reply string, p *subscribers.Post) {
 
 	m, botProfilesHi := mongo.GetBotProfilesIds("hi")
 	n, botProfilesTe := mongo.GetBotProfilesIds("te")
-	n = m + n;
-	botProfilesIds := append(botProfilesHi, botProfilesTe...) 
+	n = m + n
+	botProfilesIds := append(botProfilesHi, botProfilesTe...)
 	// shuffle profiles
 	rand.Seed(time.Now().UnixNano())
 	rand.Shuffle(n, func(i, j int) { botProfilesIds[i], botProfilesIds[j] = botProfilesIds[j], botProfilesIds[i] })
@@ -31,7 +31,8 @@ func PostSubscriberCB(subj, reply string, p *subscribers.Post) {
 		Action:      "post",
 		EntityId:    post.Id,
 		EntityType:  "post",
-		ProfileId:	post.Created.ProfileId,
+		ProfileId:   post.Created.ProfileId,
+		PostsCount:  1,
 	})
 
 	mongo.CreateUserScore(mongo.UserScore{
