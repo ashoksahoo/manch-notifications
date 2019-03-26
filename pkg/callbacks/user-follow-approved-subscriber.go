@@ -32,7 +32,7 @@ func UserFollowApprovedCB(subj, reply string, uf *subscribers.Subscription) {
 	}
 
 	templateName := "join_manch_approved"
-	deepLink := ""
+	deepLink := "manch://manch/" + community.Id.Hex()
 	msgStr := i18n.GetString(userProfile.Language, templateName, data)
 	htmlMsgStr := i18n.GetHtmlString(userProfile.Language, templateName, data)
 	msgStr = strings.Replace(msgStr, "\"\" ", "", 1)
