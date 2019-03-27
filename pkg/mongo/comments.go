@@ -24,7 +24,6 @@ type CommentModel struct {
 	CommentId    bson.ObjectId   `json:"comment_id" bson:"comment_id"`
 	Parents      []bson.ObjectId `json:"parents" bson:"parents"`
 	CommentCount int             `json:"no_of_comments" bson:"no_of_comments"`
-	
 }
 
 type CommentScheduleModel struct {

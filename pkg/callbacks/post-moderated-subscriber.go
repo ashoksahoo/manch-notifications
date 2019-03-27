@@ -105,27 +105,27 @@ func PostModeratedSubscriberCB(subj, reply string, p *subscribers.Post) {
 		query := bson.M{"created.profile_id": postCreator.Id, "deleted": true, "post_level": "-1000"}
 		deleteCount := mongo.GetPostCountByQuery(query)
 		if deleteCount == 1 || deleteCount == 2 || deleteCount == 5 || deleteCount == 8 {
-			// Warn the user
-			reason = post.Reason.IgnoreFeedReason
-			if reason == "" {
-				reason = post.IgnoreReason
-			}
-			lastwarnedOn := time.Now()
-			mongo.UpdateUser(bson.M{
-				"profiles._id": postCreator.Id,
-			}, bson.M{
-				"$set": bson.M{
-					"blacklist.status":         "warning",
-					"blacklist.last_warned_on": lastwarnedOn,
-					"blacklist.reason":         reason,
-				},
-				"$inc": bson.M{"blacklist.warn_count": 1},
-			})
-			notification.Purpose = "user.warned"
-			blockedStatus["status"] = "warning"
-			blockedStatus["last_warned_on"] = utils.ISOFormat(lastwarnedOn)
-			notification.Identifier = post.Id.Hex() + "_user_warned"
-			send_notification = true
+			// // Warn the user
+			// reason = post.Reason.IgnoreFeedReason
+			// if reason == "" {
+			// 	reason = post.IgnoreReason
+			// }
+			// lastwarnedOn := time.Now()
+			// mongo.UpdateUser(bson.M{
+			// 	"profiles._id": postCreator.Id,
+			// }, bson.M{
+			// 	"$set": bson.M{
+			// 		"blacklist.status":         "warning",
+			// 		"blacklist.last_warned_on": lastwarnedOn,
+			// 		"blacklist.reason":         reason,
+			// 	},
+			// 	"$inc": bson.M{"blacklist.warn_count": 1},
+			// })
+			// notification.Purpose = "user.warned"
+			// blockedStatus["status"] = "warning"
+			// blockedStatus["last_warned_on"] = utils.ISOFormat(lastwarnedOn)
+			// notification.Identifier = post.Id.Hex() + "_user_warned"
+			// send_notification = true
 		} else if deleteCount%10 == 0 {
 			// block for 2 ^ deleteCount/3 days
 			// manch:D, namespace & purpose
@@ -170,27 +170,27 @@ func PostModeratedSubscriberCB(subj, reply string, p *subscribers.Post) {
 		query := bson.M{"created.profile_id": postCreator.Id, "ignore_from_feed": true, "deleted": false}
 		ignoreCount := mongo.GetPostCountByQuery(query)
 		if ignoreCount == 3 || ignoreCount == 4 {
-			reason = post.Reason.IgnoreFeedReason
-			if reason == "" {
-				reason = post.Reason.DeleteReason
-			}
-			lastwarnedOn := time.Now()
-			// Warn the user
-			mongo.UpdateUser(bson.M{
-				"profiles._id": postCreator.Id,
-			}, bson.M{
-				"$set": bson.M{
-					"blacklist.status":         "warning",
-					"blacklist.last_warned_on": lastwarnedOn,
-					"blacklist.reason":         reason,
-				},
-				"$inc": bson.M{"blacklist.warn_count": 1},
-			})
-			notification.Purpose = "user.warned"
-			blockedStatus["last_warned_on"] = utils.ISOFormat(lastwarnedOn)
-			blockedStatus["status"] = "warning"
-			notification.Identifier = post.Id.Hex() + ""
-			send_notification = true
+			// reason = post.Reason.IgnoreFeedReason
+			// if reason == "" {
+			// 	reason = post.Reason.DeleteReason
+			// }
+			// lastwarnedOn := time.Now()
+			// // Warn the user
+			// mongo.UpdateUser(bson.M{
+			// 	"profiles._id": postCreator.Id,
+			// }, bson.M{
+			// 	"$set": bson.M{
+			// 		"blacklist.status":         "warning",
+			// 		"blacklist.last_warned_on": lastwarnedOn,
+			// 		"blacklist.reason":         reason,
+			// 	},
+			// 	"$inc": bson.M{"blacklist.warn_count": 1},
+			// })
+			// notification.Purpose = "user.warned"
+			// blockedStatus["last_warned_on"] = utils.ISOFormat(lastwarnedOn)
+			// blockedStatus["status"] = "warning"
+			// notification.Identifier = post.Id.Hex() + ""
+			// send_notification = true
 		} else if ignoreCount%5 == 0 {
 			// block for 2 ^ ignoreCount / 5 days
 			// days := ignoreCount / 5

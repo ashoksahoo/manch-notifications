@@ -27,12 +27,13 @@ func PostSubscriberCB(subj, reply string, p *subscribers.Post) {
 
 	// create community stats
 	mongo.CreateCommunityStats(mongo.CommunityStatsModel{
-		CommunityId: post.CommunityIds[0],
-		Action:      "post",
-		EntityId:    post.Id,
-		EntityType:  "post",
-		ProfileId:   post.Created.ProfileId,
+		CommunityId:  post.CommunityIds[0],
+		Action:       "post",
+		EntityId:     post.Id,
+		EntityType:   "post",
+		ProfileId:    post.Created.ProfileId,
 		ActionSource: post.SourcedBy,
+		PostsCount:   1,
 	})
 
 	mongo.CreateUserScore(mongo.UserScore{

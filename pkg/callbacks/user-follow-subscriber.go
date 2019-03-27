@@ -26,18 +26,19 @@ func UserFollowSubscriberCB(subj, reply string, uf *subscribers.Subscription) {
 		if uf.ResourceType == "community" {
 			// create community stats
 			mongo.CreateCommunityStats(mongo.CommunityStatsModel{
-				CommunityId: bson.ObjectIdHex(uf.Resource),
-				Action:      "community-follow",
-				EntityId:    bson.ObjectIdHex(uf.ProfileId),
-				EntityType:  "user",
-				ProfileId:   bson.ObjectIdHex(uf.ProfileId),
+				CommunityId:    bson.ObjectIdHex(uf.Resource),
+				Action:         "community-follow",
+				EntityId:       bson.ObjectIdHex(uf.ProfileId),
+				EntityType:     "user",
+				ProfileId:      bson.ObjectIdHex(uf.ProfileId),
+				FollowersCount: 1,
 			})
 
 			// send join manch notification to admins for closed m-manch
 
 			community := mongo.GetCommunityById(uf.Resource)
 
-			if community.Type == "m_manch"{
+			if community.Type == "m_manch" {
 				admins := community.Admins
 				userRequested := mongo.GetProfileById(bson.ObjectIdHex(uf.ProfileId))
 
@@ -66,7 +67,7 @@ func UserFollowSubscriberCB(subj, reply string, uf *subscribers.Subscription) {
 				} else {
 					templateName = "join_manch_request_public"
 				}
-				deepLink := ""
+				deepLink := "manch://manch/" + community.Id.Hex()
 				for _, adminProfile := range adminProfiles {
 					msgStr := i18n.GetString(adminProfile.Language, templateName, data)
 					htmlMsgStr := i18n.GetHtmlString(adminProfile.Language, templateName, data)
@@ -81,7 +82,7 @@ func UserFollowSubscriberCB(subj, reply string, uf *subscribers.Subscription) {
 					purpose := constants.NotificationPurpose["JOIN_MANCH_REQUEST"]
 					notification := mongo.CreateNotification(mongo.NotificationModel{
 						Receiver:        adminProfile.Id,
-						Identifier:      adminProfile.Id.Hex() + purpose,
+						Identifier:      userRequested.Id.Hex() + adminProfile.Id.Hex() + purpose,
 						Participants:    []bson.ObjectId{adminProfile.Id},
 						DisplayTemplate: constants.NotificationTemplate["TRANSACTIONAL"],
 						EntityGroupId:   community.Id.Hex(),
