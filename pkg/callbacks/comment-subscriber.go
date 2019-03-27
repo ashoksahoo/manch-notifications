@@ -56,6 +56,7 @@ func CommentSubscriberCB(subj, reply string, c *subscribers.Comment) {
 		EntityType:    "comment",
 		ProfileId:     comment.Created.ProfileId,
 		CommentsCount: 1,
+		ActionSource: comment.Post.SourcedBy,
 	})
 
 	// get replied on comment

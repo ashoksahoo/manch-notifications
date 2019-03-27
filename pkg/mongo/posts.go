@@ -37,6 +37,7 @@ type PostModel struct {
 	PostLevel      string          `json:"post_level" bson:"post_level"`
 	Reason         BlockReason     `json:"reason" bson:"reason"`
 	Language       string          `json:"language" bson:"language"`
+	SourcedBy      string          `json:"sourced_by" bson:"sourced_by"`
 }
 
 func GetPost(Id bson.ObjectId) PostModel {

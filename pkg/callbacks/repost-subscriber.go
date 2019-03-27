@@ -16,21 +16,21 @@ func RepostSubscriberCB(subj, reply string, p *subscribers.Post) {
 
 	err, post := mongo.GetPostById(p.Id)
 	if err != nil {
-		return;
+		return
 	}
 
 	m, botProfilesHi := mongo.GetBotProfilesIds("hi")
 	n, botProfilesTe := mongo.GetBotProfilesIds("te")
-	n = m + n;
-	botProfilesIds := append(botProfilesHi, botProfilesTe...) 
+	n = m + n
+	botProfilesIds := append(botProfilesHi, botProfilesTe...)
 	// shuffle profiles
 	rand.Seed(time.Now().UnixNano())
 	rand.Shuffle(n, func(i, j int) { botProfilesIds[i], botProfilesIds[j] = botProfilesIds[j], botProfilesIds[i] })
 
-	if post.Created.UserType == "general" && post.UpVotes < 30 {
+	if post.PostLevel == "2" && post.UpVotes < 25 {
 		// schedule votes to reach 30 votes
 		fmt.Println("General user....")
-		diff := 30 - post.UpVotes
+		diff := 25 - post.UpVotes
 		fmt.Println("total difference is", diff)
 		j := 0
 		// schedule 5 votes in 30 minutes
@@ -53,17 +53,14 @@ func RepostSubscriberCB(subj, reply string, p *subscribers.Post) {
 		}
 		fmt.Println("total votes added: ", j)
 
-	} else if post.Created.UserType == "bot" && post.UpVotes < 45 {
-		fmt.Println("Bot user....")
-
-		// schedule votes to reach 45 votes
-		diff := 45 - post.UpVotes
+	} else if post.PostLevel == "1" && post.UpVotes < 20 {
+		// schedule votes to reach 30 votes
+		fmt.Println("General user....")
+		diff := 20 - post.UpVotes
 		fmt.Println("total difference is", diff)
-		
 		j := 0
 		// schedule 5 votes in 30 minutes
 		total_votes := diff
-
 		if diff > 0 {
 			diff -= 5
 			t := utils.SplitTimeInRange(1*60, 30*60, 5, time.Second)
