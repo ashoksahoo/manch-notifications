@@ -97,3 +97,25 @@ type MileStone struct {
 	ProfileId string `json:"profile_id"`
 	MileStone string `json:"milestone"`
 }
+
+type Community struct {
+	Id             string `json:"_id"`
+	GUID           string `json:"guid"`
+	Type           string `json:"type"`
+	Name           string `json:"name"`
+	Icon           string `json:"icon"`
+	Language       string `json:"language"`
+	Status         string `json:"status"`
+	Visibility     string `json:"visibility"`
+	FollowersCount int    `json:"no_of_followers"`
+}
+
+type LiveTopicPoll struct {
+	TopicId        string `json:"topic_id"`
+	ParticipantId  string `json:"participant_id"`
+	UserAnswerId   int    `json:"user_answer_id"`
+	UserAnswerText string `json:"user_answer_text"`
+	ResultId       int    `json:"result_id"`
+	CoinsEarned    int    `json:"coins_earned"`
+	CoinsLost      int    `json:"coins_lost"`
+}

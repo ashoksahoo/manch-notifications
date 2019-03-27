@@ -15,43 +15,55 @@ var NotificationStatus = map[string]string{
 }
 
 var NotificationPurpose = map[string]string{
-	"COMMENT":            "comment",            // comment on a post
-	"REPLY":              "reply",              // reply to comments
-	"MULTI_REPLY":        "multi_reply",        // Someone else also replied to a comment
-	"MULTI_COMMENT":      "multi_comment",      // Someone else also comment on a post
-	"POST_REMOVE":        "remove",             // post removed from feed
-	"POST_SHARE":         "share",              // post shared
-	"USER_FOLLOW":        "follow",             // user followed another another user
-	"VOTE":               "vote",               // vote on comment or post
-	"LIVE_TOPIC_WINNER":  "live_topic_winner",  // live topic winners
-	"USER_BLOCKED":       "user.blocked",       // user blocked
-	"USER_UNBLOCKED":     "user.unblocked",     // user unblocked
-	"USER_WARNED":        "user.warned",        // user warned
+	"COMMENT":             "comment",             // comment on a post
+	"REPLY":               "reply",               // reply to comments
+	"MULTI_REPLY":         "multi_reply",         // Someone else also replied to a comment
+	"MULTI_COMMENT":       "multi_comment",       // Someone else also comment on a post
+	"POST_REMOVE":         "remove",              // post removed from feed
+	"POST_SHARE":          "share",               // post shared
+	"USER_FOLLOW":         "follow",              // user followed another another user
+	"VOTE":                "vote",                // vote on comment or post
+	"LIVE_TOPIC_WINNER":   "live_topic_winner",   // live topic winners
+	"USER_BLOCKED":        "user.blocked",        // user blocked
+	"USER_UNBLOCKED":      "user.unblocked",      // user unblocked
+	"USER_WARNED":         "user.warned",         // user warned
 	"100_COIN_MILESTONE": "100_coin_milestone", // 100 coin milestone achieved
+	"JOIN_MANCH_REQUEST":  "join_manch_request",  // join manch reqeust
+	"JOIN_MANCH_APPROVED": "join_manch_approved", // join manch approved
+	"MANCH_100_MEMBERS":   "manch_100_members",   // manch hits 100 users
+	"MANCH_ACTIVATION":    "manch_activation",    // manch activated
 }
 
 var NotificationPurposeResource = map[string]string{
-	"comment":           "ic_nc_comment", // comment on a post
-	"reply":             "ic_nc_comment", // reply to comments
-	"multi_reply":       "ic_nc_comment", // Someone else also replied to a comment
-	"multi_comment":     "ic_nc_comment", // Someone else also comment on a post
-	"remove":            "ic_nc_remove",  // post removed from feed
-	"share":             "ic_nc_share",   // post shared
-	"follow":            "ic_nc_follow",  // user followed another another user
-	"vote":              "ic_nc_vote",    // vote on comment or post
-	"live_topic_winner": "ic_nc_trophy",  // live topic winners notification
+	"comment":             "ic_nc_comment",  // comment on a post
+	"reply":               "ic_nc_comment",  // reply to comments
+	"multi_reply":         "ic_nc_comment",  // Someone else also replied to a comment
+	"multi_comment":       "ic_nc_comment",  // Someone else also comment on a post
+	"remove":              "ic_nc_remove",   // post removed from feed
+	"share":               "ic_nc_share",    // post shared
+	"follow":              "ic_nc_follow",   // user followed another another user
+	"vote":                "ic_nc_vote",     // vote on comment or post
+	"live_topic_winner":   "ic_nc_trophy",   // live topic winners notification
+	"join_manch_request":  "ic_nc_my_manch", // join manch request
+	"join_manch_approved": "ic_nc_my_manch", // join manch approved
+	"manch_100_members":   "ic_nc_my_manch", // manch achieved 100 members
+	"manch_activation":    "ic_nc_my_manch", // manch activated
 }
 
 var NotificationPurposeIcon = map[string]string{
-	"comment":           "https://s3.ap-south-1.amazonaws.com/manch-dev/app-resource-icons/ic_n_comment-min.png",     // comment on a post
-	"reply":             "https://s3.ap-south-1.amazonaws.com/manch-dev/app-resource-icons/ic_n_comment-min.png",     // reply to comments
-	"multi_reply":       "https://s3.ap-south-1.amazonaws.com/manch-dev/app-resource-icons/ic_n_comment-min.png",     // Someone else also replied to a comment
-	"multi_comment":     "https://s3.ap-south-1.amazonaws.com/manch-dev/app-resource-icons/ic_n_comment-min.png",     // Someone else also comment on a post
-	"remove":            "https://s3.ap-south-1.amazonaws.com/manch-dev/app-resource-icons/ic_n_default_mic-min.png", // post removed from feed
-	"share":             "https://s3.ap-south-1.amazonaws.com/manch-dev/app-resource-icons/ic_n_default_mic-min.png", // post shared
-	"follow":            "https://s3.ap-south-1.amazonaws.com/manch-dev/app-resource-icons/ic_n_follow-min.png",      // user followed another another user
-	"vote":              "https://s3.ap-south-1.amazonaws.com/manch-dev/app-resource-icons/ic_n_like-min.png",        // vote on comment or post
-	"live_topic_winner": "https://s3.ap-south-1.amazonaws.com/manch-dev/app-resource-icons/ic_n_trophy-min.png",      // live topics winners notification
+	"comment":             "https://s3.ap-south-1.amazonaws.com/manch-dev/app-resource-icons/ic_n_comment-min.png",     // comment on a post
+	"reply":               "https://s3.ap-south-1.amazonaws.com/manch-dev/app-resource-icons/ic_n_comment-min.png",     // reply to comments
+	"multi_reply":         "https://s3.ap-south-1.amazonaws.com/manch-dev/app-resource-icons/ic_n_comment-min.png",     // Someone else also replied to a comment
+	"multi_comment":       "https://s3.ap-south-1.amazonaws.com/manch-dev/app-resource-icons/ic_n_comment-min.png",     // Someone else also comment on a post
+	"remove":              "https://s3.ap-south-1.amazonaws.com/manch-dev/app-resource-icons/ic_n_default_mic-min.png", // post removed from feed
+	"share":               "https://s3.ap-south-1.amazonaws.com/manch-dev/app-resource-icons/ic_n_default_mic-min.png", // post shared
+	"follow":              "https://s3.ap-south-1.amazonaws.com/manch-dev/app-resource-icons/ic_n_follow-min.png",      // user followed another another user
+	"vote":                "https://s3.ap-south-1.amazonaws.com/manch-dev/app-resource-icons/ic_n_like-min.png",        // vote on comment or post
+	"live_topic_winner":   "https://s3.ap-south-1.amazonaws.com/manch-dev/app-resource-icons/ic_n_trophy-min.png",      // live topics winners notification
+	"join_manch_request":  "https://s3.ap-south-1.amazonaws.com/manch-dev/app-banners/MyManch_Notification.svg",        // join manch request
+	"join_manch_approved": "https://s3.ap-south-1.amazonaws.com/manch-dev/app-banners/MyManch_Notification.svg",        // join manch approved
+	"manch_100_members":   "https://s3.ap-south-1.amazonaws.com/manch-dev/app-banners/MyManch_Notification.svg",        // manch achieved 100 members
+	"manch_activation":    "https://s3.ap-south-1.amazonaws.com/manch-dev/app-banners/MyManch_Notification.svg",        // manch activated
 }
 
 var NotificationTemplate = map[string]string{
@@ -84,6 +96,7 @@ var ModelNames = map[string]string{
 	"USER_LEADERBOARDS":         "user_leaderboards",
 	"WHATSAPP_SCHEDULEDS":       "whatsapp_scheduleds",
 	"USER_COINS_SCHEDULE_MODEL": "user_coins_scheduleds",
+	"COMMUNITIES_STATS_MODEL":   "community_stats",
 }
 
 var BlackListStatus = map[string]string{
@@ -97,4 +110,11 @@ var MileStones = map[string]string{
 	"1000_COIN_MILESTONE": "1000",
 	"10000_COIN_MILESTONE": "10000",
 	"25000_COIN_MILESTONE": "25000",
+}
+
+var CommunityStatus = map[string]string{
+	"CREATED":          "created",
+	"PENDING_APPROVAL": "pending_approval",
+	"APPROVED":         "approved",
+	"ACTIVATED":        "activated",
 }

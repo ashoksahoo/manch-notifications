@@ -80,6 +80,10 @@ func UserFollowRemovedSubscriber(callback func(subj, reply string, m *Subscripti
 	go c.QueueSubscribe(subject("user.follow.removed"), queue(), callback)
 }
 
+func UserFollowApprovedSubscriber(callback func(subj, reply string, m *Subscription)) {
+	go c.QueueSubscribe(subject("user.follow.approved"), queue(), callback)
+}
+
 func SharePostSubscriber(callback func(subj, reply string, m *SharePost)) {
 	go c.QueueSubscribe(subject("share.post"), queue(), callback)
 }
@@ -100,8 +104,20 @@ func BlackListUserSubscriber(callback func(subj, reply string, m *BlackListProfi
 	go c.QueueSubscribe(subject("user.blacklist"), queue(), callback)
 }
 
-func MileStoneSubscriber(callback func(subj, reply string, m *MileStone))  {
+func MileStoneSubscriber(callback func(subj, reply string, m *MileStone)) {
 	go c.QueueSubscribe(subject("new.milestone"), queue(), callback)
+}
+
+func CommunityFollowersUpdateSubscriber(callback func(subj, reply string, m *Community)) {
+	go c.QueueSubscribe(subject("community.followers.update"), queue(), callback)
+}
+
+func CommunityStatusUpdatedSubscriber(callback func(subj, reply string, m *Community)) {
+	go c.QueueSubscribe(subject("community.status.updated"), queue(), callback)
+}
+
+func LiveTopicsPollResultSubscriber(callback func(subj, reply string, m *LiveTopicPoll)) {
+	go c.QueueSubscribe(subject("live-topics.polls.result"), queue(), callback)
 }
 
 func init() {

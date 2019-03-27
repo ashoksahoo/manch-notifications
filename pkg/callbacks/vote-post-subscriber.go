@@ -46,7 +46,18 @@ func VotePostSubscriberCB(subj, reply string, v *subscribers.Vote) {
 	if err != nil {
 		return
 	}
+
 	vote := post.GetVote(v.Id)
+
+	mongo.CreateCommunityStats(mongo.CommunityStatsModel{
+		CommunityId: post.CommunityIds[0],
+		Action:      "vote",
+		EntityId:    vote.Id,
+		EntityType:  "vote",
+		ProfileId: post.Created.ProfileId,
+		ActionSource: post.SourcedBy,
+	})
+
 	if vote.Created.ProfileId == post.Created.ProfileId {
 		//Self Vote
 		fmt.Println("Self Vote")
@@ -172,7 +183,7 @@ func VotePostSubscriberCB(subj, reply string, v *subscribers.Vote) {
 		Id:       notification.NId,
 	}
 
-	upvoteNumbers := []int{1, 2, 5, 10, 25, 50, 75, 100}
+	upvoteNumbers := []int{ 5, 10, 25, 50, 75, 100}
 
 	if utils.Contains(upvoteNumbers, count+1) {
 		fmt.Printf("\nGCM Message %+v\n", msg)

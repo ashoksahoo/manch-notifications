@@ -16,14 +16,26 @@ func PostSubscriberCB(subj, reply string, p *subscribers.Post) {
 
 	m, botProfilesHi := mongo.GetBotProfilesIds("hi")
 	n, botProfilesTe := mongo.GetBotProfilesIds("te")
-	n = m + n;
-	botProfilesIds := append(botProfilesHi, botProfilesTe...) 
+	n = m + n
+	botProfilesIds := append(botProfilesHi, botProfilesTe...)
 	// shuffle profiles
 	rand.Seed(time.Now().UnixNano())
 	rand.Shuffle(n, func(i, j int) { botProfilesIds[i], botProfilesIds[j] = botProfilesIds[j], botProfilesIds[i] })
 
 	// update user score for new post
 	_, post := mongo.GetPostById(p.Id)
+
+	// create community stats
+	mongo.CreateCommunityStats(mongo.CommunityStatsModel{
+		CommunityId:  post.CommunityIds[0],
+		Action:       "post",
+		EntityId:     post.Id,
+		EntityType:   "post",
+		ProfileId:    post.Created.ProfileId,
+		ActionSource: post.SourcedBy,
+		PostsCount:   1,
+	})
+
 	mongo.CreateUserScore(mongo.UserScore{
 		ProfileId:   post.Created.ProfileId,
 		CommunityId: post.CommunityIds[0],
@@ -33,11 +45,11 @@ func PostSubscriberCB(subj, reply string, p *subscribers.Post) {
 
 	var no_of_votes int
 	if p.CreatorType == "bot" {
-		no_of_votes = utils.Random(20, 25)
-	} else if p.CreatorType == "super_level_1" {
-		no_of_votes = utils.Random(20, 25)
+		no_of_votes = utils.Random(15, 20)
+	} else if p.CreatorType == "verified_level_1" {
+		no_of_votes = utils.Random(15, 20)
 	} else {
-		no_of_votes = utils.Random(5, 10)
+		no_of_votes = utils.Random(5, 15)
 	}
 
 	j := 0
@@ -59,7 +71,7 @@ func PostSubscriberCB(subj, reply string, p *subscribers.Post) {
 
 	// schedule shares on posts
 	var no_of_shares int
-	no_of_shares = utils.Random(15, 40)
+	no_of_shares = utils.Random(5, 10)
 
 	j = 0
 	fmt.Println("no_of_shares: ", no_of_shares)

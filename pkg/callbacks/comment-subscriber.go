@@ -48,6 +48,17 @@ func CommentSubscriberCB(subj, reply string, c *subscribers.Comment) {
 			EntityType: "comment",
 		},
 	}
+
+	mongo.CreateCommunityStats(mongo.CommunityStatsModel{
+		CommunityId:   comment.Post.CommunityIds[0],
+		Action:        "comment",
+		EntityId:      comment.Id,
+		EntityType:    "comment",
+		ProfileId:     comment.Created.ProfileId,
+		CommentsCount: 1,
+		ActionSource: comment.Post.SourcedBy,
+	})
+
 	// get replied on comment
 	var replyOnComment mongo.CommentModel
 	if len(comment.Parents) >= 2 {

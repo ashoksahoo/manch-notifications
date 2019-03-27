@@ -23,6 +23,101 @@ func UserFollowSubscriberCB(subj, reply string, uf *subscribers.Subscription) {
 
 	if uf.ResourceType != "user" {
 		fmt.Println("Not a user resource follows")
+		if uf.ResourceType == "community" {
+			// create community stats
+			mongo.CreateCommunityStats(mongo.CommunityStatsModel{
+				CommunityId:    bson.ObjectIdHex(uf.Resource),
+				Action:         "community-follow",
+				EntityId:       bson.ObjectIdHex(uf.ProfileId),
+				EntityType:     "user",
+				ProfileId:      bson.ObjectIdHex(uf.ProfileId),
+				FollowersCount: 1,
+			})
+
+			// send join manch notification to admins for closed m-manch
+
+			community := mongo.GetCommunityById(uf.Resource)
+
+			if community.Type == "m_manch" {
+				admins := community.Admins
+				userRequested := mongo.GetProfileById(bson.ObjectIdHex(uf.ProfileId))
+
+				adminProfilesIds := []string{}
+
+				for _, admin := range admins {
+					adminProfilesIds = append(adminProfilesIds, admin.ProfileId.Hex())
+				}
+
+				adminProfiles := mongo.GetProfilesByIds(adminProfilesIds)
+
+				entities := []mongo.Entity{
+					{
+						EntityId:   community.Id,
+						EntityType: "community",
+					},
+				}
+
+				data := i18n.DataModel{
+					Name:      userRequested.Name,
+					Community: community.Name,
+				}
+				var templateName string
+				if community.Visibility == "protected" {
+					templateName = "join_manch_request_private"
+				} else {
+					templateName = "join_manch_request_public"
+				}
+				deepLink := "manch://manch/" + community.Id.Hex()
+				for _, adminProfile := range adminProfiles {
+					msgStr := i18n.GetString(adminProfile.Language, templateName, data)
+					htmlMsgStr := i18n.GetHtmlString(adminProfile.Language, templateName, data)
+					msgStr = strings.Replace(msgStr, "\"\" ", "", 1)
+					title := i18n.GetAppTitle(adminProfile.Language)
+
+					messageMeta := mongo.MessageMeta{
+						TemplateName: templateName,
+						Template:     i18n.Strings[adminProfile.Language][templateName],
+						Data:         data,
+					}
+					purpose := constants.NotificationPurpose["JOIN_MANCH_REQUEST"]
+					notification := mongo.CreateNotification(mongo.NotificationModel{
+						Receiver:        adminProfile.Id,
+						Identifier:      userRequested.Id.Hex() + adminProfile.Id.Hex() + purpose,
+						Participants:    []bson.ObjectId{adminProfile.Id},
+						DisplayTemplate: constants.NotificationTemplate["TRANSACTIONAL"],
+						EntityGroupId:   community.Id.Hex(),
+						ActionId:        community.Id,
+						ActionType:      "userfollow",
+						Purpose:         purpose,
+						Entities:        entities,
+						Message:         msgStr,
+						MessageHtml:     htmlMsgStr,
+						DeepLink:        deepLink,
+						MessageMeta:     messageMeta,
+					})
+
+					tokens := mongo.GetTokensByProfiles([]bson.ObjectId{adminProfile.Id})
+
+					msg := firebase.ManchMessage{
+						Title:    title,
+						Message:  msgStr,
+						DeepLink: deepLink,
+						Id:       notification.NId,
+					}
+
+					fmt.Printf("\nGCM Message %+v\n", msg)
+					if tokens != nil {
+						for _, token := range tokens {
+							go firebase.SendMessage(msg, token.Token, notification)
+						}
+					} else {
+						fmt.Printf("No token\n")
+					}
+
+				}
+			}
+
+		}
 		return
 	}
 
