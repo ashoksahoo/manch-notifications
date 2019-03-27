@@ -1,8 +1,8 @@
 package mongo
 
 import (
-	"notification-service/pkg/constants"
 	"fmt"
+	"notification-service/pkg/constants"
 	"time"
 
 	"github.com/globalsign/mgo/bson"
@@ -10,7 +10,7 @@ import (
 
 var (
 	COMMENT_SCHEDULEDS_MODEL = constants.ModelNames["COMMENT_SCHEDULEDS"]
-	COMMENTS_MODEL = constants.ModelNames["COMMENTS"]
+	COMMENTS_MODEL           = constants.ModelNames["COMMENTS"]
 )
 
 type CommentModel struct {
@@ -24,6 +24,7 @@ type CommentModel struct {
 	CommentId    bson.ObjectId   `json:"comment_id" bson:"comment_id"`
 	Parents      []bson.ObjectId `json:"parents" bson:"parents"`
 	CommentCount int             `json:"no_of_comments" bson:"no_of_comments"`
+	
 }
 
 type CommentScheduleModel struct {

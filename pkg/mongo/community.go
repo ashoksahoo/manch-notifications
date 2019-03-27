@@ -61,6 +61,8 @@ type CommunityStatsModel struct {
 	CreatedAt    time.Time         `json:"createdAt" bson:"createdAt"`
 	UpdatedAt    time.Time         `json:"updatedAt" bson:"updatedAt"`
 	ProfileId    bson.ObjectId     `json:"profile_id" bson:"profile_id"`
+	Score        float32           `json:"score" bson:"score"`
+	ActionSource string            `json:"action_source" bson:"action_source"`
 }
 
 func GetCommunityById(Id string) CommunityModel {
@@ -95,6 +97,15 @@ func CreateCommunityStats(communityStats CommunityStatsModel) {
 	communityStats.UpdatedAt = now
 	communityStats.Language = community.Language
 
+	if communityStats.Action == "comment" {
+		communityStats.Score = 5
+	} else if communityStats.Action == "vote" {
+		communityStats.Score = 1
+	} else if communityStats.Action == "post" {
+		communityStats.Score = 0.5
+	} else if communityStats.Action == "community-follow" {
+		communityStats.Score = 0.1
+	}
 	fmt.Printf("community stats %+v\n\n", communityStats)
 	err := C.Insert(communityStats)
 	if err != nil {
