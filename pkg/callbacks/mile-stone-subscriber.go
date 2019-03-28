@@ -18,14 +18,6 @@ func MileStoneSubscriberCB(subj, reply string, m *subscribers.MileStone) {
 	if m.MileStone == constants.MileStones["100_COIN_MILESTONE"] {
 		// send notification for this milestone
 
-		if m.IsRefered {
-			// update referer's coin
-			fmt.Println("updating referar's coin", m.ReferedBy)
-			mongo.UpdateProfileById(bson.ObjectIdHex(m.ReferedBy), bson.M{
-				"$inc": bson.M{"profiles.$.total_coins": m.ReferalCoin},
-			})
-		}
-
 		tokens := mongo.GetTokensByProfiles([]bson.ObjectId{profile.Id})
 		var msgStrTitle, msgStrText string
 		var templateTitle, templateText string
@@ -78,6 +70,22 @@ func MileStoneSubscriberCB(subj, reply string, m *subscribers.MileStone) {
 		} else {
 			fmt.Printf("No token")
 		}
+
+		// update referrer's coin
+		err, referralData := mongo.GetReferralsByQuery(bson.M{
+			"profile_id":       m.ProfileId,
+			"referring_params": bson.M{"$exists": true},
+		})
+		if err != nil {
+			fmt.Println("error", err)
+		} else {
+			fmt.Printf("referal\n%+v", referralData)
+			referredBy := referralData.ReferringParams["profile_id"].(string)
+			mongo.UpdateProfileById(bson.ObjectIdHex(referredBy), bson.M{
+				"$inc": bson.M{"profiles.$.total_coins": 100},
+			})
+		}
+
 	}
 
 	if m.MileStone == constants.MileStones["1000_COIN_MILESTONE"] {

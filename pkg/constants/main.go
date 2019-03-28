@@ -27,7 +27,7 @@ var NotificationPurpose = map[string]string{
 	"USER_BLOCKED":        "user.blocked",        // user blocked
 	"USER_UNBLOCKED":      "user.unblocked",      // user unblocked
 	"USER_WARNED":         "user.warned",         // user warned
-	"100_COIN_MILESTONE": "100_coin_milestone", // 100 coin milestone achieved
+	"100_COIN_MILESTONE":  "100_coin_milestone",  // 100 coin milestone achieved
 	"JOIN_MANCH_REQUEST":  "join_manch_request",  // join manch reqeust
 	"JOIN_MANCH_APPROVED": "join_manch_approved", // join manch approved
 	"MANCH_100_MEMBERS":   "manch_100_members",   // manch hits 100 users
@@ -97,6 +97,7 @@ var ModelNames = map[string]string{
 	"WHATSAPP_SCHEDULEDS":       "whatsapp_scheduleds",
 	"USER_COINS_SCHEDULE_MODEL": "user_coins_scheduleds",
 	"COMMUNITIES_STATS_MODEL":   "community_stats",
+	"REFERRALS":                 "referrals",
 }
 
 var BlackListStatus = map[string]string{
@@ -106,8 +107,8 @@ var BlackListStatus = map[string]string{
 }
 
 var MileStones = map[string]string{
-	"100_COIN_MILESTONE": "100",
-	"1000_COIN_MILESTONE": "1000",
+	"100_COIN_MILESTONE":   "100",
+	"1000_COIN_MILESTONE":  "1000",
 	"10000_COIN_MILESTONE": "10000",
 	"25000_COIN_MILESTONE": "25000",
 }

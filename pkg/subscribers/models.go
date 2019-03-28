@@ -96,9 +96,6 @@ type BlackListProfile struct {
 type MileStone struct {
 	ProfileId   string `json:"profile_id"`
 	MileStone   string `json:"milestone"`
-	IsRefered   bool   `json:"is_refered"`
-	ReferedBy   string `json:"refered_by"`
-	ReferalCoin int    `json:"referal_coin"`
 }
 
 type Community struct {
