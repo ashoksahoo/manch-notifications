@@ -104,6 +104,10 @@ func BlackListUserSubscriber(callback func(subj, reply string, m *BlackListProfi
 	go c.QueueSubscribe(subject("user.blacklist"), queue(), callback)
 }
 
+func MileStoneSubscriber(callback func(subj, reply string, m *MileStone)) {
+	go c.QueueSubscribe(subject("new.milestone"), queue(), callback)
+}
+
 func CommunityFollowersUpdateSubscriber(callback func(subj, reply string, m *Community)) {
 	go c.QueueSubscribe(subject("community.followers.update"), queue(), callback)
 }

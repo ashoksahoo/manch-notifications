@@ -93,6 +93,11 @@ type BlackListProfile struct {
 	LastWarnedOn time.Time `json:"last_warned_on"`
 }
 
+type MileStone struct {
+	ProfileId   string `json:"profile_id"`
+	MileStone   string `json:"milestone"`
+}
+
 type Community struct {
 	Id             string `json:"_id"`
 	GUID           string `json:"guid"`
@@ -106,11 +111,11 @@ type Community struct {
 }
 
 type LiveTopicPoll struct {
-	TopicId       string `json:"topic_id"`
-	ParticipantId string `json:"participant_id"`
-	UserAnswerId      int    `json:"user_answer_id"`
-	UserAnswerText    string `json:"user_answer_text"`
-	ResultId      int    `json:"result_id"`
-	CoinsEarned   int    `json:"coins_earned"`
-	CoinsLost     int    `json:"coins_lost"`
+	TopicId        string `json:"topic_id"`
+	ParticipantId  string `json:"participant_id"`
+	UserAnswerId   int    `json:"user_answer_id"`
+	UserAnswerText string `json:"user_answer_text"`
+	ResultId       int    `json:"result_id"`
+	CoinsEarned    int    `json:"coins_earned"`
+	CoinsLost      int    `json:"coins_lost"`
 }

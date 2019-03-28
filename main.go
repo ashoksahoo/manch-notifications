@@ -82,7 +82,10 @@ func main() {
 	// received new user created
 	subscribers.UserCreatedSubscriber(callbacks.UserCreatedSubscriberCB)
 
-	// received user-follow 
+	// received new milestone
+	subscribers.MileStoneSubscriber(callbacks.MileStoneSubscriberCB)
+
+	// received user-follow
 	subscribers.UserFollowApprovedSubscriber(callbacks.UserFollowApprovedCB)
 
 	// received follower update on community
