@@ -18,6 +18,14 @@ func MileStoneSubscriberCB(subj, reply string, m *subscribers.MileStone) {
 	if m.MileStone == constants.MileStones["100_COIN_MILESTONE"] {
 		// send notification for this milestone
 
+		if m.IsRefered {
+			// update referer's coin
+			fmt.Println("updating referar's coin", m.ReferedBy)
+			mongo.UpdateProfileById(bson.ObjectIdHex(m.ReferedBy), bson.M{
+				"$inc": bson.M{"profiles.$.total_coins": m.ReferalCoin},
+			})
+		}
+
 		tokens := mongo.GetTokensByProfiles([]bson.ObjectId{profile.Id})
 		var msgStr string
 		var templateName string
