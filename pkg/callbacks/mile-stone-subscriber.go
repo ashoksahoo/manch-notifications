@@ -27,19 +27,22 @@ func MileStoneSubscriberCB(subj, reply string, m *subscribers.MileStone) {
 		}
 
 		tokens := mongo.GetTokensByProfiles([]bson.ObjectId{profile.Id})
-		var msgStr string
-		var templateName string
-		templateName = "100_coin_milestone"
+		var msgStrTitle, msgStrText string
+		var templateTitle, templateText string
+		templateTitle = "100_coin_milestone_title"
+		templateText = "100_coin_milestone_text"
 		data := i18n.DataModel{
 			Name: profile.Name,
 		}
-		msgStr = i18n.GetString(profile.Language, templateName, data)
-		htmlMsgStr := i18n.GetHtmlString(profile.Language, templateName, data)
-		title := i18n.GetAppTitle(profile.Language)
+		msgStrTitle = i18n.GetString(profile.Language, templateTitle, data)
+		msgStrText = i18n.GetString(profile.Language, templateText, data)
+		htmlMsgStr := i18n.GetHtmlString(profile.Language, templateTitle, data)
+
+		bigPicture := i18n.GetString(profile.Language, "100_coin_milestone_image", data)
 
 		messageMeta := mongo.MessageMeta{
-			TemplateName: templateName,
-			Template:     i18n.Strings[profile.Language][templateName],
+			TemplateName: templateTitle,
+			Template:     i18n.Strings[profile.Language][templateTitle],
 			Data:         data,
 		}
 		deepLink := "manch://posts/"
@@ -53,17 +56,18 @@ func MileStoneSubscriberCB(subj, reply string, m *subscribers.MileStone) {
 			ActionId:        profile.Id,
 			ActionType:      "milestone",
 			Purpose:         constants.NotificationPurpose["100_COIN_MILESTONE"],
-			Message:         msgStr,
+			Message:         msgStrTitle,
 			MessageMeta:     messageMeta,
 			MessageHtml:     htmlMsgStr,
 			DeepLink:        deepLink,
 		})
 
 		msg := firebase.ManchMessage{
-			Title:    title,
-			Message:  msgStr,
-			DeepLink: deepLink,
-			Id:       notification.NId,
+			Title:      msgStrTitle,
+			Message:    msgStrText,
+			DeepLink:   deepLink,
+			BigPicture: bigPicture,
+			Id:         notification.NId,
 		}
 
 		fmt.Printf("\nGCM Message %+v\n", msg)

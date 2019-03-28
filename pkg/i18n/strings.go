@@ -130,7 +130,9 @@ Coins का लाभ लेने के लिए इस मैसेज क�
 
 - मंच परिवार`,
 
-		"100_coin_milestone": "Congratulations {{.Name}}, on your century,keep discussing to earn more",
+		"100_coin_milestone_title": "Coins की Century 🤩",
+		"100_coin_milestone_text": "100 Coins तक पहुचन की बधाई 🎉",
+		"100_coin_milestone_image": "https://s3.ap-south-1.amazonaws.com/manch-dev/notifications/100_Coins-min.jpg",
 		"join_manch_request_private": "{{.Name}} आपके मंच {{.Community}} से जुड़ना चाहते है 🤩",
 		"join_manch_request_public":  "{{.Name}} जी आपके मंच {{.Community}} से जुड़ गए हैं",
 		"join_manch_approved":        "मुबारक हो अब आप {{.Community}} का हिस्सा हैं 😄",
@@ -214,7 +216,9 @@ Coins  పొందుటకు ఈ మెసేజ్ కి రిప్లై
 
 - Manch టీం`,
 
-		"100_coin_milestone": "Congratulations {{.Name}}, on your century,keep discussing to earn more",
+		"100_coin_milestone_title": "Coins🤩 సెంచరీ",
+		"100_coin_milestone_text": "అభినందనలు 100 mark🎉 కొట్టినందుకు",
+		"100_coin_milestone_image": "https://s3.ap-south-1.amazonaws.com/manch-dev/notifications/100_Coins-min.jpg",
 		"join_manch_request_private": "{{.Name}} మీ {{.Community}} మంచ్ లో చేరాలనుకుంటున్నారు. 🤩",
 		"join_manch_request_public":  "{{.Name}} మీ మంచ్ లో చేరారు {{.Community}}",
 		"join_manch_approved":        "{{.Community}} లో చేరడానికి మీ అభ్యర్థన ఆమోదించబడింది. 😄",
@@ -367,8 +371,8 @@ var HtmlStrings = map[string]map[string]string{
 		"live_topic_participants_title_1": "<b>{{.Name}}</b>, ये हैं आज की चर्चा के टॉप यूज़र्स",
 		"live_topic_participants_title_2": "<b>{{.Name}}</b>, आज की चर्चा के टॉप यूज़र्स की लिस्ट",
 
-		"100_coin_milestone": "Congratulations <b>{{.Name}}</b>, on your century,keep discussing to earn more",
-
+		"100_coin_milestone_title": "Coins की Century 🤩",
+		"100_coin_milestone_text": "100 Coins तक पहुचन की बधाई 🎉",
 		"join_manch_request_private": "<b>{{.Name}}</b> आपके मंच <b>{{.Community}}</b> से जुड़ना चाहते है 🤩",
 		"join_manch_request_public":  "<b>{{.Name}}</b> जी आपके मंच <b>{{.Community}}</b> से जुड़ गए हैं",
 		"join_manch_approved":        "मुबारक हो अब आप <b>{{.Community}}</b> का हिस्सा हैं 😄",
@@ -443,7 +447,8 @@ var HtmlStrings = map[string]map[string]string{
 		"live_topic_participants_title_1": "<b>{{.Name}}</b> గారు ,  నేటి  LIVE చర్చ టాప్ యూజర్లు",
 		"live_topic_participants_title_2": "<b>{{.Name}}</b> గారు , నేటి  LIVE చర్చ టాప్ యూజర్ల వివరాలు",
 
-		"100_coin_milestone": "Congratulations <b>{{.Name}}</b>, on your century,keep discussing to earn more",		
+		"100_coin_milestone_title": "Coins🤩 సెంచరీ",
+		"100_coin_milestone_text": "అభినందనలు 100 mark🎉 కొట్టినందుకు",
 		"join_manch_request_private": "<b>{{.Name}}</b> మీ <b>{{.Community}}</b> మంచ్ లో చేరాలనుకుంటున్నారు. 🤩",
 		"join_manch_request_public":  "<b>{{.Name}}</b> మీ మంచ్ లో చేరారు <b>{{.Community}}</b>",
 		"join_manch_approved":        "<b>{{.Community}}</b> లో చేరడానికి మీ అభ్యర్థన ఆమోదించబడింది. 😄",
