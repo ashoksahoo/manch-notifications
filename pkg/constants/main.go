@@ -32,6 +32,7 @@ var NotificationPurpose = map[string]string{
 	"JOIN_MANCH_APPROVED": "join_manch_approved", // join manch approved
 	"MANCH_100_MEMBERS":   "manch_100_members",   // manch hits 100 users
 	"MANCH_ACTIVATION":    "manch_activation",    // manch activated
+	"100_COIN_REFERRAL":   "100_coin_referral",
 }
 
 var NotificationPurposeResource = map[string]string{
