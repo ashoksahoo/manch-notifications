@@ -18,6 +18,7 @@ func UserStreakCB(subj, reply string, userStreak *subscribers.UserStreak) {
 			Icon:         "https://s3.ap-south-1.amazonaws.com/manch-dev/notifications/badges/1_day_streak.jpg",
 		}
 		milestone := mongo.Milestone{
+			Id:          bson.NewObjectId(),
 			MileStoneId: "0",
 			Name:        "1 day streak",
 			Badge:       badge,
@@ -27,13 +28,13 @@ func UserStreakCB(subj, reply string, userStreak *subscribers.UserStreak) {
 		}
 
 		query := bson.M{
-			"profiles.0._id":                    bson.ObjectIdHex(userStreak.ProfileId),
-			"profiles.0.achieved_milestones.id": bson.M{"$ne": "0"},
+			"profiles.0._id": bson.ObjectIdHex(userStreak.ProfileId),
+			"profiles.0.achieved_milestones.milestone_id": bson.M{"$ne": "0"},
 		}
 
 		update := bson.M{
-			"profiles.$.current_badge": badge,
-			"$push":                    bson.M{"profiles.$.achieved_milestones": milestone},
+			"$set":  bson.M{"profiles.$.current_badge": badge},
+			"$push": bson.M{"profiles.$.achieved_milestones": milestone},
 		}
 		mongo.UpdateUser(query, update)
 	}
