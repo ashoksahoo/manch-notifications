@@ -18,6 +18,11 @@ func UserStreakCB(subj, reply string, userStreak *subscribers.UserStreak) {
 
 	profile := mongo.GetProfileById(bson.ObjectIdHex(userStreak.ProfileId))
 
+	if (subscribers.Streak{}) == userStreak.CurrentStreak {
+		fmt.Println("reset streak")
+		return
+	}
+
 	if utils.IncludesInt([]int{1, 7, 30, 100}, userStreak.CurrentStreak.StreakLength) {
 
 		var resourceName, resourceIcon, milestoneId, milestoneName, bigPictureTemplateName, notifIdentifierText string

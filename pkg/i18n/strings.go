@@ -213,6 +213,12 @@ var Strings = map[string]map[string]string{
 		"manch_activation_title":     "Congratulations, మీ మంచ్ {{.Community}} ఆక్టివేట్ చేయబడింది!!",
 		"manch_activation_text":      "మీ అభిప్రాయాలను  పంచుకొని మీ పోస్ట్ ని ట్రేండింగ్ లో ఉండేలా చూసుకోండి.",
 		"manch_100_members":          "సెంచరీ! మీ  {{.Community}} మంచ్ ఇప్పుడు 100 మంది సభ్యులను కలిగి ఉన్నారు ⚡⚡",
+		"streak_milestone":            "Congratulations {{.Name}}, you have reached {{.Count}} 🎉🎉",
+		"streak_milestone_image_1":   "https://s3.ap-south-1.amazonaws.com/manch-dev/notifications/badges/1_day_streak.jpg",
+		"streak_milestone_image_7":   "https://s3.ap-south-1.amazonaws.com/manch-dev/notifications/badges/7_day_streak.jpg",
+		"streak_milestone_image_30":  "https://s3.ap-south-1.amazonaws.com/manch-dev/notifications/badges/30_day_streak.jpg",
+		"streak_milestone_image_100": "https://s3.ap-south-1.amazonaws.com/manch-dev/notifications/badges/100_day_streak.jpg",
+
 	},
 }
 
@@ -367,6 +373,8 @@ var HtmlStrings = map[string]map[string]string{
 		"manch_activation_title":     "आपका मंच <b>{{.Community}}</b> Activate हो गया है🔥",
 		"manch_activation_text":      "पोस्ट करें और अपने मंच को ट्रेंडिंग बनाएं 🤩",
 		"manch_100_members":          "शतक के लिए शुभकामना , <b>100</b> सदस्य अब आपके मंच से जुड़ चुके हैं  ⚡⚡",
+		"streak_milestone":            "Congratulations <b>{{.Name}}</b>, you have reached <b>{{.Count}}</b> 🎉🎉",
+
 	},
 
 	"te": {
@@ -443,5 +451,7 @@ var HtmlStrings = map[string]map[string]string{
 		"manch_activation_title":     "Congratulations, మీ మంచ్ <b>{{.Community}}</b> ఆక్టివేట్ చేయబడింది!!",
 		"manch_activation_text":      "మీ అభిప్రాయాలను  పంచుకొని మీ పోస్ట్ ని ట్రేండింగ్ లో ఉండేలా చూసుకోండి.",
 		"manch_100_members":          "సెంచరీ! మీ  <b>{{.Community}}</b> మంచ్ ఇప్పుడు <b>100</b> మంది సభ్యులను కలిగి ఉన్నారు ⚡⚡",
+		"streak_milestone":            "Congratulations <b>{{.Name}}</b>, you have reached <b>{{.Count}}</b> 🎉🎉",
+
 	},
 }
