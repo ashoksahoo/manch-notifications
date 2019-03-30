@@ -31,31 +31,31 @@ type BlackList struct {
 	Reason       string    `json:"reason" bson:"reason"`
 }
 
-type BadgeInfo struct {
+type Badge struct {
 	ResourceName string `json:"resource_name" bson:"resource_name"`
 	Icon         string `json:"icon" bson:"icon"`
 }
 
 type Milestone struct {
-	Id    bson.ObjectId `json:"id" bson:"id"`
-	Name  string        `json:"name" bson:"name"`
-	Badge BadgeInfo     `json:"badge" bson:"badge"`
-	Date  time.Time     `json:"date" bson:"date"`
-}
-
-type ProfileBadge struct {
-	CurrentBadge       BadgeInfo `json:"current_badge" bson:"current_badge"`
-	AchievedMileStones Milestone `json:"achieved_milestones" bson:"achieved_milestones"`
+	Id          bson.ObjectId `json:"id" bson:"id"`
+	Type        string        `json:"type" bson:"type"`
+	MileStoneId string        `json:"milestone_id" bson:"milestone_id"`
+	Name        string        `json:"name" bson:"name"`
+	Badge       Badge         `json:"badge" bson:"badge"`
+	Value       int           `json:"value" bson:"value"`
+	Date        time.Time     `json:"date" bson:"date"`
 }
 
 type Profile struct {
-	Id            bson.ObjectId `json:"_id" bson:"_id"`
-	Avatar        string        `json:"avatar"`
-	Name          string        `json:"name"`
-	Language      string        `json:"language"`
-	FollowerCount int           `json:"no_of_followers" bson:"no_of_followers"`
-	Type          string        `json:"type" bson:"type"`
-	RandomName    bool          `json:"random_name" bson:"random_name"`
+	Id                 bson.ObjectId `json:"_id" bson:"_id"`
+	Avatar             string        `json:"avatar"`
+	Name               string        `json:"name"`
+	Language           string        `json:"language"`
+	FollowerCount      int           `json:"no_of_followers" bson:"no_of_followers"`
+	Type               string        `json:"type" bson:"type"`
+	RandomName         bool          `json:"random_name" bson:"random_name"`
+	CurrentBadge       Badge         `json:"current_badge" bson:"current_badge"`
+	AchievedMileStones []Milestone   `json:"achieved_milestones" bson:"achieved_milestones"`
 }
 
 type Creator struct {
@@ -206,5 +206,7 @@ func UpdateUser(query, update bson.M) {
 	err := users.Update(query, update)
 	if err != nil {
 		fmt.Println(err, query, update)
+	} else {
+		fmt.Println("user updated successfully")
 	}
 }
