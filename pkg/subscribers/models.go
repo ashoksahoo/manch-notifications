@@ -94,8 +94,8 @@ type BlackListProfile struct {
 }
 
 type MileStone struct {
-	ProfileId   string `json:"profile_id"`
-	MileStone   string `json:"milestone"`
+	ProfileId string `json:"profile_id"`
+	MileStone string `json:"milestone"`
 }
 
 type Community struct {
@@ -118,4 +118,16 @@ type LiveTopicPoll struct {
 	ResultId       int    `json:"result_id"`
 	CoinsEarned    int    `json:"coins_earned"`
 	CoinsLost      int    `json:"coins_lost"`
+}
+
+type Streak struct {
+	StartDate    time.Time `json:"start_date" bson:"start_date"`
+	EndDate      time.Time `json:"end_date" bson:"end_date"`
+	StreakLength int       `json:"streak_length" bson:"streak_length"`
+}
+
+type UserStreak struct {
+	ProfileId     string `json:"profile_id" bson:"profile_id"`
+	CurrentStreak Streak `json:"current_streak" bson:"current_streak"`
+	LastStreak    Streak `json:"last_streak" bson:"last_streak"`
 }

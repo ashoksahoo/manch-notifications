@@ -11,6 +11,10 @@ import (
 	"github.com/mitchellh/mapstructure"
 )
 
+var (
+	USERS_MODEL = constants.ModelNames["USERS"]
+)
+
 type Stats struct {
 	PosLevel1 int `json:"pos_level_1_posts" bson:"pos_level_1_posts"`
 	PosLevel2 int `json:"pos_level_2_posts" bson:"pos_level_2_posts"`
@@ -27,9 +31,22 @@ type BlackList struct {
 	Reason       string    `json:"reason" bson:"reason"`
 }
 
-var (
-	USERS_MODEL = constants.ModelNames["USERS"]
-)
+type BadgeInfo struct {
+	ResourceName string `json:"resource_name" bson:"resource_name"`
+	Icon         string `json:"icon" bson:"icon"`
+}
+
+type Milestone struct {
+	Id    bson.ObjectId `json:"id" bson:"id"`
+	Name  string        `json:"name" bson:"name"`
+	Badge BadgeInfo     `json:"badge" bson:"badge"`
+	Date  time.Time     `json:"date" bson:"date"`
+}
+
+type ProfileBadge struct {
+	CurrentBadge       BadgeInfo `json:"current_badge" bson:"current_badge"`
+	AchievedMileStones Milestone `json:"achieved_milestones" bson:"achieved_milestones"`
+}
 
 type Profile struct {
 	Id            bson.ObjectId `json:"_id" bson:"_id"`
