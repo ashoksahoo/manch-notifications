@@ -199,7 +199,7 @@ func UpdateProfileById(profileId bson.ObjectId, update bson.M) {
 
 }
 
-func UpdateUser(query, update bson.M) {
+func UpdateUser(query, update bson.M) error {
 	s := session.Clone()
 	defer s.Close()
 	users := s.DB("manch").C("users")
@@ -209,4 +209,5 @@ func UpdateUser(query, update bson.M) {
 	} else {
 		fmt.Println("user updated successfully")
 	}
+	return err
 }

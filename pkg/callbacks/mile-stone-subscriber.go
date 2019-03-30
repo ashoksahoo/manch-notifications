@@ -7,6 +7,7 @@ import (
 	"notification-service/pkg/i18n"
 	"notification-service/pkg/mongo"
 	"notification-service/pkg/subscribers"
+	"time"
 
 	"github.com/globalsign/mgo/bson"
 )
@@ -88,15 +89,132 @@ func MileStoneSubscriberCB(subj, reply string, m *subscribers.MileStone) {
 
 	}
 
-	if m.MileStone == constants.MileStones["1000_COIN_MILESTONE"] {
+	if m.MileStone == constants.MileStones["500_COIN_MILESTONE"] {
+		badge := mongo.Badge{
+			ResourceName: "",
+			Icon:         "",
+		}
+		milestone := mongo.Milestone{
+			Id:          bson.NewObjectId(),
+			MileStoneId: "",
+			Name:        "",
+			Badge:       badge,
+			Value:       500,
+			Type:        "coin",
+			Date:        time.Now(),
+		}
+
+		query := bson.M{
+			"profiles._id": profile.Id,
+			"profiles.achieved_milestones.milestone_id": bson.M{"$ne": ""},
+		}
+
+		update := bson.M{
+			"$set":  bson.M{"profiles.$.current_badge": badge},
+			"$push": bson.M{"profiles.$.achieved_milestones": milestone},
+		}
+		// Update current badge and achieved milestones
+		err := mongo.UpdateUser(query, update)
+		if err == nil {
+			// update post and comment of this profile
+			mongo.UpdatePostsByQuery(bson.M{
+				"created.profile_id": profile.Id,
+			}, bson.M{
+				"$set": bson.M{"created.current_badge": badge},
+			})
+
+			mongo.UpdateCommentsByQuery(bson.M{
+				"created.profile_id": profile.Id,
+			}, bson.M{
+				"$set": bson.M{"created.current_badge": badge},
+			})
+		}
 
 	}
 
 	if m.MileStone == constants.MileStones["10000_COIN_MILESTONE"] {
+		badge := mongo.Badge{
+			ResourceName: "",
+			Icon:         "",
+		}
+		milestone := mongo.Milestone{
+			Id:          bson.NewObjectId(),
+			MileStoneId: "",
+			Name:        "",
+			Badge:       badge,
+			Value:       500,
+			Type:        "coin",
+			Date:        time.Now(),
+		}
+
+		query := bson.M{
+			"profiles._id": profile.Id,
+			"profiles.achieved_milestones.milestone_id": bson.M{"$ne": ""},
+		}
+
+		update := bson.M{
+			"$set":  bson.M{"profiles.$.current_badge": badge},
+			"$push": bson.M{"profiles.$.achieved_milestones": milestone},
+		}
+		// Update current badge and achieved milestones
+		err := mongo.UpdateUser(query, update)
+		if err == nil {
+			// update post and comment of this profile
+			mongo.UpdatePostsByQuery(bson.M{
+				"created.profile_id": profile.Id,
+			}, bson.M{
+				"$set": bson.M{"created.current_badge": badge},
+			})
+
+			mongo.UpdateCommentsByQuery(bson.M{
+				"created.profile_id": profile.Id,
+			}, bson.M{
+				"$set": bson.M{"created.current_badge": badge},
+			})
+		}
 
 	}
 
 	if m.MileStone == constants.MileStones["25000_COIN_MILESTONE"] {
+		badge := mongo.Badge{
+			ResourceName: "",
+			Icon:         "",
+		}
+		milestone := mongo.Milestone{
+			Id:          bson.NewObjectId(),
+			MileStoneId: "",
+			Name:        "",
+			Badge:       badge,
+			Value:       500,
+			Type:        "coin",
+			Date:        time.Now(),
+		}
+
+		query := bson.M{
+			"profiles._id": profile.Id,
+			"profiles.achieved_milestones.milestone_id": bson.M{"$ne": ""},
+		}
+
+		update := bson.M{
+			"$set":  bson.M{"profiles.$.current_badge": badge},
+			"$push": bson.M{"profiles.$.achieved_milestones": milestone},
+		}
+		// Update current badge and achieved milestones
+		err := mongo.UpdateUser(query, update)
+		if err == nil {
+			// update post and comment of this profile
+			mongo.UpdatePostsByQuery(bson.M{
+				"created.profile_id": profile.Id,
+			}, bson.M{
+				"$set": bson.M{"created.current_badge": badge},
+			})
+
+			mongo.UpdateCommentsByQuery(bson.M{
+				"created.profile_id": profile.Id,
+			}, bson.M{
+				"$set": bson.M{"created.current_badge": badge},
+			})
+		}
 
 	}
 

@@ -2,8 +2,12 @@ package callbacks
 
 import (
 	"fmt"
+	"notification-service/pkg/constants"
+	"notification-service/pkg/firebase"
+	"notification-service/pkg/i18n"
 	"notification-service/pkg/mongo"
 	"notification-service/pkg/subscribers"
+	"notification-service/pkg/utils"
 	"time"
 
 	"github.com/globalsign/mgo/bson"
@@ -12,43 +16,139 @@ import (
 func UserStreakCB(subj, reply string, userStreak *subscribers.UserStreak) {
 	fmt.Printf("Received a user streak on subject %s! with Value %+v\n", subj, userStreak)
 
-	if userStreak.CurrentStreak.StreakLength == 1 {
+	profile := mongo.GetProfileById(bson.ObjectIdHex(userStreak.ProfileId))
+
+	if utils.IncludesInt([]int{1, 7, 30, 100}, userStreak.CurrentStreak.StreakLength) {
+
+		var resourceName, resourceIcon, milestoneId, milestoneName, bigPictureTemplateName, notifIdentifierText string
+		var milestoneValue int
+		if userStreak.CurrentStreak.StreakLength == 1 {
+			resourceName = "ic_start_1_day"
+			resourceIcon = "https://s3.ap-south-1.amazonaws.com/manch-dev/notifications/badges/1_day_streak.jpg"
+			milestoneId = "0"
+			milestoneName = "1 day streak"
+			milestoneValue = 1
+			bigPictureTemplateName = "streak_milestone_image_1"
+			notifIdentifierText = "milestone_streak_1"
+		} else if userStreak.CurrentStreak.StreakLength == 7 {
+			resourceName = "ic_7_day_steak"
+			resourceIcon = "https://s3.ap-south-1.amazonaws.com/manch-dev/notifications/badges/7_day_streak.jpg"
+			milestoneId = "1"
+			milestoneName = "7 day streak"
+			milestoneValue = 7
+			bigPictureTemplateName = "streak_milestone_image_7"
+			notifIdentifierText = "milestone_streak_7"
+		} else if userStreak.CurrentStreak.StreakLength == 30 {
+			resourceName = "ic_30_day_steak"
+			resourceIcon = "https://s3.ap-south-1.amazonaws.com/manch-dev/notifications/badges/30_day_streak.jpg"
+			milestoneId = "3"
+			milestoneName = "30 day streak"
+			milestoneValue = 30
+			bigPictureTemplateName = "streak_milestone_image_30"
+			notifIdentifierText = "milestone_streak_30"
+		} else if userStreak.CurrentStreak.StreakLength == 100 {
+			resourceName = "ic_100_day_steak"
+			resourceIcon = "https://s3.ap-south-1.amazonaws.com/manch-dev/notifications/badges/100_day_streak.jpg"
+			milestoneId = "5"
+			milestoneName = "100 day streak"
+			milestoneValue = 100
+			bigPictureTemplateName = "streak_milestone_image_100"
+			notifIdentifierText = "milestone_streak_100"
+		}
+
 		badge := mongo.Badge{
-			ResourceName: "1 day streak",
-			Icon:         "https://s3.ap-south-1.amazonaws.com/manch-dev/notifications/badges/1_day_streak.jpg",
+			ResourceName: resourceName,
+			Icon:         resourceIcon,
 		}
 		milestone := mongo.Milestone{
 			Id:          bson.NewObjectId(),
-			MileStoneId: "0",
-			Name:        "1 day streak",
+			MileStoneId: milestoneId,
+			Name:        milestoneName,
 			Badge:       badge,
-			Value:       1,
+			Value:       milestoneValue,
 			Type:        "streak",
 			Date:        time.Now(),
 		}
 
 		query := bson.M{
-			"profiles.0._id": bson.ObjectIdHex(userStreak.ProfileId),
-			"profiles.0.achieved_milestones.milestone_id": bson.M{"$ne": "0"},
+			"profiles._id": profile.Id,
+			"profiles.achieved_milestones.milestone_id": bson.M{"$ne": milestoneId},
 		}
 
 		update := bson.M{
 			"$set":  bson.M{"profiles.$.current_badge": badge},
 			"$push": bson.M{"profiles.$.achieved_milestones": milestone},
 		}
-		mongo.UpdateUser(query, update)
+		// Update current badge and achieved milestones
+		err := mongo.UpdateUser(query, update)
+
+		if err == nil {
+			// update post and comment of this profile
+			mongo.UpdatePostsByQuery(bson.M{
+				"created.profile_id": profile.Id,
+			}, bson.M{
+				"$set": bson.M{"created.current_badge": badge},
+			})
+
+			mongo.UpdateCommentsByQuery(bson.M{
+				"created.profile_id": profile.Id,
+			}, bson.M{
+				"$set": bson.M{"created.current_badge": badge},
+			})
+
+			// send notification
+			templateName := "streak_milestone"
+			data := i18n.DataModel{
+				Name:  profile.Name,
+				Count: userStreak.CurrentStreak.StreakLength,
+			}
+			msgStr := i18n.GetString(profile.Language, templateName, data)
+			htmlMsgStr := i18n.GetString(profile.Language, templateName, data)
+			title := i18n.GetAppTitle(profile.Language)
+			bigPicture := i18n.GetString(profile.Language, bigPictureTemplateName, data)
+
+			messageMeta := mongo.MessageMeta{
+				TemplateName: templateName,
+				Template:     i18n.Strings[profile.Language][templateName],
+				Data:         data,
+			}
+			deepLink := "manch://posts/"
+
+			notification := mongo.CreateNotification(mongo.NotificationModel{
+				Receiver:        profile.Id,
+				Identifier:      profile.Id.Hex() + notifIdentifierText,
+				Participants:    []bson.ObjectId{profile.Id},
+				DisplayTemplate: constants.NotificationTemplate["TRANSACTIONAL"],
+				EntityGroupId:   profile.Id.Hex(),
+				ActionId:        profile.Id,
+				ActionType:      "streak_milestone",
+				Purpose:         constants.NotificationPurpose["STREAK_MILESTONE"],
+				Message:         msgStr,
+				MessageMeta:     messageMeta,
+				MessageHtml:     htmlMsgStr,
+				DeepLink:        deepLink,
+			})
+
+			msg := firebase.ManchMessage{
+				Title:      title,
+				Message:    msgStr,
+				DeepLink:   deepLink,
+				BigPicture: bigPicture,
+				Id:         notification.NId,
+			}
+			tokens := mongo.GetTokensByProfiles([]bson.ObjectId{profile.Id})
+			fmt.Printf("\nGCM Message %+v\n", msg)
+			if tokens != nil {
+				for _, token := range tokens {
+					go firebase.SendMessage(msg, token.Token, notification)
+				}
+			} else {
+				fmt.Printf("No token")
+			}
+
+		}
+
 	}
 
-	if userStreak.CurrentStreak.StreakLength == 7 {
-
-	}
-
-	if userStreak.CurrentStreak.StreakLength == 30 {
-
-	}
-
-	if userStreak.CurrentStreak.StreakLength == 100 {
-
-	}
 	fmt.Printf("Processed a user streak on subject %s! with profile Id %s\n", subj, userStreak.ProfileId)
 }

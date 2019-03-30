@@ -32,6 +32,7 @@ var NotificationPurpose = map[string]string{
 	"JOIN_MANCH_APPROVED": "join_manch_approved", // join manch approved
 	"MANCH_100_MEMBERS":   "manch_100_members",   // manch hits 100 users
 	"MANCH_ACTIVATION":    "manch_activation",    // manch activated
+	"STREAK_MILESTONE":    "streak_milestone",    // streak milestone
 }
 
 var NotificationPurposeResource = map[string]string{
@@ -108,6 +109,7 @@ var BlackListStatus = map[string]string{
 
 var MileStones = map[string]string{
 	"100_COIN_MILESTONE":   "100",
+	"500_COIN_MILESTONE":   "500",
 	"1000_COIN_MILESTONE":  "1000",
 	"10000_COIN_MILESTONE": "10000",
 	"25000_COIN_MILESTONE": "25000",
