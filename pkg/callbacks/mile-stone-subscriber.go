@@ -150,8 +150,8 @@ func MileStoneSubscriberCB(subj, reply string, m *subscribers.MileStone) {
 
 	if m.MileStone == constants.MileStones["500_COIN_MILESTONE"] {
 		badge := mongo.Badge{
-			ResourceName: "ic_manch_member",
-			Icon:         "https://s3.ap-south-1.amazonaws.com/manch-dev/notifications/badges/ic_manch_member.png",
+			ResourceName: "ic_milestone_manch_member",
+			Icon:         "https://s3.ap-south-1.amazonaws.com/manch-dev/notifications/badges/ic_milestone_manch_member.png",
 		}
 		currentMilestoneID:= "2"
 		milestone := mongo.Milestone{
@@ -194,8 +194,8 @@ func MileStoneSubscriberCB(subj, reply string, m *subscribers.MileStone) {
 
 	if m.MileStone == constants.MileStones["10000_COIN_MILESTONE"] {
 		badge := mongo.Badge{
-			ResourceName: "ic_super_user",
-			Icon:         "https://s3.ap-south-1.amazonaws.com/manch-dev/notifications/badges/ic_super_user.png",
+			ResourceName: "ic_milestone_super_user",
+			Icon:         "https://s3.ap-south-1.amazonaws.com/manch-dev/notifications/badges/ic_milestone_super_user.png",
 		}
 		currentMilestoneID := "4"
 		milestone := mongo.Milestone{
@@ -238,8 +238,8 @@ func MileStoneSubscriberCB(subj, reply string, m *subscribers.MileStone) {
 
 	if m.MileStone == constants.MileStones["25000_COIN_MILESTONE"] {
 		badge := mongo.Badge{
-			ResourceName: "ic_manch_creator",
-			Icon:         "https://s3.ap-south-1.amazonaws.com/manch-dev/notifications/badges/ic_manch_creator.png",
+			ResourceName: "ic_milestone_manch_creator",
+			Icon:         "https://s3.ap-south-1.amazonaws.com/manch-dev/notifications/badges/ic_milestone_manch_creator.png",
 		}
 		currentMilestoneID := "6"
 		milestone := mongo.Milestone{

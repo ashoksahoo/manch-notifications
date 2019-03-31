@@ -28,32 +28,32 @@ func UserStreakCB(subj, reply string, userStreak *subscribers.UserStreak) {
 		var resourceName, resourceIcon, milestoneId, milestoneName, bigPictureTemplateName, notifIdentifierText string
 		var milestoneValue int
 		if userStreak.CurrentStreak.StreakLength == 1 {
-			resourceName = "ic_start_1_day"
-			resourceIcon = "https://s3.ap-south-1.amazonaws.com/manch-dev/notifications/badges/1_day_streak.jpg"
+			resourceName = "ic_milestone_1_day_steak"
+			resourceIcon = "https://s3.ap-south-1.amazonaws.com/manch-dev/notifications/badges/ic_milestone_1_day_steak.png"
 			milestoneId = "0"
 			milestoneName = "1 day streak"
 			milestoneValue = 1
 			bigPictureTemplateName = "streak_milestone_image_1"
 			notifIdentifierText = "milestone_streak_1"
 		} else if userStreak.CurrentStreak.StreakLength == 7 {
-			resourceName = "ic_7_day_steak"
-			resourceIcon = "https://s3.ap-south-1.amazonaws.com/manch-dev/notifications/badges/7_day_streak.jpg"
+			resourceName = "ic_milestone_7_day_steak"
+			resourceIcon = "https://s3.ap-south-1.amazonaws.com/manch-dev/notifications/badges/ic_milestone_7_day_steak.png"
 			milestoneId = "1"
 			milestoneName = "7 day streak"
 			milestoneValue = 7
 			bigPictureTemplateName = "streak_milestone_image_7"
 			notifIdentifierText = "milestone_streak_7"
 		} else if userStreak.CurrentStreak.StreakLength == 30 {
-			resourceName = "ic_30_day_steak"
-			resourceIcon = "https://s3.ap-south-1.amazonaws.com/manch-dev/notifications/badges/30_day_streak.jpg"
+			resourceName = "ic_milestone_30_day_steak"
+			resourceIcon = "https://s3.ap-south-1.amazonaws.com/manch-dev/notifications/badges/ic_milestone_30_day_steak.png"
 			milestoneId = "3"
 			milestoneName = "30 day streak"
 			milestoneValue = 30
 			bigPictureTemplateName = "streak_milestone_image_30"
 			notifIdentifierText = "milestone_streak_30"
 		} else if userStreak.CurrentStreak.StreakLength == 100 {
-			resourceName = "ic_100_day_steak"
-			resourceIcon = "https://s3.ap-south-1.amazonaws.com/manch-dev/notifications/badges/100_day_streak.jpg"
+			resourceName = "ic_milestone_100_day_steak"
+			resourceIcon = "https://s3.ap-south-1.amazonaws.com/manch-dev/notifications/badges/ic_milestone_100_day_steak.png"
 			milestoneId = "5"
 			milestoneName = "100 day streak"
 			milestoneValue = 100
