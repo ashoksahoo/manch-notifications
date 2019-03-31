@@ -81,9 +81,68 @@ func MileStoneSubscriberCB(subj, reply string, m *subscribers.MileStone) {
 		} else {
 			fmt.Printf("referal\n%+v", referralData)
 			referredBy := referralData.ReferringParams["profile_id"].(string)
+
+			// update coin
 			mongo.UpdateProfileById(bson.ObjectIdHex(referredBy), bson.M{
 				"$inc": bson.M{"profiles.$.total_coins": 100},
 			})
+
+			// send notification
+
+			referrer := mongo.GetProfileById(bson.ObjectIdHex(referredBy))
+			tokens := mongo.GetTokensByProfiles([]bson.ObjectId{referrer.Id})
+			var msgStrTitle, msgStrText string
+			var templateTitle, templateText string
+			templateTitle = "100_coin_referral_title"
+			templateText = "100_coin_referral_text"
+			data := i18n.DataModel{
+				Name:  referrer.Name,
+				Name2: profile.Name,
+			}
+			msgStrTitle = i18n.GetString(referrer.Language, templateTitle, data)
+			msgStrText = i18n.GetString(referrer.Language, templateText, data)
+			htmlMsgStr := i18n.GetHtmlString(referrer.Language, templateTitle, data)
+			bigPicture := i18n.GetString(profile.Language, "100_coin_referral_image", data)
+
+			messageMeta := mongo.MessageMeta{
+				TemplateName: templateTitle,
+				Template:     i18n.Strings[referrer.Language][templateTitle],
+				Data:         data,
+			}
+			deepLink := "manch://posts/"
+
+			notification := mongo.CreateNotification(mongo.NotificationModel{
+				Receiver:        referrer.Id,
+				Identifier:      referrer.Id.Hex() + profile.Id.Hex() + "_100_referral",
+				Participants:    []bson.ObjectId{referrer.Id},
+				DisplayTemplate: constants.NotificationTemplate["TRANSACTIONAL"],
+				EntityGroupId:   referrer.Id.Hex(),
+				ActionId:        referrer.Id,
+				ActionType:      "referral",
+				Purpose:         constants.NotificationPurpose["100_COIN_REFERRAL"],
+				Message:         msgStrTitle,
+				MessageMeta:     messageMeta,
+				MessageHtml:     htmlMsgStr,
+				DeepLink:        deepLink,
+			})
+
+			msg := firebase.ManchMessage{
+				Title:      msgStrTitle,
+				Message:    msgStrText,
+				DeepLink:   deepLink,
+				BigPicture: bigPicture,
+				Id:         notification.NId,
+			}
+
+			fmt.Printf("\nGCM Message %+v\n", msg)
+			if tokens != nil {
+				for _, token := range tokens {
+					go firebase.SendMessage(msg, token.Token, notification)
+				}
+			} else {
+				fmt.Printf("No token")
+			}
+
 		}
 
 	}
