@@ -61,10 +61,10 @@ var NotificationPurposeIcon = map[string]string{
 	"follow":              "https://s3.ap-south-1.amazonaws.com/manch-dev/app-resource-icons/ic_n_follow-min.png",      // user followed another another user
 	"vote":                "https://s3.ap-south-1.amazonaws.com/manch-dev/app-resource-icons/ic_n_like-min.png",        // vote on comment or post
 	"live_topic_winner":   "https://s3.ap-south-1.amazonaws.com/manch-dev/app-resource-icons/ic_n_trophy-min.png",      // live topics winners notification
-	"join_manch_request":  "https://s3.ap-south-1.amazonaws.com/manch-dev/app-banners/MyManch_Notification.svg",        // join manch request
-	"join_manch_approved": "https://s3.ap-south-1.amazonaws.com/manch-dev/app-banners/MyManch_Notification.svg",        // join manch approved
-	"manch_100_members":   "https://s3.ap-south-1.amazonaws.com/manch-dev/app-banners/MyManch_Notification.svg",        // manch achieved 100 members
-	"manch_activation":    "https://s3.ap-south-1.amazonaws.com/manch-dev/app-banners/MyManch_Notification.svg",        // manch activated
+	"join_manch_request":  "https://s3.ap-south-1.amazonaws.com/manch-dev/app-banners/MyManch_Notification_PNG.png",    // join manch request
+	"join_manch_approved": "https://s3.ap-south-1.amazonaws.com/manch-dev/app-banners/MyManch_Notification_PNG.png",    // join manch approved
+	"manch_100_members":   "https://s3.ap-south-1.amazonaws.com/manch-dev/app-banners/MyManch_Notification_PNG.png",    // manch achieved 100 members
+	"manch_activation":    "https://s3.ap-south-1.amazonaws.com/manch-dev/app-banners/MyManch_Notification_PNG.png",    // manch activated
 }
 
 var NotificationTemplate = map[string]string{
