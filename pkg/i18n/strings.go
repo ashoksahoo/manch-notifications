@@ -135,6 +135,10 @@ var Strings = map[string]map[string]string{
 		"streak_milestone_image_7":   "https://s3.ap-south-1.amazonaws.com/manch-dev/notifications/badges/7_day_streak.jpg",
 		"streak_milestone_image_30":  "https://s3.ap-south-1.amazonaws.com/manch-dev/notifications/badges/30_day_streak.jpg",
 		"streak_milestone_image_100": "https://s3.ap-south-1.amazonaws.com/manch-dev/notifications/badges/100_day_streak.jpg",
+
+		"100_coin_referral_title":    "{{.Name}}, आपको मिले है 100 Referral Coins 🤑",
+		"100_coin_referral_text":     "Thanks बोलें अपने दोस्त {{.Name2}} को 😄",
+		"100_coin_referral_image":    "https://s3.ap-south-1.amazonaws.com/manch-dev/notifications/Referral_100_Coins.jpg",
 	},
 
 	"te": {
@@ -206,6 +210,9 @@ var Strings = map[string]map[string]string{
 
 		"100_coin_milestone_title":   "Coins🤩 సెంచరీ",
 		"100_coin_milestone_text":    "అభినందనలు 100 mark🎉 కొట్టినందుకు",
+		"100_coin_referral_title":    "{{.Name}}, మీకు 100 రెఫరల్ Coins 🤩వచ్చాయి",
+		"100_coin_referral_text":     "మీ స్నేహితులకు ధన్యవాదాలు 😃 {{.Name2}}",
+		"100_coin_referral_image":    "https://s3.ap-south-1.amazonaws.com/manch-dev/notifications/Referral_100_Coins.jpg",
 		"100_coin_milestone_image":   "https://s3.ap-south-1.amazonaws.com/manch-dev/notifications/100_Coins-min.jpg",
 		"join_manch_request_private": "{{.Name}} మీ {{.Community}} మంచ్ లో చేరాలనుకుంటున్నారు. 🤩",
 		"join_manch_request_public":  "{{.Name}} మీ మంచ్ లో చేరారు {{.Community}}",
@@ -367,6 +374,8 @@ var HtmlStrings = map[string]map[string]string{
 
 		"100_coin_milestone_title":   "Coins की Century 🤩",
 		"100_coin_milestone_text":    "100 Coins तक पहुचन की बधाई 🎉",
+		"100_coin_referral_title":    "<b>{{.Name}}</b>, आपको मिले है 100 Referral Coins 🤑",
+		"100_coin_referral_text":     "Thanks बोलें अपने दोस्त <b>{{.Name2}}</b> को 😄",
 		"join_manch_request_private": "<b>{{.Name}}</b> आपके मंच <b>{{.Community}}</b> से जुड़ना चाहते है 🤩",
 		"join_manch_request_public":  "<b>{{.Name}}</b> जी आपके मंच <b>{{.Community}}</b> से जुड़ गए हैं",
 		"join_manch_approved":        "मुबारक हो अब आप <b>{{.Community}}</b> का हिस्सा हैं 😄",
@@ -445,6 +454,8 @@ var HtmlStrings = map[string]map[string]string{
 
 		"100_coin_milestone_title":   "Coins🤩 సెంచరీ",
 		"100_coin_milestone_text":    "అభినందనలు 100 mark🎉 కొట్టినందుకు",
+		"100_coin_referral_title":    "<b>{{.Name}}</b>, మీకు 100 రెఫరల్ Coins 🤩వచ్చాయి",
+		"100_coin_referral_text":     "మీ స్నేహితులకు ధన్యవాదాలు 😃 <b>{{.Name2}}</b>",
 		"join_manch_request_private": "<b>{{.Name}}</b> మీ <b>{{.Community}}</b> మంచ్ లో చేరాలనుకుంటున్నారు. 🤩",
 		"join_manch_request_public":  "<b>{{.Name}}</b> మీ మంచ్ లో చేరారు <b>{{.Community}}</b>",
 		"join_manch_approved":        "<b>{{.Community}}</b> లో చేరడానికి మీ అభ్యర్థన ఆమోదించబడింది. 😄",
