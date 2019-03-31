@@ -81,7 +81,7 @@ func UserStreakCB(subj, reply string, userStreak *subscribers.UserStreak) {
 		}
 
 		update := bson.M{
-			"$set":  bson.M{"profiles.$.current_badge": badge},
+			"$set":  bson.M{"profiles.$.current_badge": badge,  "profiles.$.current_milestone_id":  milestoneId},
 			"$push": bson.M{"profiles.$.achieved_milestones": milestone},
 		}
 		// Update current badge and achieved milestones

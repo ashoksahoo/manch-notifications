@@ -150,13 +150,14 @@ func MileStoneSubscriberCB(subj, reply string, m *subscribers.MileStone) {
 
 	if m.MileStone == constants.MileStones["500_COIN_MILESTONE"] {
 		badge := mongo.Badge{
-			ResourceName: "",
-			Icon:         "",
+			ResourceName: "ic_manch_member",
+			Icon:         "https://s3.ap-south-1.amazonaws.com/manch-dev/notifications/badges/ic_manch_member.png",
 		}
+		currentMilestoneID:= "2"
 		milestone := mongo.Milestone{
 			Id:          bson.NewObjectId(),
-			MileStoneId: "",
-			Name:        "",
+			MileStoneId: currentMilestoneID,
+			Name:        "Manch Member",
 			Badge:       badge,
 			Value:       500,
 			Type:        "coin",
@@ -165,11 +166,11 @@ func MileStoneSubscriberCB(subj, reply string, m *subscribers.MileStone) {
 
 		query := bson.M{
 			"profiles._id": profile.Id,
-			"profiles.achieved_milestones.milestone_id": bson.M{"$ne": ""},
+			"profiles.achieved_milestones.milestone_id": bson.M{"$ne": currentMilestoneID},
 		}
 
 		update := bson.M{
-			"$set":  bson.M{"profiles.$.current_badge": badge},
+			"$set":  bson.M{"profiles.$.current_badge": badge,  "profiles.$.current_milestone_id":  currentMilestoneID},
 			"$push": bson.M{"profiles.$.achieved_milestones": milestone},
 		}
 		// Update current badge and achieved milestones
@@ -193,26 +194,27 @@ func MileStoneSubscriberCB(subj, reply string, m *subscribers.MileStone) {
 
 	if m.MileStone == constants.MileStones["10000_COIN_MILESTONE"] {
 		badge := mongo.Badge{
-			ResourceName: "",
-			Icon:         "",
+			ResourceName: "ic_super_user",
+			Icon:         "https://s3.ap-south-1.amazonaws.com/manch-dev/notifications/badges/ic_super_user.png",
 		}
+		currentMilestoneID := "4"
 		milestone := mongo.Milestone{
 			Id:          bson.NewObjectId(),
-			MileStoneId: "",
-			Name:        "",
+			MileStoneId: currentMilestoneID,
+			Name:        "Super User",
 			Badge:       badge,
-			Value:       500,
+			Value:       10000,
 			Type:        "coin",
 			Date:        time.Now(),
 		}
 
 		query := bson.M{
 			"profiles._id": profile.Id,
-			"profiles.achieved_milestones.milestone_id": bson.M{"$ne": ""},
+			"profiles.achieved_milestones.milestone_id": bson.M{"$ne": currentMilestoneID},
 		}
 
 		update := bson.M{
-			"$set":  bson.M{"profiles.$.current_badge": badge},
+			"$set":  bson.M{"profiles.$.current_badge": badge, "profiles.$.current_milestone_id":  currentMilestoneID},
 			"$push": bson.M{"profiles.$.achieved_milestones": milestone},
 		}
 		// Update current badge and achieved milestones
@@ -236,26 +238,27 @@ func MileStoneSubscriberCB(subj, reply string, m *subscribers.MileStone) {
 
 	if m.MileStone == constants.MileStones["25000_COIN_MILESTONE"] {
 		badge := mongo.Badge{
-			ResourceName: "",
-			Icon:         "",
+			ResourceName: "ic_manch_creator",
+			Icon:         "https://s3.ap-south-1.amazonaws.com/manch-dev/notifications/badges/ic_manch_creator.png",
 		}
+		currentMilestoneID := "6"
 		milestone := mongo.Milestone{
 			Id:          bson.NewObjectId(),
-			MileStoneId: "",
-			Name:        "",
+			MileStoneId: currentMilestoneID,
+			Name:        "Manch Creator",
 			Badge:       badge,
-			Value:       500,
+			Value:       25000,
 			Type:        "coin",
 			Date:        time.Now(),
 		}
 
 		query := bson.M{
 			"profiles._id": profile.Id,
-			"profiles.achieved_milestones.milestone_id": bson.M{"$ne": ""},
+			"profiles.achieved_milestones.milestone_id": bson.M{"$ne": currentMilestoneID},
 		}
 
 		update := bson.M{
-			"$set":  bson.M{"profiles.$.current_badge": badge},
+			"$set":  bson.M{"profiles.$.current_badge": badge, "profiles.$.current_milestone_id":  currentMilestoneID},
 			"$push": bson.M{"profiles.$.achieved_milestones": milestone},
 		}
 		// Update current badge and achieved milestones
