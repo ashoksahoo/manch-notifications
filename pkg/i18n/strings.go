@@ -123,9 +123,6 @@ var Strings = map[string]map[string]string{
 
 		"100_coin_milestone_title":   "Coins की Century 🤩",
 		"100_coin_milestone_text":    "100 Coins तक पहुचन की बधाई 🎉",
-		"100_coin_referral_title":    "{{.Name}}, आपको मिले है 100 Referral Coins 🤑",
-		"100_coin_referral_text":     "Thanks बोलें अपने दोस्त {{.Name2}} को 😄",
-		"100_coin_referral_image":    "https://s3.ap-south-1.amazonaws.com/manch-dev/notifications/Referral_100_Coins.jpg",
 		"100_coin_milestone_image":   "https://s3.ap-south-1.amazonaws.com/manch-dev/notifications/100_Coins-min.jpg",
 		"join_manch_request_private": "{{.Name}} आपके मंच {{.Community}} से जुड़ना चाहते है 🤩",
 		"join_manch_request_public":  "{{.Name}} जी आपके मंच {{.Community}} से जुड़ गए हैं",
@@ -138,6 +135,18 @@ var Strings = map[string]map[string]string{
 		"repost_three": "{{.Name}}, {{.Name2}} और {{.Name3}} ने आपकी पोस्ट \"{{.Post}}\" को Repost किया है",
 		"repost_two":   "{{.Name}} और {{.Name2}} ने आपकी पोस्ट \"{{.Post}}\" को Repost किया है",
 		"repost_one":   "{{.Name}} ने आपकी पोस्ट \"{{.Post}}\" को Repost किया है",
+		"streak_milestone":           "Congratulations {{.Name}}, you have reached {{.Count}} 🎉🎉",
+		"streak_milestone_image_1":   "https://s3.ap-south-1.amazonaws.com/manch-dev/notifications/badges/1_day_streak.jpg",
+		"streak_milestone_image_7":   "https://s3.ap-south-1.amazonaws.com/manch-dev/notifications/badges/7_day_streak.jpg",
+		"streak_milestone_image_30":  "https://s3.ap-south-1.amazonaws.com/manch-dev/notifications/badges/30_day_streak.jpg",
+		"streak_milestone_image_100": "https://s3.ap-south-1.amazonaws.com/manch-dev/notifications/badges/100_day_streak.jpg",
+		"coin_milestone_image_500":   "https://s3.ap-south-1.amazonaws.com/manch-dev/notifications/badges/manch_member.jpg",
+		"coin_milestone_image_10000": "https://s3.ap-south-1.amazonaws.com/manch-dev/notifications/badges/super_user.jpg",
+		"coin_milestone_image_25000": "https://s3.ap-south-1.amazonaws.com/manch-dev/notifications/badges/manch_creator.jpg",
+
+		"100_coin_referral_title": "{{.Name}}, आपको मिले है 100 Referral Coins 🤑",
+		"100_coin_referral_text":  "Thanks बोलें अपने दोस्त {{.Name2}} को 😄",
+		"100_coin_referral_image": "https://s3.ap-south-1.amazonaws.com/manch-dev/notifications/Referral_100_Coins.jpg",
 	},
 
 	"te": {
@@ -224,6 +233,14 @@ var Strings = map[string]map[string]string{
 		"repost_three": "{{.Name}}, {{.Name2}} & {{.Name3}} మీ పోస్ట్ \"{{.Post}}\" ని రిపోస్ట్ చేసారు.",
 		"repost_two":   "{{.Name}} & {{.Name2}} మీ పోస్ట్ \"{{.Post}}\" ని రిపోస్ట్ చేసారు.",
 		"repost_one":   "{{.Name}} మీ పోస్ట్ \"{{.Post}}\" ని రిపోస్ట్ చేసారు.",
+		"streak_milestone":           "Congratulations {{.Name}}, you have reached {{.Count}} 🎉🎉",
+		"streak_milestone_image_1":   "https://s3.ap-south-1.amazonaws.com/manch-dev/notifications/badges/1_day_streak.jpg",
+		"streak_milestone_image_7":   "https://s3.ap-south-1.amazonaws.com/manch-dev/notifications/badges/7_day_streak.jpg",
+		"streak_milestone_image_30":  "https://s3.ap-south-1.amazonaws.com/manch-dev/notifications/badges/30_day_streak.jpg",
+		"streak_milestone_image_100": "https://s3.ap-south-1.amazonaws.com/manch-dev/notifications/badges/100_day_streak.jpg",
+		"coin_milestone_image_500":   "https://s3.ap-south-1.amazonaws.com/manch-dev/notifications/badges/manch_member.jpg",
+		"coin_milestone_image_10000": "https://s3.ap-south-1.amazonaws.com/manch-dev/notifications/badges/super_user.jpg",
+		"coin_milestone_image_25000": "https://s3.ap-south-1.amazonaws.com/manch-dev/notifications/badges/manch_creator.jpg",
 	},
 }
 
@@ -385,6 +402,7 @@ var HtmlStrings = map[string]map[string]string{
 		"repost_three": "<b>{{.Name}}</b>, <b>{{.Name2}}</b> और <b>{{.Name3}}</b> ने आपकी पोस्ट \"{{.Post}}\" को Repost किया है",
 		"repost_two":   "<b>{{.Name}}</b> और <b>{{.Name2}}</b> ने आपकी पोस्ट \"{{.Post}}\" को Repost किया है",
 		"repost_one":   "<b>{{.Name}}</b> ने आपकी पोस्ट \"{{.Post}}\" को Repost किया है",
+		"streak_milestone":           "Congratulations <b>{{.Name}}</b>, you have reached <b>{{.Count}}</b> 🎉🎉",
 	},
 
 	"te": {
@@ -467,5 +485,6 @@ var HtmlStrings = map[string]map[string]string{
 		"repost_three":               "<b>{{.Name}}</b>, <b>{{.Name2}}</b> & <b>{{.Name3}}</b> మీ పోస్ట్ \"{{.Post}}\" ని రిపోస్ట్ చేసారు.",
 		"repost_two":                 "<b>{{.Name}}</b> & <b>{{.Name2}}</b> మీ పోస్ట్ \"{{.Post}}\" ని రిపోస్ట్ చేసారు.",
 		"repost_one":                 "<b>{{.Name}}</b> మీ పోస్ట్ \"{{.Post}}\" ని రిపోస్ట్ చేసారు.",
+		"streak_milestone":           "Congratulations <b>{{.Name}}</b>, you have reached <b>{{.Count}}</b> 🎉🎉",
 	},
 }

@@ -83,7 +83,7 @@ func GetPostByQuery(query bson.M) (error, PostModel) {
 func GetPostCountByQuery(query bson.M) int {
 	s := session.Clone()
 	defer s.Close()
-	P := s.DB("manch").C("posts")
+	P := s.DB("manch").C(POSTS_MODEL)
 	n, err := P.Find(query).Count()
 	if err != nil {
 		return 0
@@ -91,7 +91,7 @@ func GetPostCountByQuery(query bson.M) int {
 	return n
 }
 
-func UpdatePostsByQuery(query, update bson.M) {
+func UpdatePostsByQuery(query, update bson.M)  {
 	s := session.Clone()
 	defer s.Close()
 	P := s.DB("manch").C(POSTS_MODEL)
