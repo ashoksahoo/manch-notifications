@@ -7,6 +7,7 @@ import (
 	"notification-service/pkg/i18n"
 	"notification-service/pkg/mongo"
 	"notification-service/pkg/subscribers"
+	"time"
 
 	"github.com/globalsign/mgo/bson"
 )
@@ -37,7 +38,7 @@ func MileStoneSubscriberCB(subj, reply string, m *subscribers.MileStone) {
 			Template:     i18n.Strings[profile.Language][templateTitle],
 			Data:         data,
 		}
-		deepLink := "manch://posts/"
+		deepLink := "manch://profile/" + profile.Id.Hex()
 
 		notification := mongo.CreateNotification(mongo.NotificationModel{
 			Receiver:        profile.Id,
@@ -109,7 +110,7 @@ func MileStoneSubscriberCB(subj, reply string, m *subscribers.MileStone) {
 				Template:     i18n.Strings[referrer.Language][templateTitle],
 				Data:         data,
 			}
-			deepLink := "manch://posts/"
+			deepLink := "manch://profile/" + referrer.Id.Hex()
 
 			notification := mongo.CreateNotification(mongo.NotificationModel{
 				Receiver:        referrer.Id,
@@ -147,15 +148,291 @@ func MileStoneSubscriberCB(subj, reply string, m *subscribers.MileStone) {
 
 	}
 
-	if m.MileStone == constants.MileStones["1000_COIN_MILESTONE"] {
+	if m.MileStone == constants.MileStones["500_COIN_MILESTONE"] {
+		badge := mongo.Badge{
+			ResourceName: "ic_milestone_manch_member",
+			Icon:         "https://s3.ap-south-1.amazonaws.com/manch-dev/notifications/badges/ic_milestone_manch_member.png",
+		}
+		currentMilestoneID := "2"
+		milestoneValue := 500
+		milestone := mongo.Milestone{
+			Id:          bson.NewObjectId(),
+			MileStoneId: currentMilestoneID,
+			Name:        "Manch Member",
+			Badge:       badge,
+			Value:       milestoneValue,
+			Type:        "coin",
+			Date:        time.Now(),
+		}
+
+		query := bson.M{
+			"profiles._id": profile.Id,
+			"profiles.achieved_milestones.milestone_id": bson.M{"$ne": currentMilestoneID},
+		}
+
+		update := bson.M{
+			"$set":  bson.M{"profiles.$.current_badge": badge, "profiles.$.current_milestone_id": currentMilestoneID},
+			"$push": bson.M{"profiles.$.achieved_milestones": milestone},
+		}
+		// Update current badge and achieved milestones
+		err := mongo.UpdateUser(query, update)
+		if err == nil {
+			// update post and comment of this profile
+			mongo.UpdatePostsByQuery(bson.M{
+				"created.profile_id": profile.Id,
+			}, bson.M{
+				"$set": bson.M{"created.current_badge": badge},
+			})
+
+			mongo.UpdateCommentsByQuery(bson.M{
+				"created.profile_id": profile.Id,
+			}, bson.M{
+				"$set": bson.M{"created.current_badge": badge},
+			})
+
+			// send notification
+			templateName := "streak_milestone"
+			data := i18n.DataModel{
+				Name:  profile.Name,
+				Count: milestoneValue,
+			}
+			msgStr := i18n.GetString(profile.Language, templateName, data)
+			htmlMsgStr := i18n.GetString(profile.Language, templateName, data)
+			title := i18n.GetAppTitle(profile.Language)
+			bigPictureTemplateName := "coin_milestone_image_500"
+			bigPicture := i18n.GetString(profile.Language, bigPictureTemplateName, data)
+
+			messageMeta := mongo.MessageMeta{
+				TemplateName: templateName,
+				Template:     i18n.Strings[profile.Language][templateName],
+				Data:         data,
+			}
+			deepLink := "manch://profile/" + profile.Id.Hex()
+
+			notification := mongo.CreateNotification(mongo.NotificationModel{
+				Receiver:        profile.Id,
+				Identifier:      profile.Id.Hex() + "milestone_coin_500",
+				Participants:    []bson.ObjectId{profile.Id},
+				DisplayTemplate: constants.NotificationTemplate["TRANSACTIONAL"],
+				EntityGroupId:   profile.Id.Hex(),
+				ActionId:        profile.Id,
+				ActionType:      "coin_milestone",
+				Purpose:         constants.NotificationPurpose["500_COIN_MILESTONE"],
+				Message:         msgStr,
+				MessageMeta:     messageMeta,
+				MessageHtml:     htmlMsgStr,
+				DeepLink:        deepLink,
+			})
+
+			msg := firebase.ManchMessage{
+				Title:      title,
+				Message:    msgStr,
+				DeepLink:   deepLink,
+				BigPicture: bigPicture,
+				Id:         notification.NId,
+			}
+			tokens := mongo.GetTokensByProfiles([]bson.ObjectId{profile.Id})
+			fmt.Printf("\nGCM Message %+v\n", msg)
+			if tokens != nil {
+				for _, token := range tokens {
+					go firebase.SendMessage(msg, token.Token, notification)
+				}
+			} else {
+				fmt.Printf("No token")
+			}
+		}
 
 	}
 
 	if m.MileStone == constants.MileStones["10000_COIN_MILESTONE"] {
+		badge := mongo.Badge{
+			ResourceName: "ic_milestone_super_user",
+			Icon:         "https://s3.ap-south-1.amazonaws.com/manch-dev/notifications/badges/ic_milestone_super_user.png",
+		}
+		currentMilestoneID := "4"
+		milestoneValue := 10000
+		milestone := mongo.Milestone{
+			Id:          bson.NewObjectId(),
+			MileStoneId: currentMilestoneID,
+			Name:        "Super User",
+			Badge:       badge,
+			Value:       milestoneValue,
+			Type:        "coin",
+			Date:        time.Now(),
+		}
+
+		query := bson.M{
+			"profiles._id": profile.Id,
+			"profiles.achieved_milestones.milestone_id": bson.M{"$ne": currentMilestoneID},
+		}
+
+		update := bson.M{
+			"$set":  bson.M{"profiles.$.current_badge": badge, "profiles.$.current_milestone_id": currentMilestoneID},
+			"$push": bson.M{"profiles.$.achieved_milestones": milestone},
+		}
+		// Update current badge and achieved milestones
+		err := mongo.UpdateUser(query, update)
+		if err == nil {
+			// update post and comment of this profile
+			mongo.UpdatePostsByQuery(bson.M{
+				"created.profile_id": profile.Id,
+			}, bson.M{
+				"$set": bson.M{"created.current_badge": badge},
+			})
+
+			mongo.UpdateCommentsByQuery(bson.M{
+				"created.profile_id": profile.Id,
+			}, bson.M{
+				"$set": bson.M{"created.current_badge": badge},
+			})
+
+			// send notification
+			templateName := "streak_milestone"
+			data := i18n.DataModel{
+				Name:  profile.Name,
+				Count: milestoneValue,
+			}
+			msgStr := i18n.GetString(profile.Language, templateName, data)
+			htmlMsgStr := i18n.GetString(profile.Language, templateName, data)
+			title := i18n.GetAppTitle(profile.Language)
+			bigPictureTemplateName := "coin_milestone_image_10000"
+			bigPicture := i18n.GetString(profile.Language, bigPictureTemplateName, data)
+
+			messageMeta := mongo.MessageMeta{
+				TemplateName: templateName,
+				Template:     i18n.Strings[profile.Language][templateName],
+				Data:         data,
+			}
+			deepLink := "manch://profile/" + profile.Id.Hex()
+
+			notification := mongo.CreateNotification(mongo.NotificationModel{
+				Receiver:        profile.Id,
+				Identifier:      profile.Id.Hex() + "milestone_coin_10000",
+				Participants:    []bson.ObjectId{profile.Id},
+				DisplayTemplate: constants.NotificationTemplate["TRANSACTIONAL"],
+				EntityGroupId:   profile.Id.Hex(),
+				ActionId:        profile.Id,
+				ActionType:      "coin_milestone",
+				Purpose:         constants.NotificationPurpose["10000_COIN_MILESTONE"],
+				Message:         msgStr,
+				MessageMeta:     messageMeta,
+				MessageHtml:     htmlMsgStr,
+				DeepLink:        deepLink,
+			})
+
+			msg := firebase.ManchMessage{
+				Title:      title,
+				Message:    msgStr,
+				DeepLink:   deepLink,
+				BigPicture: bigPicture,
+				Id:         notification.NId,
+			}
+			tokens := mongo.GetTokensByProfiles([]bson.ObjectId{profile.Id})
+			fmt.Printf("\nGCM Message %+v\n", msg)
+			if tokens != nil {
+				for _, token := range tokens {
+					go firebase.SendMessage(msg, token.Token, notification)
+				}
+			} else {
+				fmt.Printf("No token")
+			}
+		}
 
 	}
 
 	if m.MileStone == constants.MileStones["25000_COIN_MILESTONE"] {
+		badge := mongo.Badge{
+			ResourceName: "ic_milestone_manch_creator",
+			Icon:         "https://s3.ap-south-1.amazonaws.com/manch-dev/notifications/badges/ic_milestone_manch_creator.png",
+		}
+		currentMilestoneID := "6"
+		milestoneValue := 25000
+		milestone := mongo.Milestone{
+			Id:          bson.NewObjectId(),
+			MileStoneId: currentMilestoneID,
+			Name:        "Manch Creator",
+			Badge:       badge,
+			Value:       25000,
+			Type:        "coin",
+			Date:        time.Now(),
+		}
+
+		query := bson.M{
+			"profiles._id": profile.Id,
+			"profiles.achieved_milestones.milestone_id": bson.M{"$ne": currentMilestoneID},
+		}
+
+		update := bson.M{
+			"$set":  bson.M{"profiles.$.current_badge": badge, "profiles.$.current_milestone_id": currentMilestoneID},
+			"$push": bson.M{"profiles.$.achieved_milestones": milestone},
+		}
+		// Update current badge and achieved milestones
+		err := mongo.UpdateUser(query, update)
+		if err == nil {
+			// update post and comment of this profile
+			mongo.UpdatePostsByQuery(bson.M{
+				"created.profile_id": profile.Id,
+			}, bson.M{
+				"$set": bson.M{"created.current_badge": badge},
+			})
+
+			mongo.UpdateCommentsByQuery(bson.M{
+				"created.profile_id": profile.Id,
+			}, bson.M{
+				"$set": bson.M{"created.current_badge": badge},
+			})
+
+			// send notification
+			templateName := "streak_milestone"
+			data := i18n.DataModel{
+				Name:  profile.Name,
+				Count: milestoneValue,
+			}
+			msgStr := i18n.GetString(profile.Language, templateName, data)
+			htmlMsgStr := i18n.GetString(profile.Language, templateName, data)
+			title := i18n.GetAppTitle(profile.Language)
+			bigPictureTemplateName := "coin_milestone_image_25000"
+			bigPicture := i18n.GetString(profile.Language, bigPictureTemplateName, data)
+
+			messageMeta := mongo.MessageMeta{
+				TemplateName: templateName,
+				Template:     i18n.Strings[profile.Language][templateName],
+				Data:         data,
+			}
+			deepLink := "manch://profile/" + profile.Id.Hex()
+
+			notification := mongo.CreateNotification(mongo.NotificationModel{
+				Receiver:        profile.Id,
+				Identifier:      profile.Id.Hex() + "milestone_coin_25000",
+				Participants:    []bson.ObjectId{profile.Id},
+				DisplayTemplate: constants.NotificationTemplate["TRANSACTIONAL"],
+				EntityGroupId:   profile.Id.Hex(),
+				ActionId:        profile.Id,
+				ActionType:      "coin_milestone",
+				Purpose:         constants.NotificationPurpose["25000_COIN_MILESTONE"],
+				Message:         msgStr,
+				MessageMeta:     messageMeta,
+				MessageHtml:     htmlMsgStr,
+				DeepLink:        deepLink,
+			})
+
+			msg := firebase.ManchMessage{
+				Title:      title,
+				Message:    msgStr,
+				DeepLink:   deepLink,
+				BigPicture: bigPicture,
+				Id:         notification.NId,
+			}
+			tokens := mongo.GetTokensByProfiles([]bson.ObjectId{profile.Id})
+			fmt.Printf("\nGCM Message %+v\n", msg)
+			if tokens != nil {
+				for _, token := range tokens {
+					go firebase.SendMessage(msg, token.Token, notification)
+				}
+			} else {
+				fmt.Printf("No token")
+			}
+		}
 
 	}
 

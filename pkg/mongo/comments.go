@@ -147,3 +147,15 @@ func RemoveCommentScheduleByPostId(pId bson.ObjectId) {
 		fmt.Println("deleted comment schedule info", info)
 	}
 }
+
+func UpdateCommentsByQuery(query, update bson.M)  {
+	s := session.Clone()
+	defer s.Close()
+	C := s.DB("manch").C(COMMENTS_MODEL)
+	info, err := C.UpdateAll(query, update)
+	if err != nil {
+		fmt.Println("error on updating comment", err)
+	} else {
+		fmt.Println("comment update info", info)
+	}
+}

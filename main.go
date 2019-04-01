@@ -97,6 +97,9 @@ func main() {
 	// received live topic poll results
 	subscribers.LiveTopicsPollResultSubscriber(callbacks.LiveTopicsPollResultCB)
 
+	// received a user streak
+	subscribers.UserStreakSubscriber(callbacks.UserStreakCB)
+
 	// listen on http server 5000
 	http.ListenAndServe(":5000", router)
 }

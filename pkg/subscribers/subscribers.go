@@ -120,6 +120,10 @@ func LiveTopicsPollResultSubscriber(callback func(subj, reply string, m *LiveTop
 	go c.QueueSubscribe(subject("live-topics.polls.result"), queue(), callback)
 }
 
+func UserStreakSubscriber(callback func(subj, reply string, m *UserStreak)) {
+	go c.QueueSubscribe(subject("user.streak"), queue(), callback)
+}
+
 func init() {
 	if url == "" {
 		url = nats.DefaultURL

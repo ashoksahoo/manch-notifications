@@ -159,3 +159,12 @@ func ParseISOToTime(isoString string) time.Time {
 	t, _ := time.Parse("2006-01-02T15:04:05.000Z", isoString)
 	return t
 }
+
+func IncludesInt(s []int, e int) bool {
+	for _, a := range s {
+		if a == e {
+			return true
+		}
+	}
+	return false
+}
