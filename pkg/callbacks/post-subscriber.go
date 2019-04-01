@@ -39,6 +39,7 @@ func PostSubscriberCB(subj, reply string, p *subscribers.Post) {
 		data := i18n.DataModel{
 			Name:  repostedPostCreator.Name,
 			Count: repostCount - 1,
+			Post:  repostedPost.Title,
 		}
 
 		if repostCount == 1 {
