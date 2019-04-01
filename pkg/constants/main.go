@@ -33,6 +33,7 @@ var NotificationPurpose = map[string]string{
 	"MANCH_100_MEMBERS":   "manch_100_members",   // manch hits 100 users
 	"MANCH_ACTIVATION":    "manch_activation",    // manch activated
 	"100_COIN_REFERRAL":   "100_coin_referral",
+	"REPOSTED_POST":       "reposted_post",
 }
 
 var NotificationPurposeResource = map[string]string{
@@ -65,6 +66,7 @@ var NotificationPurposeIcon = map[string]string{
 	"join_manch_approved": "https://s3.ap-south-1.amazonaws.com/manch-dev/app-banners/MyManch_Notification_PNG.png",    // join manch approved
 	"manch_100_members":   "https://s3.ap-south-1.amazonaws.com/manch-dev/app-banners/MyManch_Notification_PNG.png",    // manch achieved 100 members
 	"manch_activation":    "https://s3.ap-south-1.amazonaws.com/manch-dev/app-banners/MyManch_Notification_PNG.png",    // manch activated
+	"reposted_post":       "https://s3.ap-south-1.amazonaws.com/manch-dev/app-resource-icons/repost_icon.png",
 }
 
 var NotificationTemplate = map[string]string{

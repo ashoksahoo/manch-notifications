@@ -38,6 +38,8 @@ type PostModel struct {
 	Reason         BlockReason     `json:"reason" bson:"reason"`
 	Language       string          `json:"language" bson:"language"`
 	SourcedBy      string          `json:"sourced_by" bson:"sourced_by"`
+	RepostedPostId bson.ObjectId   `json:"reposted_post_id" bson:"reposted_post_id"`
+	RepostCount int `json:"no_of_reposts" bson:"no_of_reposts"`
 }
 
 func GetPost(Id bson.ObjectId) PostModel {
@@ -87,4 +89,16 @@ func GetPostCountByQuery(query bson.M) int {
 		return 0
 	}
 	return n
+}
+
+func UpdatePostsByQuery(query, update bson.M) {
+	s := session.Clone()
+	defer s.Close()
+	P := s.DB("manch").C(POSTS_MODEL)
+	info, err := P.UpdateAll(query, update)
+	if err != nil {
+		fmt.Println("error on updating post", err)
+	} else {
+		fmt.Println("post update info", info)
+	}
 }
