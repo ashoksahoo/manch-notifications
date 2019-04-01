@@ -38,6 +38,8 @@ type PostModel struct {
 	Reason         BlockReason     `json:"reason" bson:"reason"`
 	Language       string          `json:"language" bson:"language"`
 	SourcedBy      string          `json:"sourced_by" bson:"sourced_by"`
+	RepostedPostId bson.ObjectId   `json:"reposted_post_id" bson:"reposted_post_id"`
+	RepostCount int `json:"no_of_reposts" bson:"no_of_reposts"`
 }
 
 func GetPost(Id bson.ObjectId) PostModel {
