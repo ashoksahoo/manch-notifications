@@ -36,18 +36,13 @@ func PostSubscriberCB(subj, reply string, p *subscribers.Post) {
 		tokens := mongo.GetTokensByProfiles([]bson.ObjectId{repostedPostCreator.Id})
 		var msgStr string
 		var templateName string
-		repostCount := repostedPost.RepostCount
 		data := i18n.DataModel{
 			Name:  postCreator.Name,
-			Count: repostCount - 1,
 			Post:  repostedPost.Title,
 		}
 
-		if repostCount == 1 {
-			templateName = "repost_one"
-		} else if repostCount > 1 {
-			templateName = "repost_multi"
-		}
+		templateName = "repost_one"
+
 		msgStr = i18n.GetString(repostedPostCreator.Language, templateName, data)
 		htmlMsgStr := i18n.GetHtmlString(repostedPostCreator.Language, templateName, data)
 		title := i18n.GetAppTitle(repostedPostCreator.Language)
@@ -57,7 +52,7 @@ func PostSubscriberCB(subj, reply string, p *subscribers.Post) {
 			Template:     i18n.Strings[repostedPostCreator.Language][templateName],
 			Data:         data,
 		}
-		deepLink := "manch://posts/" + repostedPost.Id.Hex()
+		deepLink := "manch://posts/" + post.Id.Hex()
 
 		entities := []mongo.Entity{
 			{
