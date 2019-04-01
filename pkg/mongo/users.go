@@ -56,6 +56,7 @@ type Profile struct {
 	RandomName         bool          `json:"random_name" bson:"random_name"`
 	CurrentBadge       Badge         `json:"current_badge" bson:"current_badge"`
 	AchievedMileStones []Milestone   `json:"achieved_milestones" bson:"achieved_milestones"`
+	CommentsCount      int           `json:"no_of_comments" bson:"no_of_comments"`
 }
 
 type Creator struct {

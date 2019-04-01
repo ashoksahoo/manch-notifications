@@ -37,6 +37,46 @@ func CommentSubscriberCB(subj, reply string, c *subscribers.Comment) {
 	}()
 	comment, uniqueCommentator := mongo.GetFullCommentById(c.Id)
 
+	commentCreator := mongo.GetProfileById(comment.Created.ProfileId)
+	
+	if commentCreator.CommentsCount == 5 {
+		// send data notification
+		entities := []mongo.Entity{
+			{
+				EntityId:   comment.Id,
+				EntityType: "comment",
+			},
+		}
+		notification := mongo.CreateNotification(mongo.NotificationModel{
+			Receiver:        commentCreator.Id,
+			Identifier:      commentCreator.Id.Hex() + "_user_review",
+			Participants:    []bson.ObjectId{commentCreator.Id},
+			DisplayTemplate: constants.NotificationTemplate["TRANSACTIONAL"],
+			ActionId:        comment.Id,
+			ActionType:      "comment",
+			Purpose:         constants.NotificationPurpose["USER_REVIEW"],
+			Entities:        entities,
+		})
+
+		tokens := mongo.GetTokensByProfiles([]bson.ObjectId{commentCreator.Id})
+		msg := firebase.ManchMessage{
+			Title:     "",
+			Message:   "",
+			Namespace: "manch:D",
+			Id:        notification.NId,
+		}
+		if tokens != nil {
+			for _, token := range tokens {
+				fmt.Println("successfully sent data message")
+				go firebase.SendMessage(msg, token.Token, notification)
+			}
+		} else {
+			fmt.Printf("No token")
+		}
+
+	}
+
+
 	var commentEntity, replyEntity []mongo.Entity
 	commentEntity = []mongo.Entity{
 		{
@@ -56,7 +96,7 @@ func CommentSubscriberCB(subj, reply string, c *subscribers.Comment) {
 		EntityType:    "comment",
 		ProfileId:     comment.Created.ProfileId,
 		CommentsCount: 1,
-		ActionSource: comment.Post.SourcedBy,
+		ActionSource:  comment.Post.SourcedBy,
 	})
 
 	// get replied on comment
@@ -390,6 +430,7 @@ func CommentSubscriberCB(subj, reply string, c *subscribers.Comment) {
 	} else {
 		fmt.Printf("No token")
 	}
+
 	fmt.Printf("Processed a comment on subject %s! with Comment %s\n", subj, c.Id)
 
 }
