@@ -29,7 +29,7 @@ func PostSubscriberCB(subj, reply string, p *subscribers.Post) {
 	_, post := mongo.GetPostById(p.Id)
 
 	// send notification for reposted post creator
-	if post.RepostedPostId != post.Id &&  post.RepostedPostId.Hex() != "" {
+	if post.RepostedPostId.Hex() != "" {
 		postCreator := mongo.GetProfileById(post.Created.ProfileId)
 		_, repostedPost := mongo.GetPostById(post.RepostedPostId.Hex())
 		repostedPostCreator := mongo.GetProfileById(repostedPost.Created.ProfileId)
