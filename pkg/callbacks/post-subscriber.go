@@ -30,6 +30,7 @@ func PostSubscriberCB(subj, reply string, p *subscribers.Post) {
 
 	// send notification for reposted post creator
 	if post.RepostedPostId.Hex() != "" {
+		postCreator := mongo.GetProfileById(post.Created.ProfileId)
 		_, repostedPost := mongo.GetPostById(post.RepostedPostId.Hex())
 		repostedPostCreator := mongo.GetProfileById(repostedPost.Created.ProfileId)
 		tokens := mongo.GetTokensByProfiles([]bson.ObjectId{repostedPostCreator.Id})
@@ -37,7 +38,7 @@ func PostSubscriberCB(subj, reply string, p *subscribers.Post) {
 		var templateName string
 		repostCount := repostedPost.RepostCount
 		data := i18n.DataModel{
-			Name:  repostedPostCreator.Name,
+			Name:  postCreator.Name,
 			Count: repostCount - 1,
 			Post:  repostedPost.Title,
 		}
