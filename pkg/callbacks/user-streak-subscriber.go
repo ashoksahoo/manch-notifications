@@ -25,7 +25,7 @@ func UserStreakCB(subj, reply string, userStreak *subscribers.UserStreak) {
 
 	if utils.IncludesInt([]int{1, 7, 30, 100}, userStreak.CurrentStreak.StreakLength) {
 
-		var resourceName, resourceIcon, milestoneId, milestoneName, bigPictureTemplateName, notifIdentifierText string
+		var resourceName, resourceIcon, milestoneId, milestoneName, bigPictureTemplateName, notifIdentifierText, notifPurpose string
 		var milestoneValue int
 		if userStreak.CurrentStreak.StreakLength == 1 {
 			resourceName = "ic_milestone_1_day_steak"
@@ -35,6 +35,7 @@ func UserStreakCB(subj, reply string, userStreak *subscribers.UserStreak) {
 			milestoneValue = 1
 			bigPictureTemplateName = "streak_milestone_image_1"
 			notifIdentifierText = "milestone_streak_1"
+			notifPurpose = constants.NotificationPurpose["1_STREAK_MILESTONE"]
 		} else if userStreak.CurrentStreak.StreakLength == 7 {
 			resourceName = "ic_milestone_7_day_steak"
 			resourceIcon = "https://s3.ap-south-1.amazonaws.com/manch-dev/notifications/badges/ic_milestone_7_day_steak.png"
@@ -43,6 +44,7 @@ func UserStreakCB(subj, reply string, userStreak *subscribers.UserStreak) {
 			milestoneValue = 7
 			bigPictureTemplateName = "streak_milestone_image_7"
 			notifIdentifierText = "milestone_streak_7"
+			notifPurpose = constants.NotificationPurpose["7_STREAK_MILESTONE"]
 		} else if userStreak.CurrentStreak.StreakLength == 30 {
 			resourceName = "ic_milestone_30_day_steak"
 			resourceIcon = "https://s3.ap-south-1.amazonaws.com/manch-dev/notifications/badges/ic_milestone_30_day_steak.png"
@@ -51,6 +53,7 @@ func UserStreakCB(subj, reply string, userStreak *subscribers.UserStreak) {
 			milestoneValue = 30
 			bigPictureTemplateName = "streak_milestone_image_30"
 			notifIdentifierText = "milestone_streak_30"
+			notifPurpose = constants.NotificationPurpose["30_STREAK_MILESTONE"]
 		} else if userStreak.CurrentStreak.StreakLength == 100 {
 			resourceName = "ic_milestone_100_day_steak"
 			resourceIcon = "https://s3.ap-south-1.amazonaws.com/manch-dev/notifications/badges/ic_milestone_100_day_steak.png"
@@ -59,6 +62,7 @@ func UserStreakCB(subj, reply string, userStreak *subscribers.UserStreak) {
 			milestoneValue = 100
 			bigPictureTemplateName = "streak_milestone_image_100"
 			notifIdentifierText = "milestone_streak_100"
+			notifPurpose = constants.NotificationPurpose["100_STREAK_MILESTONE"]
 		}
 
 		badge := mongo.Badge{
@@ -81,7 +85,7 @@ func UserStreakCB(subj, reply string, userStreak *subscribers.UserStreak) {
 		}
 
 		update := bson.M{
-			"$set":  bson.M{"profiles.$.current_badge": badge,  "profiles.$.current_milestone_id":  milestoneId},
+			"$set":  bson.M{"profiles.$.current_badge": badge, "profiles.$.current_milestone_id": milestoneId},
 			"$push": bson.M{"profiles.$.achieved_milestones": milestone},
 		}
 		// Update current badge and achieved milestones
@@ -117,8 +121,7 @@ func UserStreakCB(subj, reply string, userStreak *subscribers.UserStreak) {
 				Template:     i18n.Strings[profile.Language][templateName],
 				Data:         data,
 			}
-			deepLink := "manch://posts/"
-
+			deepLink := "manch://profile/" + profile.Id.Hex()
 			notification := mongo.CreateNotification(mongo.NotificationModel{
 				Receiver:        profile.Id,
 				Identifier:      profile.Id.Hex() + notifIdentifierText,
@@ -127,7 +130,7 @@ func UserStreakCB(subj, reply string, userStreak *subscribers.UserStreak) {
 				EntityGroupId:   profile.Id.Hex(),
 				ActionId:        profile.Id,
 				ActionType:      "streak_milestone",
-				Purpose:         constants.NotificationPurpose["STREAK_MILESTONE"],
+				Purpose:         notifPurpose,
 				Message:         msgStr,
 				MessageMeta:     messageMeta,
 				MessageHtml:     htmlMsgStr,

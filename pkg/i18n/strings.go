@@ -121,24 +121,27 @@ var Strings = map[string]map[string]string{
 
 		"welcome_message": `नमस्कार {{.Name}} 🙏🏻,\n\nभारत में बने मंच में आपका स्वागत है।\n🌟मंच हिंदी के साथ साथ तेलुगू, बांग्ला जैसी अन्य क्षेत्रीय भाषाओं को सम्मान दिलाने की कोशिश कर रहा है।\n🌟मंच पर आप अलग अलग Interest के ग्रुप से जुड़ सकते हैं। आप अपने विचार रख सकते हैं और पोस्ट बना और शेयर भी कर सकते हैं।\n🌟साथ में आप बना सकते हैं अपना ग्रुप(मंच) और बन सकते हैं Influencer.\n🇮🇳 तो अब बिंदास बोले मंच पर !\nजय हिन्द\n\n- मंच परिवार`,
 
-		"100_coin_milestone_title":    "Coins की Century 🤩",
-		"100_coin_milestone_text":     "100 Coins तक पहुचन की बधाई 🎉",
-		"100_coin_milestone_image":    "https://s3.ap-south-1.amazonaws.com/manch-dev/notifications/100_Coins-min.jpg",
-		"join_manch_request_private":  "{{.Name}} आपके मंच {{.Community}} से जुड़ना चाहते है 🤩",
-		"join_manch_request_public":   "{{.Name}} जी आपके मंच {{.Community}} से जुड़ गए हैं",
-		"join_manch_approved":         "मुबारक हो अब आप {{.Community}} का हिस्सा हैं 😄",
-		"manch_activation_title":      "आपका मंच {{.Community}} Activate हो गया है🔥",
-		"manch_activation_text":       "पोस्ट करें और अपने मंच को ट्रेंडिंग बनाएं 🤩",
-		"manch_100_members":           "शतक के लिए शुभकामना , 100 सदस्य अब आपके मंच से जुड़ चुके हैं  ⚡⚡",
-		"streak_milestone":            "Congratulations {{.Name}}, you have reached {{.Count}} 🎉🎉",
+		"100_coin_milestone_title":   "Coins की Century 🤩",
+		"100_coin_milestone_text":    "100 Coins तक पहुचन की बधाई 🎉",
+		"100_coin_milestone_image":   "https://s3.ap-south-1.amazonaws.com/manch-dev/notifications/100_Coins-min.jpg",
+		"join_manch_request_private": "{{.Name}} आपके मंच {{.Community}} से जुड़ना चाहते है 🤩",
+		"join_manch_request_public":  "{{.Name}} जी आपके मंच {{.Community}} से जुड़ गए हैं",
+		"join_manch_approved":        "मुबारक हो अब आप {{.Community}} का हिस्सा हैं 😄",
+		"manch_activation_title":     "आपका मंच {{.Community}} Activate हो गया है🔥",
+		"manch_activation_text":      "पोस्ट करें और अपने मंच को ट्रेंडिंग बनाएं 🤩",
+		"manch_100_members":          "शतक के लिए शुभकामना , 100 सदस्य अब आपके मंच से जुड़ चुके हैं  ⚡⚡",
+		"streak_milestone":           "Congratulations {{.Name}}, you have reached {{.Count}} 🎉🎉",
 		"streak_milestone_image_1":   "https://s3.ap-south-1.amazonaws.com/manch-dev/notifications/badges/1_day_streak.jpg",
 		"streak_milestone_image_7":   "https://s3.ap-south-1.amazonaws.com/manch-dev/notifications/badges/7_day_streak.jpg",
 		"streak_milestone_image_30":  "https://s3.ap-south-1.amazonaws.com/manch-dev/notifications/badges/30_day_streak.jpg",
 		"streak_milestone_image_100": "https://s3.ap-south-1.amazonaws.com/manch-dev/notifications/badges/100_day_streak.jpg",
+		"coin_milestone_image_500":   "https://s3.ap-south-1.amazonaws.com/manch-dev/notifications/badges/manch_member.jpg",
+		"coin_milestone_image_10000": "https://s3.ap-south-1.amazonaws.com/manch-dev/notifications/badges/super_user.jpg",
+		"coin_milestone_image_25000": "https://s3.ap-south-1.amazonaws.com/manch-dev/notifications/badges/manch_creator.jpg",
 
-		"100_coin_referral_title":    "{{.Name}}, आपको मिले है 100 Referral Coins 🤑",
-		"100_coin_referral_text":     "Thanks बोलें अपने दोस्त {{.Name2}} को 😄",
-		"100_coin_referral_image":    "https://s3.ap-south-1.amazonaws.com/manch-dev/notifications/Referral_100_Coins.jpg",
+		"100_coin_referral_title": "{{.Name}}, आपको मिले है 100 Referral Coins 🤑",
+		"100_coin_referral_text":  "Thanks बोलें अपने दोस्त {{.Name2}} को 😄",
+		"100_coin_referral_image": "https://s3.ap-south-1.amazonaws.com/manch-dev/notifications/Referral_100_Coins.jpg",
 	},
 
 	"te": {
@@ -220,12 +223,14 @@ var Strings = map[string]map[string]string{
 		"manch_activation_title":     "Congratulations, మీ మంచ్ {{.Community}} ఆక్టివేట్ చేయబడింది!!",
 		"manch_activation_text":      "మీ అభిప్రాయాలను  పంచుకొని మీ పోస్ట్ ని ట్రేండింగ్ లో ఉండేలా చూసుకోండి.",
 		"manch_100_members":          "సెంచరీ! మీ  {{.Community}} మంచ్ ఇప్పుడు 100 మంది సభ్యులను కలిగి ఉన్నారు ⚡⚡",
-		"streak_milestone":            "Congratulations {{.Name}}, you have reached {{.Count}} 🎉🎉",
+		"streak_milestone":           "Congratulations {{.Name}}, you have reached {{.Count}} 🎉🎉",
 		"streak_milestone_image_1":   "https://s3.ap-south-1.amazonaws.com/manch-dev/notifications/badges/1_day_streak.jpg",
 		"streak_milestone_image_7":   "https://s3.ap-south-1.amazonaws.com/manch-dev/notifications/badges/7_day_streak.jpg",
 		"streak_milestone_image_30":  "https://s3.ap-south-1.amazonaws.com/manch-dev/notifications/badges/30_day_streak.jpg",
 		"streak_milestone_image_100": "https://s3.ap-south-1.amazonaws.com/manch-dev/notifications/badges/100_day_streak.jpg",
-
+		"coin_milestone_image_500":   "https://s3.ap-south-1.amazonaws.com/manch-dev/notifications/badges/manch_member.jpg",
+		"coin_milestone_image_10000": "https://s3.ap-south-1.amazonaws.com/manch-dev/notifications/badges/super_user.jpg",
+		"coin_milestone_image_25000": "https://s3.ap-south-1.amazonaws.com/manch-dev/notifications/badges/manch_creator.jpg",
 	},
 }
 
@@ -382,8 +387,7 @@ var HtmlStrings = map[string]map[string]string{
 		"manch_activation_title":     "आपका मंच <b>{{.Community}}</b> Activate हो गया है🔥",
 		"manch_activation_text":      "पोस्ट करें और अपने मंच को ट्रेंडिंग बनाएं 🤩",
 		"manch_100_members":          "शतक के लिए शुभकामना , <b>100</b> सदस्य अब आपके मंच से जुड़ चुके हैं  ⚡⚡",
-		"streak_milestone":            "Congratulations <b>{{.Name}}</b>, you have reached <b>{{.Count}}</b> 🎉🎉",
-
+		"streak_milestone":           "Congratulations <b>{{.Name}}</b>, you have reached <b>{{.Count}}</b> 🎉🎉",
 	},
 
 	"te": {
@@ -462,7 +466,6 @@ var HtmlStrings = map[string]map[string]string{
 		"manch_activation_title":     "Congratulations, మీ మంచ్ <b>{{.Community}}</b> ఆక్టివేట్ చేయబడింది!!",
 		"manch_activation_text":      "మీ అభిప్రాయాలను  పంచుకొని మీ పోస్ట్ ని ట్రేండింగ్ లో ఉండేలా చూసుకోండి.",
 		"manch_100_members":          "సెంచరీ! మీ  <b>{{.Community}}</b> మంచ్ ఇప్పుడు <b>100</b> మంది సభ్యులను కలిగి ఉన్నారు ⚡⚡",
-		"streak_milestone":            "Congratulations <b>{{.Name}}</b>, you have reached <b>{{.Count}}</b> 🎉🎉",
-
+		"streak_milestone":           "Congratulations <b>{{.Name}}</b>, you have reached <b>{{.Count}}</b> 🎉🎉",
 	},
 }
