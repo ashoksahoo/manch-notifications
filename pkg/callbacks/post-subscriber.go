@@ -33,70 +33,73 @@ func PostSubscriberCB(subj, reply string, p *subscribers.Post) {
 		postCreator := mongo.GetProfileById(post.Created.ProfileId)
 		_, repostedPost := mongo.GetPostById(post.RepostedPostId.Hex())
 		repostedPostCreator := mongo.GetProfileById(repostedPost.Created.ProfileId)
-		tokens := mongo.GetTokensByProfiles([]bson.ObjectId{repostedPostCreator.Id})
-		var msgStr string
-		var templateName string
-		data := i18n.DataModel{
-			Name:  postCreator.Name,
-			Post:  repostedPost.Title,
-		}
 
-		templateName = "repost_one"
-
-		msgStr = i18n.GetString(repostedPostCreator.Language, templateName, data)
-		htmlMsgStr := i18n.GetHtmlString(repostedPostCreator.Language, templateName, data)
-		title := i18n.GetAppTitle(repostedPostCreator.Language)
-
-		messageMeta := mongo.MessageMeta{
-			TemplateName: templateName,
-			Template:     i18n.Strings[repostedPostCreator.Language][templateName],
-			Data:         data,
-		}
-		deepLink := "manch://posts/" + post.Id.Hex()
-
-		entities := []mongo.Entity{
-			{
-				EntityId:   repostedPost.Id,
-				EntityType: "reposted_post",
-			},
-			{
-				EntityId:   post.Id,
-				EntityType: "post",
-			},
-		}
-
-		notification := mongo.CreateNotification(mongo.NotificationModel{
-			Receiver:        repostedPostCreator.Id,
-			Identifier:      repostedPostCreator.Id.Hex() + post.Id.Hex() + "re_post",
-			Participants:    []bson.ObjectId{repostedPostCreator.Id},
-			DisplayTemplate: constants.NotificationTemplate["TRANSACTIONAL"],
-			EntityGroupId:   repostedPost.Id.Hex(),
-			ActionId:        repostedPost.Id,
-			ActionType:      "reposted_post",
-			Purpose:         constants.NotificationPurpose["REPOSTED_POST"],
-			Entities:        entities,
-			Message:         msgStr,
-			MessageMeta:     messageMeta,
-			MessageHtml:     htmlMsgStr,
-			DeepLink:        deepLink,
-		})
-
-		msg := firebase.ManchMessage{
-			Title:    title,
-			Message:  msgStr,
-			DeepLink: deepLink,
-			Id:       notification.NId,
-		}
-
-		fmt.Printf("\nGCM Message %+v\n", msg)
-		if tokens != nil {
-			for _, token := range tokens {
-				go firebase.SendMessage(msg, token.Token, notification)
+		if postCreator.Id != repostedPostCreator.Id {
+			tokens := mongo.GetTokensByProfiles([]bson.ObjectId{repostedPostCreator.Id})
+			var msgStr string
+			var templateName string
+			data := i18n.DataModel{
+				Name:  postCreator.Name,
+				Post:  repostedPost.Title,
 			}
-		} else {
-			fmt.Printf("No token")
+	
+			templateName = "repost_one"
+	
+			msgStr = i18n.GetString(repostedPostCreator.Language, templateName, data)
+			htmlMsgStr := i18n.GetHtmlString(repostedPostCreator.Language, templateName, data)
+			title := i18n.GetAppTitle(repostedPostCreator.Language)
+	
+			messageMeta := mongo.MessageMeta{
+				TemplateName: templateName,
+				Template:     i18n.Strings[repostedPostCreator.Language][templateName],
+				Data:         data,
+			}
+			deepLink := "manch://posts/" + post.Id.Hex()
+	
+			entities := []mongo.Entity{
+				{
+					EntityId:   repostedPost.Id,
+					EntityType: "reposted_post",
+				},
+				{
+					EntityId:   post.Id,
+					EntityType: "post",
+				},
+			}
+	
+			notification := mongo.CreateNotification(mongo.NotificationModel{
+				Receiver:        repostedPostCreator.Id,
+				Identifier:      repostedPostCreator.Id.Hex() + post.Id.Hex() + "re_post",
+				Participants:    []bson.ObjectId{repostedPostCreator.Id},
+				DisplayTemplate: constants.NotificationTemplate["TRANSACTIONAL"],
+				EntityGroupId:   repostedPost.Id.Hex(),
+				ActionId:        repostedPost.Id,
+				ActionType:      "reposted_post",
+				Purpose:         constants.NotificationPurpose["REPOSTED_POST"],
+				Entities:        entities,
+				Message:         msgStr,
+				MessageMeta:     messageMeta,
+				MessageHtml:     htmlMsgStr,
+				DeepLink:        deepLink,
+			})
+	
+			msg := firebase.ManchMessage{
+				Title:    title,
+				Message:  msgStr,
+				DeepLink: deepLink,
+				Id:       notification.NId,
+			}
+	
+			fmt.Printf("\nGCM Message %+v\n", msg)
+			if tokens != nil {
+				for _, token := range tokens {
+					go firebase.SendMessage(msg, token.Token, notification)
+				}
+			} else {
+				fmt.Printf("No token")
+			}
+	
 		}
-
 	}
 
 	// create community stats
