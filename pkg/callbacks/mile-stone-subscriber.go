@@ -244,13 +244,13 @@ func MileStoneSubscriberCB(subj, reply string, m *subscribers.MileStone) {
 
 	}
 
-	if m.MileStone == constants.MileStones["10000_COIN_MILESTONE"] {
+	if m.MileStone == constants.MileStones["5000_COIN_MILESTONE"] {
 		badge := mongo.Badge{
 			ResourceName: "ic_milestone_super_user",
 			Icon:         "https://s3.ap-south-1.amazonaws.com/manch-dev/notifications/badges/ic_milestone_super_user.png",
 		}
 		currentMilestoneID := "4"
-		milestoneValue := 10000
+		milestoneValue := 5000
 		milestone := mongo.Milestone{
 			Id:          bson.NewObjectId(),
 			MileStoneId: currentMilestoneID,
@@ -269,6 +269,7 @@ func MileStoneSubscriberCB(subj, reply string, m *subscribers.MileStone) {
 		update := bson.M{
 			"$set":  bson.M{"profiles.$.current_badge": badge, "profiles.$.current_milestone_id": currentMilestoneID},
 			"$push": bson.M{"profiles.$.achieved_milestones": milestone},
+			"$inc":  bson.M{"profiles.$.total_manch_allowed": 1},
 		}
 		// Update current badge and achieved milestones
 		err := mongo.UpdateUser(query, update)
@@ -295,7 +296,7 @@ func MileStoneSubscriberCB(subj, reply string, m *subscribers.MileStone) {
 			msgStr := i18n.GetString(profile.Language, templateName, data)
 			htmlMsgStr := i18n.GetString(profile.Language, templateName, data)
 			title := i18n.GetAppTitle(profile.Language)
-			bigPictureTemplateName := "coin_milestone_image_10000"
+			bigPictureTemplateName := "coin_milestone_image_5000"
 			bigPicture := i18n.GetString(profile.Language, bigPictureTemplateName, data)
 
 			messageMeta := mongo.MessageMeta{
@@ -307,13 +308,13 @@ func MileStoneSubscriberCB(subj, reply string, m *subscribers.MileStone) {
 
 			notification := mongo.CreateNotification(mongo.NotificationModel{
 				Receiver:        profile.Id,
-				Identifier:      profile.Id.Hex() + "milestone_coin_10000",
+				Identifier:      profile.Id.Hex() + "milestone_coin_5000",
 				Participants:    []bson.ObjectId{profile.Id},
 				DisplayTemplate: constants.NotificationTemplate["TRANSACTIONAL"],
 				EntityGroupId:   profile.Id.Hex(),
 				ActionId:        profile.Id,
 				ActionType:      "coin_milestone",
-				Purpose:         constants.NotificationPurpose["10000_COIN_MILESTONE"],
+				Purpose:         constants.NotificationPurpose["5000_COIN_MILESTONE"],
 				Message:         msgStr,
 				MessageMeta:     messageMeta,
 				MessageHtml:     htmlMsgStr,
@@ -365,6 +366,7 @@ func MileStoneSubscriberCB(subj, reply string, m *subscribers.MileStone) {
 		update := bson.M{
 			"$set":  bson.M{"profiles.$.current_badge": badge, "profiles.$.current_milestone_id": currentMilestoneID},
 			"$push": bson.M{"profiles.$.achieved_milestones": milestone},
+			"$inc":  bson.M{"profiles.$.total_manch_allowed": 2},
 		}
 		// Update current badge and achieved milestones
 		err := mongo.UpdateUser(query, update)
