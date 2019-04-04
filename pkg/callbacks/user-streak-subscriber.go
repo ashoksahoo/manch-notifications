@@ -80,8 +80,12 @@ func UserStreakCB(subj, reply string, userStreak *subscribers.UserStreak) {
 		}
 
 		query := bson.M{
-			"profiles._id": profile.Id,
-			"profiles.achieved_milestones.milestone_id": bson.M{"$ne": milestoneId},
+			"profiles": bson.M{
+				"$elemMatch": bson.M{
+					"_id": profile.Id,
+					"achieved_milestones.milestone_id": bson.M{"$ne": milestoneId},
+				},
+			},
 		}
 
 		update := bson.M{
