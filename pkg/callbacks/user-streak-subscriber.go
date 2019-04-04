@@ -80,8 +80,12 @@ func UserStreakCB(subj, reply string, userStreak *subscribers.UserStreak) {
 		}
 
 		query := bson.M{
-			"profiles._id": profile.Id,
-			"profiles.achieved_milestones.milestone_id": bson.M{"$ne": milestoneId},
+			"profiles": bson.M{
+				"$elemMatch": bson.M{
+					"_id": profile.Id,
+					"achieved_milestones.milestone_id": bson.M{"$ne": milestoneId},
+				},
+			},
 		}
 
 		update := bson.M{
@@ -109,7 +113,7 @@ func UserStreakCB(subj, reply string, userStreak *subscribers.UserStreak) {
 			templateName := "streak_milestone"
 			data := i18n.DataModel{
 				Name:  profile.Name,
-				Count: userStreak.CurrentStreak.StreakLength,
+				Name2: milestoneName, // milestone name
 			}
 			msgStr := i18n.GetString(profile.Language, templateName, data)
 			htmlMsgStr := i18n.GetString(profile.Language, templateName, data)
