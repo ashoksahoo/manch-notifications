@@ -135,7 +135,7 @@ var Strings = map[string]map[string]string{
 		"repost_three":               "{{.Name}}, {{.Name2}} और {{.Name3}} ने आपकी पोस्ट \"{{.Post}}\" को Repost किया है",
 		"repost_two":                 "{{.Name}} और {{.Name2}} ने आपकी पोस्ट \"{{.Post}}\" को Repost किया है",
 		"repost_one":                 "{{.Name}} ने आपकी पोस्ट \"{{.Post}}\" को Repost किया है",
-		"streak_milestone":           "Congratulations {{.Name}}, you have reached {{.Count}} 🎉🎉",
+		"streak_milestone":           "Congratulations {{.Name}}, you have reached {{.Name2}} 🎉🎉",
 		"streak_milestone_image_1":   "https://s3.ap-south-1.amazonaws.com/manch-dev/notifications/badges/1_day_streak.jpg",
 		"streak_milestone_image_7":   "https://s3.ap-south-1.amazonaws.com/manch-dev/notifications/badges/7_day_streak.jpg",
 		"streak_milestone_image_30":  "https://s3.ap-south-1.amazonaws.com/manch-dev/notifications/badges/30_day_streak.jpg",

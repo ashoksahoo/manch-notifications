@@ -194,7 +194,7 @@ func MileStoneSubscriberCB(subj, reply string, m *subscribers.MileStone) {
 			templateName := "streak_milestone"
 			data := i18n.DataModel{
 				Name:  profile.Name,
-				Count: milestoneValue,
+				Name2: milestone.Name, // milestone name
 			}
 			msgStr := i18n.GetString(profile.Language, templateName, data)
 			htmlMsgStr := i18n.GetString(profile.Language, templateName, data)
@@ -291,7 +291,7 @@ func MileStoneSubscriberCB(subj, reply string, m *subscribers.MileStone) {
 			templateName := "streak_milestone"
 			data := i18n.DataModel{
 				Name:  profile.Name,
-				Count: milestoneValue,
+				Name2: milestone.Name, // milestone name
 			}
 			msgStr := i18n.GetString(profile.Language, templateName, data)
 			htmlMsgStr := i18n.GetString(profile.Language, templateName, data)
@@ -353,7 +353,7 @@ func MileStoneSubscriberCB(subj, reply string, m *subscribers.MileStone) {
 			MileStoneId: currentMilestoneID,
 			Name:        "Manch Creator",
 			Badge:       badge,
-			Value:       25000,
+			Value:       milestoneValue,
 			Type:        "coin",
 			Date:        time.Now(),
 		}
@@ -388,7 +388,7 @@ func MileStoneSubscriberCB(subj, reply string, m *subscribers.MileStone) {
 			templateName := "streak_milestone"
 			data := i18n.DataModel{
 				Name:  profile.Name,
-				Count: milestoneValue,
+				Name2: milestone.Name, // milestone name
 			}
 			msgStr := i18n.GetString(profile.Language, templateName, data)
 			htmlMsgStr := i18n.GetString(profile.Language, templateName, data)
