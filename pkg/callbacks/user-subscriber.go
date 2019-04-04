@@ -33,7 +33,7 @@ func UserSubscriberCB(subj, reply string, u *subscribers.User) {
 
 	// 0-5th minute - +5 followes
 	j := 0
-	randomFollowers := utils.Random(3, 10)
+	randomFollowers := utils.Random(1, 3)
 	followers := randomFollowers
 	t := utils.SplitTimeInRange(1, 5, randomFollowers, time.Minute)
 	for k := 0; j < followers; j, k = j+1, k+1 {
@@ -43,8 +43,8 @@ func UserSubscriberCB(subj, reply string, u *subscribers.User) {
 	}
 
 	// 5 minuts to 1 hours - +5
-	randomFollowers = utils.Random(5, 10)
-	t = utils.SplitTimeInRange(5, 59, randomFollowers, time.Minute)
+	randomFollowers = utils.Random(1, 3)
+	t = utils.SplitTimeInRange(5, 1440, randomFollowers, time.Minute)
 	followers += randomFollowers
 	for k := 0; j < followers; j, k = j+1, k+1 {
 		doc := mongo.CreateFollowSchedule(t[k], bson.ObjectIdHex(botProfilesIds[j]), resourceId)
@@ -53,8 +53,8 @@ func UserSubscriberCB(subj, reply string, u *subscribers.User) {
 	}
 
 	// 1 Hr to 6Hr +5-10 followers
-	randomFollowers = utils.Random(5, 10)
-	t = utils.SplitTimeInRange(1, 6, randomFollowers, time.Hour)
+	randomFollowers = utils.Random(3, 5)
+	t = utils.SplitTimeInRange(24, 48, randomFollowers, time.Hour)
 	followers += randomFollowers
 	for k := 0; j < followers; j, k = j+1, k+1 {
 		doc := mongo.CreateFollowSchedule(t[k], bson.ObjectIdHex(botProfilesIds[j]), resourceId)
@@ -63,8 +63,8 @@ func UserSubscriberCB(subj, reply string, u *subscribers.User) {
 	}
 
 	// 6 Hr to 24 Hr +5-10 followers
-	randomFollowers = utils.Random(5, 10)
-	t = utils.SplitTimeInRange(6, 24, randomFollowers, time.Hour)
+	randomFollowers = utils.Random(3, 5)
+	t = utils.SplitTimeInRange(48, 72, randomFollowers, time.Hour)
 	followers += randomFollowers
 	for k := 0; j < followers; j, k = j+1, k+1 {
 		doc := mongo.CreateFollowSchedule(t[k], bson.ObjectIdHex(botProfilesIds[j]), resourceId)
@@ -72,17 +72,17 @@ func UserSubscriberCB(subj, reply string, u *subscribers.User) {
 		mongo.AddFollowSchedule(doc)
 	}
 
-	// 1st to 3rd day +10-15 followers
-	randomFollowers = utils.Random(20, 30)
-	t = utils.SplitTimeInRange(24, 72, randomFollowers, time.Hour)
-	followers += randomFollowers
-	for k := 0; j < followers; j, k = j+1, k+1 {
-		doc := mongo.CreateFollowSchedule(t[k], bson.ObjectIdHex(botProfilesIds[j]), resourceId)
-		mongo.AddFollowSchedule(doc)
-	}
+	// // 1st to 3rd day +10-15 followers
+	// randomFollowers = utils.Random(20, 30)
+	// t = utils.SplitTimeInRange(24, 72, randomFollowers, time.Hour)
+	// followers += randomFollowers
+	// for k := 0; j < followers; j, k = j+1, k+1 {
+	// 	doc := mongo.CreateFollowSchedule(t[k], bson.ObjectIdHex(botProfilesIds[j]), resourceId)
+	// 	mongo.AddFollowSchedule(doc)
+	// }
 
 	// 3rd to 7th day +10-20 followers
-	randomFollowers = utils.Random(20, 30)
+	randomFollowers = utils.Random(6, 10)
 	t = utils.SplitTimeInRange(72, 168, randomFollowers, time.Hour)
 	followers += randomFollowers
 	for k := 0; j < followers; j, k = j+1, k+1 {
