@@ -39,7 +39,7 @@ func UserStreakCB(subj, reply string, userStreak *subscribers.UserStreak) {
 	err := mongo.UpdateUser(bson.M{
 		"profiles._id": profile.Id,
 	}, bson.M{
-		"$set":  bson.M{"profiles.$.current_streak": userStreak.CurrentStreak},
+		"$set":  bson.M{"profiles.$.current_streak": userStreak.CurrentStreak, "profiles.$.longest_streak": userStreak.LongestStreak},
 	})
 
 	if err != nil {
