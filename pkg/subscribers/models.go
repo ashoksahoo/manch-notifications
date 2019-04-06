@@ -130,4 +130,5 @@ type UserStreak struct {
 	ProfileId     string `json:"profile_id" bson:"profile_id"`
 	CurrentStreak Streak `json:"current_streak" bson:"current_streak"`
 	LastStreak    Streak `json:"last_streak" bson:"last_streak"`
+	LongestStreak Streak `json:"longest_streak" bson:"longest_streak"`
 }

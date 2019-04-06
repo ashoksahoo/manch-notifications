@@ -20,7 +20,30 @@ func UserStreakCB(subj, reply string, userStreak *subscribers.UserStreak) {
 
 	if (subscribers.Streak{}) == userStreak.CurrentStreak {
 		fmt.Println("reset streak")
+		// update last and longest streak on profile
+		query := bson.M{"profiles._id": profile.Id}
+
+		update := bson.M{
+			"$set":  bson.M{"profiles.$.last_streak": userStreak.LastStreak, "profiles.$.longest_streak": userStreak.LongestStreak},
+		}
+		err := mongo.UpdateUser(query, update)
+		if err != nil {
+			fmt.Println("update last and longest streak on profile", profile.Id.Hex())
+		} else {
+			fmt.Println("error while updating last and longest streak")
+		}
 		return
+	}
+
+	// update current streak on profile
+	err := mongo.UpdateUser(bson.M{
+		"profiles._id": profile.Id,
+	}, bson.M{
+		"$set":  bson.M{"profiles.$.current_streak": userStreak.CurrentStreak},
+	})
+
+	if err != nil {
+		fmt.Println("update current on profile", profile.Id.Hex())
 	}
 
 	if utils.IncludesInt([]int{1, 7, 30, 100}, userStreak.CurrentStreak.StreakLength) {
@@ -82,7 +105,7 @@ func UserStreakCB(subj, reply string, userStreak *subscribers.UserStreak) {
 		query := bson.M{
 			"profiles": bson.M{
 				"$elemMatch": bson.M{
-					"_id": profile.Id,
+					"_id":                              profile.Id,
 					"achieved_milestones.milestone_id": bson.M{"$ne": milestoneId},
 				},
 			},

@@ -183,7 +183,7 @@ func VotePostSubscriberCB(subj, reply string, v *subscribers.Vote) {
 		Id:       notification.NId,
 	}
 
-	upvoteNumbers := []int{ 5, 10, 25, 50, 75, 100}
+	upvoteNumbers := []int{ 5, 25, 50, 75, 100}
 
 	if utils.Contains(upvoteNumbers, count+1) {
 		fmt.Printf("\nGCM Message %+v\n", msg)
