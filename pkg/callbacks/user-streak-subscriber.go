@@ -28,9 +28,9 @@ func UserStreakCB(subj, reply string, userStreak *subscribers.UserStreak) {
 		}
 		err := mongo.UpdateUser(query, update)
 		if err != nil {
-			fmt.Println("update last and longest streak on profile", profile.Id.Hex())
+			fmt.Println("error while updating last and longest streak", err)
 		} else {
-			fmt.Println("error while updating last and longest streak")
+			fmt.Println("update last and longest streak on profile", profile.Id.Hex())
 		}
 		return
 	}
@@ -43,7 +43,9 @@ func UserStreakCB(subj, reply string, userStreak *subscribers.UserStreak) {
 	})
 
 	if err != nil {
-		fmt.Println("update current on profile", profile.Id.Hex())
+		fmt.Println("error while updating last and current streak", err)
+	} else {
+		fmt.Println("update current streak on profile", profile.Id.Hex())
 	}
 
 	if utils.IncludesInt([]int{1, 7, 30, 100}, userStreak.CurrentStreak.StreakLength) {
