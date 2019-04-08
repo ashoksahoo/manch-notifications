@@ -20,7 +20,7 @@ func UserStreakMissedCB(subj, reply string, userStreak *subscribers.UserStreak) 
 	templateTitle = "streak_miss_title"
 	templateText = "streak_miss_text"
 	data := i18n.DataModel{
-		Name: profile.Name,
+		Name:  profile.Name,
 		Count: userStreak.CurrentStreak.StreakLength,
 	}
 	msgStrTitle = i18n.GetString(profile.Language, templateTitle, data)
@@ -38,7 +38,7 @@ func UserStreakMissedCB(subj, reply string, userStreak *subscribers.UserStreak) 
 
 	notification := mongo.CreateNotification(mongo.NotificationModel{
 		Receiver:        profile.Id,
-		Identifier:      profile.Id.Hex() + "streak_missed" + userStreak.CurrentStreak.EndDate.String(),
+		Identifier:      profile.Id.Hex() + "_streak_missed_" + userStreak.CurrentStreak.EndDate.Format("20060102150405"),
 		Participants:    []bson.ObjectId{profile.Id},
 		DisplayTemplate: constants.NotificationTemplate["TRANSACTIONAL"],
 		EntityGroupId:   profile.Id.Hex(),
