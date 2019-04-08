@@ -168,7 +168,7 @@ func MileStoneSubscriberCB(subj, reply string, m *subscribers.MileStone) {
 		query := bson.M{
 			"profiles": bson.M{
 				"$elemMatch": bson.M{
-					"_id": profile.Id,
+					"_id":                              profile.Id,
 					"achieved_milestones.milestone_id": bson.M{"$ne": currentMilestoneID},
 				},
 			},

@@ -44,6 +44,7 @@ var NotificationPurpose = map[string]string{
 	"100_STREAK_MILESTONE": "100_streak_milestone",
 	"REPOSTED_POST":        "reposted_post",
 	"USER_REVIEW":          "user.review",
+	"STREAK_MISSING":        "streak_missing",
 }
 
 var NotificationPurposeResource = map[string]string{
@@ -97,6 +98,7 @@ var NotificationPurposeIcon = map[string]string{
 	"100_coin_milestone":   "https://s3.ap-south-1.amazonaws.com/manch-dev/app-resource-icons/ic_n_default_mic-min.png",
 	"100_coin_referral":    "https://s3.ap-south-1.amazonaws.com/manch-dev/app-resource-icons/ic_n_default_mic-min.png",
 	"reposted_post":        "https://s3.ap-south-1.amazonaws.com/manch-dev/app-resource-icons/repost_icon.png",
+	"streak_missing":        "https://s3.ap-south-1.amazonaws.com/manch-dev/app-resource-icons/streak_miss_notification.png",
 }
 
 var NotificationTemplate = map[string]string{

@@ -141,13 +141,18 @@ var Strings = map[string]map[string]string{
 		"streak_milestone_image_30":  "https://s3.ap-south-1.amazonaws.com/manch-dev/notifications/badges/30_day_streak.jpg",
 		"streak_milestone_image_100": "https://s3.ap-south-1.amazonaws.com/manch-dev/notifications/badges/100_day_streak.jpg",
 		"coin_milestone_image_500":   "https://s3.ap-south-1.amazonaws.com/manch-dev/notifications/badges/manch_member.jpg",
-		"coin_milestone_image_5000": "https://s3.ap-south-1.amazonaws.com/manch-dev/notifications/badges/super_user.jpg",
+		"coin_milestone_image_5000":  "https://s3.ap-south-1.amazonaws.com/manch-dev/notifications/badges/super_user.jpg",
 		"coin_milestone_image_10000": "https://s3.ap-south-1.amazonaws.com/manch-dev/notifications/badges/super_user.jpg",
 		"coin_milestone_image_25000": "https://s3.ap-south-1.amazonaws.com/manch-dev/notifications/badges/manch_creator.jpg",
 
 		"100_coin_referral_title": "{{.Name}}, आपको मिले है 100 Referral Coins 🤑",
 		"100_coin_referral_text":  "Thanks बोलें अपने दोस्त {{.Name2}} को 😄",
 		"100_coin_referral_image": "https://s3.ap-south-1.amazonaws.com/manch-dev/notifications/Referral_100_Coins.jpg",
+
+		"streak_missing_title": "{{.Name}} आप अभी {{.Count}} Day Streak पर हैं",
+		"streak_missing_text": "इसे मिस न करें !!",
+		"streak_missing_image": "https://s3.ap-south-1.amazonaws.com/manch-dev/notifications/Streak_Miss_Hindi.jpg",
+
 	},
 
 	"te": {
@@ -243,6 +248,11 @@ var Strings = map[string]map[string]string{
 		"coin_milestone_image_5000":  "https://s3.ap-south-1.amazonaws.com/manch-dev/notifications/badges/super_user.jpg",
 		"coin_milestone_image_10000": "https://s3.ap-south-1.amazonaws.com/manch-dev/notifications/badges/super_user.jpg",
 		"coin_milestone_image_25000": "https://s3.ap-south-1.amazonaws.com/manch-dev/notifications/badges/manch_creator.jpg",
+
+		"streak_missing_title": "{{.Name}}, మీరు ప్రస్తుతం {{.Count}}",
+		"streak_missing_text": "లో ఉన్నారు మిస్ చేయకండి",
+		"streak_missing_image": "https://s3.ap-south-1.amazonaws.com/manch-dev/notifications/Streak_Miss_Telugu.jpg",
+
 	},
 }
 
@@ -405,6 +415,7 @@ var HtmlStrings = map[string]map[string]string{
 		"repost_two":       "<b>{{.Name}}</b> और <b>{{.Name2}}</b> ने आपकी पोस्ट \"{{.Post}}\" को Repost किया है",
 		"repost_one":       "<b>{{.Name}}</b> ने आपकी पोस्ट \"{{.Post}}\" को Repost किया है",
 		"streak_milestone": "Congratulations <b>{{.Name}}</b>, you have reached <b>{{.Count}}</b> 🎉🎉",
+		"streak_missing_title": "<b>{{.Name}}</b> आप अभी <b>{{.Count}}</b> Day Streak पर हैं",
 	},
 
 	"te": {
@@ -488,5 +499,6 @@ var HtmlStrings = map[string]map[string]string{
 		"repost_two":                 "<b>{{.Name}}</b> & <b>{{.Name2}}</b> మీ పోస్ట్ \"{{.Post}}\" ని రిపోస్ట్ చేసారు.",
 		"repost_one":                 "<b>{{.Name}}</b> మీ పోస్ట్ \"{{.Post}}\" ని రిపోస్ట్ చేసారు.",
 		"streak_milestone":           "Congratulations <b>{{.Name}}</b>, you have reached <b>{{.Count}}</b> 🎉🎉",
+		"streak_missing_title": "<b>{{.Name}}</b>, మీరు ప్రస్తుతం <b>{{.Count}}</b>",
 	},
 }
