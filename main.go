@@ -100,6 +100,9 @@ func main() {
 	// received a user streak
 	subscribers.UserStreakSubscriber(callbacks.UserStreakCB)
 
+	// received a user streak missed event
+	subscribers.UserStreakMissedSubscriber(callbacks.UserStreakMissedCB)
+
 	// listen on http server 5000
 	http.ListenAndServe(":5000", router)
 }

@@ -124,6 +124,10 @@ func UserStreakSubscriber(callback func(subj, reply string, m *UserStreak)) {
 	go c.QueueSubscribe(subject("user.streak"), queue(), callback)
 }
 
+func UserStreakMissedSubscriber(callback func(subj, reply string, m *UserStreak)) {
+	go c.QueueSubscribe(subject("user.streak.missed"), queue(), callback)
+}
+
 func init() {
 	if url == "" {
 		url = nats.DefaultURL
