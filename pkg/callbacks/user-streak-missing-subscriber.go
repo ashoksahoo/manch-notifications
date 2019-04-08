@@ -11,14 +11,14 @@ import (
 	"github.com/globalsign/mgo/bson"
 )
 
-func UserStreakMissedCB(subj, reply string, userStreak *subscribers.UserStreak) {
-	fmt.Printf("Received a user streak missed on subject %s! with Value %+v\n", subj, userStreak)
+func UserSTreakMissingCB(subj, reply string, userStreak *subscribers.UserStreak) {
+	fmt.Printf("Received a user streak missing on subject %s! with Value %+v\n", subj, userStreak)
 	profile := mongo.GetProfileById(bson.ObjectIdHex(userStreak.ProfileId))
 
 	var msgStrTitle, msgStrText string
 	var templateTitle, templateText string
-	templateTitle = "streak_miss_title"
-	templateText = "streak_miss_text"
+	templateTitle = "streak_missing_title"
+	templateText = "streak_missing_text"
 	data := i18n.DataModel{
 		Name:  profile.Name,
 		Count: userStreak.CurrentStreak.StreakLength,
@@ -27,7 +27,7 @@ func UserStreakMissedCB(subj, reply string, userStreak *subscribers.UserStreak) 
 	msgStrText = i18n.GetString(profile.Language, templateText, data)
 	htmlMsgStr := i18n.GetHtmlString(profile.Language, templateTitle, data)
 
-	bigPicture := i18n.GetString(profile.Language, "streak_miss_image", data)
+	bigPicture := i18n.GetString(profile.Language, "streak_missing_image", data)
 
 	messageMeta := mongo.MessageMeta{
 		TemplateName: templateTitle,
@@ -38,13 +38,13 @@ func UserStreakMissedCB(subj, reply string, userStreak *subscribers.UserStreak) 
 
 	notification := mongo.CreateNotification(mongo.NotificationModel{
 		Receiver:        profile.Id,
-		Identifier:      profile.Id.Hex() + "_streak_missed_" + userStreak.CurrentStreak.EndDate.Format("20060102150405"),
+		Identifier:      profile.Id.Hex() + "_streak_missing_" + userStreak.CurrentStreak.EndDate.Format("20060102150405"),
 		Participants:    []bson.ObjectId{profile.Id},
 		DisplayTemplate: constants.NotificationTemplate["TRANSACTIONAL"],
 		EntityGroupId:   profile.Id.Hex(),
 		ActionId:        profile.Id,
-		ActionType:      "streak_missed",
-		Purpose:         constants.NotificationPurpose["STREAK_MISSED"],
+		ActionType:      "streak_missing",
+		Purpose:         constants.NotificationPurpose["STREAK_MISSING"],
 		Message:         msgStrTitle,
 		MessageMeta:     messageMeta,
 		MessageHtml:     htmlMsgStr,
