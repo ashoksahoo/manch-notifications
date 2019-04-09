@@ -122,13 +122,18 @@ func VoteCommentSubscriberCB(subj, reply string, v *subscribers.Vote) {
 		Id:       notification.NId,
 	}
 
-	fmt.Printf("\nGCM Message %+v\n", msg)
-	if tokens != nil {
-		for _, token := range tokens {
-			go firebase.SendMessage(msg, token.Token, notification)
+
+	upvoteNumbers := []int{1, 2, 5, 10, 25, 50}
+
+	if utils.Contains(upvoteNumbers, comment.UpVotes) || ((comment.UpVotes % 100) == 0) {
+		fmt.Printf("\nGCM Message %+v\n", msg)
+		if tokens != nil {
+			for _, token := range tokens {
+				go firebase.SendMessage(msg, token.Token, notification)
+			}
+		} else {
+			fmt.Printf("No token")
 		}
-	} else {
-		fmt.Printf("No token\n")
 	}
 	fmt.Printf("Processed a Vote on subject %s! with Vote Id %s\n", subj, v.Id)
 
