@@ -38,7 +38,7 @@ func CommentSubscriberCB(subj, reply string, c *subscribers.Comment) {
 	comment, uniqueCommentator := mongo.GetFullCommentById(c.Id)
 
 	commentCreator := mongo.GetProfileById(comment.Created.ProfileId)
-	
+
 	if commentCreator.CommentsCount == 5 {
 		// send data notification
 		entities := []mongo.Entity{
@@ -75,7 +75,6 @@ func CommentSubscriberCB(subj, reply string, c *subscribers.Comment) {
 		}
 
 	}
-
 
 	var commentEntity, replyEntity []mongo.Entity
 	commentEntity = []mongo.Entity{
@@ -187,7 +186,7 @@ func CommentSubscriberCB(subj, reply string, c *subscribers.Comment) {
 		}
 	}
 	// reply on comment
-	if len(comment.Parents) >= 2 && replyOnComment.Created.ProfileId != comment.Created.ProfileId {
+	if len(comment.Parents) >= 2 && replyOnComment.Created.ProfileId != comment.Created.ProfileId && replyOnComment.Created.ProfileId != replyOnComment.Post.Created.ProfileId {
 		fmt.Println("reply on comments")
 		// if replyOnComment.Created.ProfileId == comment.Created.ProfileId {
 		// 	// Self Reply on comment
@@ -257,14 +256,20 @@ func CommentSubscriberCB(subj, reply string, c *subscribers.Comment) {
 			BadgeCount: strconv.Itoa(replyOnComment.CommentCount),
 			Id:         notification1.NId,
 		}
-		fmt.Printf("\nGCM Message %+v\n", msg)
-		if tokens1 != nil {
-			for _, token := range tokens1 {
-				go firebase.SendMessage(msg, token.Token, notification1)
+
+		upvoteNumbers := []int{1, 2, 3, 10, 25, 50}
+
+		if utils.Contains(upvoteNumbers, count) || ((count % 100) == 0) {
+			fmt.Printf("\nGCM Message %+v\n", msg)
+			if tokens1 != nil {
+				for _, token := range tokens1 {
+					go firebase.SendMessage(msg, token.Token, notification1)
+				}
+			} else {
+				fmt.Printf("No token")
 			}
-		} else {
-			fmt.Printf("No token")
 		}
+
 		fmt.Println("end reply on comments")
 	}
 
@@ -421,14 +426,17 @@ func CommentSubscriberCB(subj, reply string, c *subscribers.Comment) {
 		Id:         notification.NId,
 	}
 
-	fmt.Printf("\nGCM Message %+v\n", msg)
-	//firebase.SendMessage(msg, "frgp37gfvFg:APA91bHbnbfoX-bp3M_3k-ceD7E4fZ73fcmVL4b5DGB5cQn-fFEvfbj3aAI9g0wXozyApIb-6wGsJauf67auK1p3Ins5Ff7IXCN161fb5JJ5pfBnTZ4LEcRUatO6wimsbiS7EANoGDr4")
-	if tokens != nil {
-		for _, token := range tokens {
-			go firebase.SendMessage(msg, token.Token, notification)
+	upvoteNumbers := []int{1, 2, 3, 10, 25, 50}
+
+	if utils.Contains(upvoteNumbers, uniqueCommentator) || ((uniqueCommentator % 100) == 0) {
+		fmt.Printf("\nGCM Message %+v\n", msg)
+		if tokens != nil {
+			for _, token := range tokens {
+				go firebase.SendMessage(msg, token.Token, notification)
+			}
+		} else {
+			fmt.Printf("No token")
 		}
-	} else {
-		fmt.Printf("No token")
 	}
 
 	fmt.Printf("Processed a comment on subject %s! with Comment %s\n", subj, c.Id)
