@@ -117,7 +117,7 @@ func GetCommentsByPostId(postId, commentCreator bson.ObjectId) []bson.ObjectId {
 	C.Find(bson.M{
 		"post_id":            postId,
 		"created.profile_id": bson.M{"$ne": commentCreator},
-		"parents":            bson.M{"$exists": true, "$size": 1},
+		"comment_id":         bson.M{"$exists": false},
 	}).Distinct("created.profile_id", &result)
 	return result
 }
@@ -147,7 +147,7 @@ func RemoveCommentScheduleByPostId(pId bson.ObjectId) {
 	}
 }
 
-func UpdateCommentsByQuery(query, update bson.M)  {
+func UpdateCommentsByQuery(query, update bson.M) {
 	s := session.Clone()
 	defer s.Close()
 	C := s.DB("manch").C(COMMENTS_MODEL)
