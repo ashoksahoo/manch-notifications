@@ -117,8 +117,7 @@ func GetCommentsByPostId(postId, commentCreator bson.ObjectId) []bson.ObjectId {
 	C.Find(bson.M{
 		"post_id":            postId,
 		"created.profile_id": bson.M{"$ne": commentCreator},
-		"parents":            bson.M{"$exists": true},
-		"$where":             "this.parents.length<2",
+		"parents":            bson.M{"$exists": true, "$size": 1},
 	}).Distinct("created.profile_id", &result)
 	return result
 }

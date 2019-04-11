@@ -20,11 +20,12 @@ func UserStreakCB(subj, reply string, userStreak *subscribers.UserStreak) {
 
 	if (subscribers.Streak{}) == userStreak.CurrentStreak {
 		fmt.Println("reset streak")
-		// update last and longest streak on profile
+		// update last and longest streak on profile and reset current streak
 		query := bson.M{"profiles._id": profile.Id}
 
 		update := bson.M{
-			"$set":  bson.M{"profiles.$.last_streak": userStreak.LastStreak, "profiles.$.longest_streak": userStreak.LongestStreak},
+			"$set":   bson.M{"profiles.$.last_streak": userStreak.LastStreak, "profiles.$.longest_streak": userStreak.LongestStreak},
+			"$unset": bson.M{"profiles.$.current_streak": 1},
 		}
 		err := mongo.UpdateUser(query, update)
 		if err != nil {
@@ -35,11 +36,11 @@ func UserStreakCB(subj, reply string, userStreak *subscribers.UserStreak) {
 		return
 	}
 
-	// update current streak on profile
+	// update current streak and longest streak on profile
 	err := mongo.UpdateUser(bson.M{
 		"profiles._id": profile.Id,
 	}, bson.M{
-		"$set":  bson.M{"profiles.$.current_streak": userStreak.CurrentStreak, "profiles.$.longest_streak": userStreak.LongestStreak},
+		"$set": bson.M{"profiles.$.current_streak": userStreak.CurrentStreak, "profiles.$.longest_streak": userStreak.LongestStreak},
 	})
 
 	if err != nil {
