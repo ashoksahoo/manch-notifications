@@ -137,4 +137,6 @@ type Profile struct {
 	Id     string `json:"_id"`
 	Name   string `json:"name"`
 	Avatar string `json:"avatar"`
+	DisplayProfileChanges bool `json:"display_profile_changes"`
+	DisplayProfileUpdatedAt time.Time `json:"display_profile_updated_at"`
 }
