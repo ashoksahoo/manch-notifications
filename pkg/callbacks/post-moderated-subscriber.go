@@ -91,6 +91,7 @@ func PostModeratedSubscriberCB(subj, reply string, p *subscribers.Post) {
 		ActionType:      "post",
 		Purpose:         "user.blocked",
 		Entities:        entities,
+		PushType:        "manch:D",
 		NUUID:           "",
 	})
 

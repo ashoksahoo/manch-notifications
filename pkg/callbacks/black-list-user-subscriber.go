@@ -1,8 +1,8 @@
 package callbacks
 
 import (
-	"notification-service/pkg/constants"
 	"fmt"
+	"notification-service/pkg/constants"
 	"notification-service/pkg/firebase"
 	"notification-service/pkg/mongo"
 	"notification-service/pkg/subscribers"
@@ -32,6 +32,7 @@ func BlackListUserSubscriberCB(subj, reply string, blacklist *subscribers.BlackL
 		ActionType:      "profile",
 		Purpose:         constants.NotificationPurpose["USER_BLOCKED"],
 		Entities:        entities,
+		PushType:        "manch:D",
 		NUUID:           "",
 	})
 
