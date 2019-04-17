@@ -123,13 +123,13 @@ func UserStreakCB(subj, reply string, userStreak *subscribers.UserStreak) {
 
 		if err == nil {
 			// update post and comment of this profile
-			mongo.UpdatePostsByQuery(bson.M{
+			mongo.UpdateAllPostsByQuery(bson.M{
 				"created.profile_id": profile.Id,
 			}, bson.M{
 				"$set": bson.M{"created.current_badge": badge},
 			})
 
-			mongo.UpdateCommentsByQuery(bson.M{
+			mongo.UpdateAllCommentsByQuery(bson.M{
 				"created.profile_id": profile.Id,
 			}, bson.M{
 				"$set": bson.M{"created.current_badge": badge},

@@ -147,7 +147,7 @@ func RemoveCommentScheduleByPostId(pId bson.ObjectId) {
 	}
 }
 
-func UpdateCommentsByQuery(query, update bson.M) {
+func UpdateAllCommentsByQuery(query, update bson.M) {
 	s := session.Clone()
 	defer s.Close()
 	C := s.DB("manch").C(COMMENTS_MODEL)
@@ -156,5 +156,33 @@ func UpdateCommentsByQuery(query, update bson.M) {
 		fmt.Println("error on updating comment", err)
 	} else {
 		fmt.Println("comment update info", info)
+	}
+}
+
+func UpdateOneCommentsByQuery(query, update bson.M) {
+	s := session.Clone()
+	defer s.Close()
+	C := s.DB("manch").C(COMMENTS_MODEL)
+	err := C.Update(query, update)
+	if err != nil {
+		fmt.Println("error on updating comment", err)
+	} else {
+		fmt.Println("comment updated")
+	}
+}
+
+func UpdateCommentByItr(query, update bson.M) {
+	s := session.Clone()
+	defer s.Close()
+	C := s.DB("manch").C(POSTS_MODEL)
+	itr := C.Find(query).Iter()
+	comment := CommentModel{}
+	for itr.Next(&comment) {
+		fmt.Println("going to update", comment.Id)
+		UpdateOneCommentsByQuery(query, update)
+		fmt.Println("update post", comment.Id)
+	}
+	if err := itr.Close(); err != nil {
+		fmt.Println("error while updating bulk comment")
 	}
 }

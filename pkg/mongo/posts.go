@@ -39,7 +39,7 @@ type PostModel struct {
 	Language       string          `json:"language" bson:"language"`
 	SourcedBy      string          `json:"sourced_by" bson:"sourced_by"`
 	RepostedPostId bson.ObjectId   `json:"reposted_post_id" bson:"reposted_post_id"`
-	RepostCount int `json:"no_of_reposts" bson:"no_of_reposts"`
+	RepostCount    int             `json:"no_of_reposts" bson:"no_of_reposts"`
 }
 
 func GetPost(Id bson.ObjectId) PostModel {
@@ -91,7 +91,7 @@ func GetPostCountByQuery(query bson.M) int {
 	return n
 }
 
-func UpdatePostsByQuery(query, update bson.M)  {
+func UpdateAllPostsByQuery(query, update bson.M) {
 	s := session.Clone()
 	defer s.Close()
 	P := s.DB("manch").C(POSTS_MODEL)
@@ -100,5 +100,33 @@ func UpdatePostsByQuery(query, update bson.M)  {
 		fmt.Println("error on updating post", err)
 	} else {
 		fmt.Println("post update info", info)
+	}
+}
+
+func UpdateOnePostsByQuery(query, update bson.M) {
+	s := session.Clone()
+	defer s.Close()
+	P := s.DB("manch").C(POSTS_MODEL)
+	err := P.Update(query, update)
+	if err != nil {
+		fmt.Println("error on updating post", err)
+	} else {
+		fmt.Println("updated post")
+	}
+}
+
+func UpdatePostByItr(query, update bson.M) {
+	s := session.Clone()
+	defer s.Close()
+	P := s.DB("manch").C(POSTS_MODEL)
+	itr := P.Find(query).Iter()
+	post := PostModel{}
+	for itr.Next(&post) {
+		fmt.Println("going to update", post.Id)
+		UpdateOnePostsByQuery(query, update)
+		fmt.Println("update post", post.Id)
+	}
+	if err := itr.Close(); err != nil {
+		fmt.Println("error while updating bulk post")
 	}
 }
