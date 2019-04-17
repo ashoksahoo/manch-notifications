@@ -56,6 +56,7 @@ func CommentSubscriberCB(subj, reply string, c *subscribers.Comment) {
 			ActionType:      "comment",
 			Purpose:         constants.NotificationPurpose["USER_REVIEW"],
 			Entities:        entities,
+			PushType:        "manch:D",
 		})
 
 		tokens := mongo.GetTokensByProfiles([]bson.ObjectId{commentCreator.Id})
