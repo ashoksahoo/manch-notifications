@@ -23,9 +23,11 @@ func ProfileModifiedCB(subj, reply string, profile *subscribers.Profile) {
 	}
 	if isUpdated {
 		// update post
-		mongo.UpdatePostByItr(query, update)
+		mongo.UpdatePostByItr(query, bson.M{"$set": update})
+		fmt.Println("updated post now update comments")
 		// update comment
-		mongo.UpdateCommentByItr(query, update)
+		mongo.UpdateCommentByItr(query, bson.M{"$set": update})
+		fmt.Println("updated comments as well")
 	}
 
 	fmt.Printf("Processed a New User on subject %s! with User Id %s\n", subj, profile.Id)
