@@ -125,6 +125,8 @@ func CreateNotification(notification NotificationModel) NotificationModel {
 
 	if notification.PushType == "" {
 		n.PushType = "manch:N"
+	} else {
+		n.PushType = notification.PushType
 	}
 
 	// get participants avatar
