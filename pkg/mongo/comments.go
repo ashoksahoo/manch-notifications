@@ -174,13 +174,11 @@ func UpdateOneCommentsByQuery(query, update bson.M) {
 func UpdateCommentByItr(query, update bson.M) {
 	s := session.Clone()
 	defer s.Close()
-	C := s.DB("manch").C(POSTS_MODEL)
+	C := s.DB("manch").C(COMMENTS_MODEL)
 	itr := C.Find(query).Iter()
 	comment := CommentModel{}
 	for itr.Next(&comment) {
-		fmt.Println("going to update", comment.Id)
-		UpdateOneCommentsByQuery(query, update)
-		fmt.Println("update post", comment.Id)
+		UpdateOneCommentsByQuery(bson.M{"_id": comment.Id}, update)
 	}
 	if err := itr.Close(); err != nil {
 		fmt.Println("error while updating bulk comment")

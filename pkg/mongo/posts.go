@@ -122,9 +122,7 @@ func UpdatePostByItr(query, update bson.M) {
 	itr := P.Find(query).Iter()
 	post := PostModel{}
 	for itr.Next(&post) {
-		fmt.Println("going to update", post.Id)
-		UpdateOnePostsByQuery(query, update)
-		fmt.Println("update post", post.Id)
+		UpdateOnePostsByQuery(bson.M{"_id": post.Id}, update)
 	}
 	if err := itr.Close(); err != nil {
 		fmt.Println("error while updating bulk post")

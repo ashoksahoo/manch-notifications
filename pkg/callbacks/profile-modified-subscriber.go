@@ -15,19 +15,17 @@ func ProfileModifiedCB(subj, reply string, profile *subscribers.Profile) {
 	query := bson.M{"created.profile_id": bson.ObjectIdHex(profile.Id)}
 	if profile.Name != "" {
 		isUpdated = true
-		update["name"] = profile.Name
+		update["create.name"] = profile.Name
 	}
 	if profile.Avatar != "" {
 		isUpdated = true
-		update["avatar"] = profile.Avatar
+		update["created.avatar"] = profile.Avatar
 	}
 	if isUpdated {
 		// update post
 		mongo.UpdatePostByItr(query, bson.M{"$set": update})
-		fmt.Println("updated post now update comments")
 		// update comment
 		mongo.UpdateCommentByItr(query, bson.M{"$set": update})
-		fmt.Println("updated comments as well")
 	}
 
 	fmt.Printf("Processed a New User on subject %s! with User Id %s\n", subj, profile.Id)
