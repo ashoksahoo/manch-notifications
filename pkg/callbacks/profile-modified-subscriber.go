@@ -17,7 +17,7 @@ func ProfileModifiedCB(subj, reply string, updatedProfile *subscribers.Profile) 
 	profile := mongo.GetProfileById(bson.ObjectIdHex(updatedProfile.Id))
 	if updatedProfile.Name != "" {
 		isUpdated = true
-		update["create.name"] = updatedProfile.Name
+		update["created.name"] = updatedProfile.Name
 	}
 	if updatedProfile.Avatar != "" {
 		isUpdated = true
