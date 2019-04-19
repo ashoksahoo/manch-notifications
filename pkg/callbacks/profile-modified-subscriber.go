@@ -1,10 +1,10 @@
 package callbacks
 
 import (
-	"time"
 	"fmt"
 	"notification-service/pkg/mongo"
 	"notification-service/pkg/subscribers"
+	"time"
 
 	"github.com/globalsign/mgo/bson"
 )
@@ -23,7 +23,9 @@ func ProfileModifiedCB(subj, reply string, updatedProfile *subscribers.Profile) 
 		isUpdated = true
 		update["created.avatar"] = updatedProfile.Avatar
 	}
-	if isUpdated && updatedProfile.DisplayProfileUpdatedAt == profile.DisplayProfileUpdatedAt{
+	fmt.Println("requested displayprofilechange", updatedProfile.DisplayProfileChangedUpdatedAt)
+	fmt.Println("requested displayprofilechange", profile.DisplayProfileChangedUpdatedAt)
+	if isUpdated && updatedProfile.DisplayProfileChangedUpdatedAt == profile.DisplayProfileChangedUpdatedAt {
 		// update post
 		mongo.UpdatePostByItr(query, bson.M{"$set": update})
 		// update comment
@@ -32,8 +34,8 @@ func ProfileModifiedCB(subj, reply string, updatedProfile *subscribers.Profile) 
 		mongo.UpdateProfileById(profile.Id,
 			bson.M{
 				"$set": bson.M{
-					"profiles.$.display_profile_changes": false,
-					"profiles.$.display_profile_updated_at": time.Now(),
+					"profiles.$.display_profile_changed_updated":    false,
+					"profiles.$.display_profile_changed_updated_at": time.Now(),
 				},
 			})
 	}

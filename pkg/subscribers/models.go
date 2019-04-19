@@ -134,9 +134,9 @@ type UserStreak struct {
 }
 
 type Profile struct {
-	Id     string `json:"_id"`
-	Name   string `json:"name"`
-	Avatar string `json:"avatar"`
-	DisplayProfileChanges bool `json:"display_profile_changes"`
-	DisplayProfileUpdatedAt time.Time `json:"display_profile_updated_at"`
+	Id                             string    `json:"_id"`
+	Name                           string    `json:"name"`
+	Avatar                         string    `json:"avatar"`
+	DisplayProfileChangedUpdated   bool      `json:"display_profile_changed_updated"`
+	DisplayProfileChangedUpdatedAt time.Time `json:"display_profile_changed_updated_at"`
 }

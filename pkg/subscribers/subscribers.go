@@ -64,7 +64,7 @@ func UserCreatedSubscriber(callback func(subj, reply string, m *User)) {
 	go c.QueueSubscribe(subject("user.created"), queue(), callback)
 }
 
-func ProfileModifiedSubscriber(callback func(subj, reply string, m *Profile))  {
+func ProfileModifiedSubscriber(callback func(subj, reply string, m *Profile)) {
 	go c.QueueSubscribe(subject("profile.modified"), queue(), callback)
 }
 
