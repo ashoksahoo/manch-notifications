@@ -108,6 +108,10 @@ func MileStoneSubscriber(callback func(subj, reply string, m *MileStone)) {
 	go c.QueueSubscribe(subject("new.milestone"), queue(), callback)
 }
 
+func CommunitySubscriber(callback func(subj, reply string, m *Community)) {
+	go c.QueueSubscribe(subject("new.community"), queue(), callback)
+}
+
 func CommunityFollowersUpdateSubscriber(callback func(subj, reply string, m *Community)) {
 	go c.QueueSubscribe(subject("community.followers.update"), queue(), callback)
 }
