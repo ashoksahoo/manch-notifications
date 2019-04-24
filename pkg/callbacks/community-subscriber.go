@@ -2,9 +2,10 @@ package callbacks
 
 import (
 	"fmt"
-	"notification-service/pkg/subscribers"
-	"time"
 	"notification-service/pkg/mongo"
+	"notification-service/pkg/subscribers"
+	"notification-service/pkg/i18n"
+	"time"
 )
 
 func CommunitySubscriberCB(subj, reply string, C *subscribers.Community) {
@@ -19,7 +20,12 @@ func CommunitySubscriberCB(subj, reply string, C *subscribers.Community) {
 	for _, communityAdmin := range community.Admins {
 		user := mongo.GetUserByProfileId(communityAdmin.ProfileId.Hex())
 		scheduleTime := time.Now()
-		whatsappSchedule := mongo.CreateWhatsAppSchedule(user, scheduleTime)
+		data := i18n.DataModel{
+			Community: community.Name,
+		}
+		templateName := "new_manch_whatsapp"
+		message := i18n.GetString(user.Profiles[0].Language, templateName, data)
+		whatsappSchedule := mongo.CreateWhatsAppSchedule(user, scheduleTime, message)
 		fmt.Printf("whatsapp schedule \n%+v\n\n", whatsappSchedule)
 		mongo.AddWhatsAppSchedule(whatsappSchedule)
 	}
