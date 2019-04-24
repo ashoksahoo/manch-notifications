@@ -153,6 +153,8 @@ var Strings = map[string]map[string]string{
 		"streak_missing_text": "इसे मिस न करें !!",
 		"streak_missing_image": "https://s3.ap-south-1.amazonaws.com/manch-dev/notifications/Streak_Miss_Hindi.jpg",
 
+		"post_on_manch_one": "{{.Name}} ने आपके मंच {{.Community}} पर पोस्ट किया है 😃",
+		"post_on_manch_multi": "{{.Name}} और {{.Count}} अन्य लोगों ने आपके मंच {{.Community}} पर पोस्ट किया है 😃",
 	},
 
 	"te": {
@@ -253,6 +255,8 @@ var Strings = map[string]map[string]string{
 		"streak_missing_text": "లో ఉన్నారు మిస్ చేయకండి",
 		"streak_missing_image": "https://s3.ap-south-1.amazonaws.com/manch-dev/notifications/Streak_Miss_Telugu.jpg",
 
+		"post_on_manch_one": "{{.Name}} మీ మంచ్ లో పోస్ట్ చేసారు. {{.Community}}",
+		"post_on_manch_multi": "{{.Name}} మరియు {{.Count}} ఇతరులు మీ మంచ్ లో పోస్ట్ చేసారు. {{.Community}}",
 	},
 }
 
@@ -416,6 +420,9 @@ var HtmlStrings = map[string]map[string]string{
 		"repost_one":       "<b>{{.Name}}</b> ने आपकी पोस्ट \"{{.Post}}\" को Repost किया है",
 		"streak_milestone": "Congratulations <b>{{.Name}}</b>, you have reached <b>{{.Count}}</b> 🎉🎉",
 		"streak_missing_title": "<b>{{.Name}}</b> आप अभी <b>{{.Count}}</b> Day Streak पर हैं",
+		"post_on_manch_one": "<b>{{.Name}}</b> ने आपके मंच <b>{{.Community}}</b> पर पोस्ट किया है 😃",
+		"post_on_manch_multi": "<b>{{.Name}}</b> और <b>{{.Count}}</b> अन्य लोगों ने आपके मंच <b>{{.Community}}</b> पर पोस्ट किया है 😃",
+
 	},
 
 	"te": {
@@ -500,5 +507,7 @@ var HtmlStrings = map[string]map[string]string{
 		"repost_one":                 "<b>{{.Name}}</b> మీ పోస్ట్ \"{{.Post}}\" ని రిపోస్ట్ చేసారు.",
 		"streak_milestone":           "Congratulations <b>{{.Name}}</b>, you have reached <b>{{.Count}}</b> 🎉🎉",
 		"streak_missing_title": "<b>{{.Name}}</b>, మీరు ప్రస్తుతం <b>{{.Count}}</b>",
+		"post_on_manch_one": "<b>{{.Name}}</b> మీ మంచ్ లో పోస్ట్ చేసారు. <b>{{.Community}}</b>",
+		"post_on_manch_multi": "<b>{{.Name}}</b> మరియు <b>{{.Count}}</b> ఇతరులు మీ మంచ్ లో పోస్ట్ చేసారు. <b>{{.Community}}</b>",
 	},
 }

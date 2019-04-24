@@ -1,6 +1,7 @@
 package mongo
 
 import (
+	"time"
 	"fmt"
 	"notification-service/pkg/constants"
 
@@ -101,4 +102,17 @@ func UpdatePostsByQuery(query, update bson.M)  {
 	} else {
 		fmt.Println("post update info", info)
 	}
+}
+
+
+func GetUniquePostCreatorOnManch(communityId bson.ObjectId, adminIds []bson.ObjectId, startAt time.Time) int {
+	s := session.Clone()
+	defer s.Close()
+	P := s.DB("manch").C(POSTS_MODEL)
+	var result []bson.ObjectId
+	fmt.Println("communityId", communityId)
+	fmt.Printf("admin ids \n%+v\n", adminIds)
+	fmt.Println("start AT", startAt)
+	P.Find(bson.M{"community_ids": communityId, "createdAt": bson.M{"$gte": startAt}, "created.profile_id": bson.M{"$nin": adminIds}}).Distinct("created.profile_id", &result)
+	return len(result)
 }

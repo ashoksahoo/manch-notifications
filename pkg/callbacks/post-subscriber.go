@@ -28,6 +28,91 @@ func PostSubscriberCB(subj, reply string, p *subscribers.Post) {
 	// update user score for new post
 	_, post := mongo.GetPostById(p.Id)
 
+	// send notification to manch owner
+	community := mongo.GetCommunityById(post.CommunityIds[0].Hex())
+
+	if community.Type == "m_manch" {
+		adminIds := []bson.ObjectId{}
+		for _, admin := range community.Admins {
+			adminIds = append(adminIds, admin.ProfileId)
+		}
+
+		loc, _ := time.LoadLocation("Asia/Kolkata")
+		startAt := utils.GetStartOfDay(time.Now().In(loc))
+
+		count := mongo.GetUniquePostCreatorOnManch(community.Id, adminIds, startAt)
+
+		if count == 1 || count == 5 || count == 25 {
+			// send notification to all admins
+			var msgStr string
+			var templateName string
+			data := i18n.DataModel{
+				Name:  post.Created.Name,
+				Community: community.Name,
+				Count: count - 1,
+			}
+
+			templateName = "post_on_manch_one"
+			if (count > 1) {
+				templateName = "post_on_manch_multi"
+			}
+
+			msgStr = i18n.GetString(community.Language, templateName, data)
+			htmlMsgStr := i18n.GetHtmlString(community.Language, templateName, data)
+			title := i18n.GetAppTitle(community.Language)
+
+			messageMeta := mongo.MessageMeta{
+				TemplateName: templateName,
+				Template:     i18n.Strings[community.Language][templateName],
+				Data:         data,
+			}
+
+			deepLink := "manch://posts/" + post.Id.Hex()
+
+			entities := []mongo.Entity{
+				{
+					EntityId:   post.Id,
+					EntityType: "post",
+				},
+			}
+			for _, adminProfile := range community.Admins {
+				notification := mongo.CreateNotification(mongo.NotificationModel{
+					Receiver:        adminProfile.ProfileId,
+					Identifier:      adminProfile.ProfileId.Hex() + "post_on_manch",
+					Participants:    []bson.ObjectId{post.Created.ProfileId},
+					DisplayTemplate: constants.NotificationTemplate["TRANSACTIONAL"],
+					EntityGroupId:   post.Id.Hex(),
+					ActionId:        post.Id,
+					ActionType:      "post",
+					Purpose:         constants.NotificationPurpose["POST_ON_MANCH"],
+					Entities:        entities,
+					Message:         msgStr,
+					MessageMeta:     messageMeta,
+					MessageHtml:     htmlMsgStr,
+					DeepLink:        deepLink,
+				})
+
+				msg := firebase.ManchMessage{
+					Title:    title,
+					Message:  msgStr,
+					DeepLink: deepLink,
+					Id:       notification.NId,
+				}
+		
+				fmt.Printf("\nGCM Message %+v\n", msg)
+				tokens := mongo.GetTokensByProfiles([]bson.ObjectId{adminProfile.ProfileId})
+				if tokens != nil {
+					for _, token := range tokens {
+						go firebase.SendMessage(msg, token.Token, notification)
+					}
+				} else {
+					fmt.Printf("No token")
+				}
+			}
+		}
+	}
+
+
 	// send notification for reposted post creator
 	if post.RepostedPostId.Hex() != "" {
 		_, repostedPost := mongo.GetPostById(post.RepostedPostId.Hex())
