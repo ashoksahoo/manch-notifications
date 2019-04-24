@@ -2,9 +2,9 @@ package callbacks
 
 import (
 	"fmt"
+	"notification-service/pkg/i18n"
 	"notification-service/pkg/mongo"
 	"notification-service/pkg/subscribers"
-	"notification-service/pkg/i18n"
 	"time"
 )
 
