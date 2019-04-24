@@ -117,3 +117,4 @@ func CreateCommunityStats(communityStats CommunityStatsModel) {
 		fmt.Println("created community stats successfully", communityStats.Id)
 	}
 }
+

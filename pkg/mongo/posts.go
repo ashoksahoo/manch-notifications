@@ -3,6 +3,7 @@ package mongo
 import (
 	"fmt"
 	"notification-service/pkg/constants"
+	"time"
 
 	"github.com/globalsign/mgo/bson"
 )
@@ -39,7 +40,7 @@ type PostModel struct {
 	Language       string          `json:"language" bson:"language"`
 	SourcedBy      string          `json:"sourced_by" bson:"sourced_by"`
 	RepostedPostId bson.ObjectId   `json:"reposted_post_id" bson:"reposted_post_id"`
-	RepostCount int `json:"no_of_reposts" bson:"no_of_reposts"`
+	RepostCount    int             `json:"no_of_reposts" bson:"no_of_reposts"`
 }
 
 func GetPost(Id bson.ObjectId) PostModel {
@@ -91,7 +92,7 @@ func GetPostCountByQuery(query bson.M) int {
 	return n
 }
 
-func UpdatePostsByQuery(query, update bson.M)  {
+func UpdatePostsByQuery(query, update bson.M) {
 	s := session.Clone()
 	defer s.Close()
 	P := s.DB("manch").C(POSTS_MODEL)
@@ -101,4 +102,16 @@ func UpdatePostsByQuery(query, update bson.M)  {
 	} else {
 		fmt.Println("post update info", info)
 	}
+}
+
+func GetUniquePostCreatorOnManch(communityId bson.ObjectId, adminIds []bson.ObjectId, startAt time.Time) int {
+	s := session.Clone()
+	defer s.Close()
+	P := s.DB("manch").C(POSTS_MODEL)
+	var result []bson.ObjectId
+	fmt.Println("communityId", communityId)
+	fmt.Printf("admin ids \n%+v\n", adminIds)
+	fmt.Println("start AT", startAt)
+	P.Find(bson.M{"community_ids": communityId, "createdAt": bson.M{"$gte": startAt}, "created.profile_id": bson.M{"$nin": adminIds}}).Distinct("created.profile_id", &result)
+	return len(result)
 }
