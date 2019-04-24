@@ -22,7 +22,7 @@ func UserCreatedSubscriberCB(subj, reply string, u *subscribers.User) {
 	}
 	templateName := "welcome_message"
 	message := i18n.GetString(user.Profiles[0].Language, templateName, data)
-	whatsappSchedule := mongo.CreateWhatsAppSchedule(user, scheduleTime, message)
+	whatsappSchedule := mongo.CreateWhatsAppSchedule(user, scheduleTime, message, "TEXT")
 	fmt.Printf("whatsapp schedule \n%+v\n\n", whatsappSchedule)
 	mongo.AddWhatsAppSchedule(whatsappSchedule)
 

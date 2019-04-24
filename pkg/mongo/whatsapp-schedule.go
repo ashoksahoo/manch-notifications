@@ -17,6 +17,7 @@ type WhatsAppMessageBody struct {
 	MessageType     string `json:"messsageType" bson:"messsageType"`
 	Number          string `json:"number" bson:"number"`
 	Message         string `json:"message bson:"message"`
+	MessageCaption  string `json:"image_caption"`
 }
 
 type WhatsappSchedule struct {
@@ -28,7 +29,7 @@ type WhatsappSchedule struct {
 	UpdatedAt   time.Time           `json:"updatedAt" bson:"updatedAt"`
 }
 
-func CreateWhatsAppSchedule(user UserModel, scheduleTime time.Time, message string) WhatsappSchedule {
+func CreateWhatsAppSchedule(user UserModel, scheduleTime time.Time, message, messageType string) WhatsappSchedule {
 
 	currentTime := time.Now()
 	profile := user.Profiles[0]
@@ -49,10 +50,11 @@ func CreateWhatsAppSchedule(user UserModel, scheduleTime time.Time, message stri
 
 	messageBody := WhatsAppMessageBody{
 		MessagePlatform: "WHATSAPP",
-		MessageType:     "TEXT",
+		MessageType:     messageType,
 		Number:          "91" + user.Phone,
 		Message:         message,
 	}
+
 	return WhatsappSchedule{
 		Id:          bson.NewObjectId(),
 		ProfileId:   profile.Id,
