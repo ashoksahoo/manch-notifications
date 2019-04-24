@@ -150,10 +150,10 @@ var Strings = map[string]map[string]string{
 		"100_coin_referral_image": "https://s3.ap-south-1.amazonaws.com/manch-dev/notifications/Referral_100_Coins.jpg",
 
 		"streak_missing_title": "{{.Name}} आप अभी {{.Count}} Day Streak पर हैं",
-		"streak_missing_text": "इसे मिस न करें !!",
+		"streak_missing_text":  "इसे मिस न करें !!",
 		"streak_missing_image": "https://s3.ap-south-1.amazonaws.com/manch-dev/notifications/Streak_Miss_Hindi.jpg",
 
-		"post_on_manch_one": "{{.Name}} ने आपके मंच {{.Community}} पर पोस्ट किया है 😃",
+		"post_on_manch_one":   "{{.Name}} ने आपके मंच {{.Community}} पर पोस्ट किया है 😃",
 		"post_on_manch_multi": "{{.Name}} और {{.Count}} अन्य लोगों ने आपके मंच {{.Community}} पर पोस्ट किया है 😃",
 	},
 
@@ -252,10 +252,10 @@ var Strings = map[string]map[string]string{
 		"coin_milestone_image_25000": "https://s3.ap-south-1.amazonaws.com/manch-dev/notifications/badges/manch_creator.jpg",
 
 		"streak_missing_title": "{{.Name}}, మీరు ప్రస్తుతం {{.Count}}",
-		"streak_missing_text": "లో ఉన్నారు మిస్ చేయకండి",
+		"streak_missing_text":  "లో ఉన్నారు మిస్ చేయకండి",
 		"streak_missing_image": "https://s3.ap-south-1.amazonaws.com/manch-dev/notifications/Streak_Miss_Telugu.jpg",
 
-		"post_on_manch_one": "{{.Name}} మీ మంచ్ లో పోస్ట్ చేసారు. {{.Community}}",
+		"post_on_manch_one":   "{{.Name}} మీ మంచ్ లో పోస్ట్ చేసారు. {{.Community}}",
 		"post_on_manch_multi": "{{.Name}} మరియు {{.Count}} ఇతరులు మీ మంచ్ లో పోస్ట్ చేసారు. {{.Community}}",
 	},
 }
@@ -414,15 +414,14 @@ var HtmlStrings = map[string]map[string]string{
 		"manch_activation_text":      "पोस्ट करें और अपने मंच को ट्रेंडिंग बनाएं 🤩",
 		"manch_100_members":          "शतक के लिए शुभकामना , <b>100</b> सदस्य अब आपके मंच से जुड़ चुके हैं  ⚡⚡",
 
-		"repost_multi":     "<b>{{.Name}}</b> और <b>{{.Count}}</b> लोगों ने आपकी पोस्ट \"{{.Post}}\" को Repost किया है",
-		"repost_three":     "<b>{{.Name}}</b>, <b>{{.Name2}}</b> और <b>{{.Name3}}</b> ने आपकी पोस्ट \"{{.Post}}\" को Repost किया है",
-		"repost_two":       "<b>{{.Name}}</b> और <b>{{.Name2}}</b> ने आपकी पोस्ट \"{{.Post}}\" को Repost किया है",
-		"repost_one":       "<b>{{.Name}}</b> ने आपकी पोस्ट \"{{.Post}}\" को Repost किया है",
-		"streak_milestone": "Congratulations <b>{{.Name}}</b>, you have reached <b>{{.Count}}</b> 🎉🎉",
+		"repost_multi":         "<b>{{.Name}}</b> और <b>{{.Count}}</b> लोगों ने आपकी पोस्ट \"{{.Post}}\" को Repost किया है",
+		"repost_three":         "<b>{{.Name}}</b>, <b>{{.Name2}}</b> और <b>{{.Name3}}</b> ने आपकी पोस्ट \"{{.Post}}\" को Repost किया है",
+		"repost_two":           "<b>{{.Name}}</b> और <b>{{.Name2}}</b> ने आपकी पोस्ट \"{{.Post}}\" को Repost किया है",
+		"repost_one":           "<b>{{.Name}}</b> ने आपकी पोस्ट \"{{.Post}}\" को Repost किया है",
+		"streak_milestone":     "Congratulations <b>{{.Name}}</b>, you have reached <b>{{.Count}}</b> 🎉🎉",
 		"streak_missing_title": "<b>{{.Name}}</b> आप अभी <b>{{.Count}}</b> Day Streak पर हैं",
-		"post_on_manch_one": "<b>{{.Name}}</b> ने आपके मंच <b>{{.Community}}</b> पर पोस्ट किया है 😃",
-		"post_on_manch_multi": "<b>{{.Name}}</b> और <b>{{.Count}}</b> अन्य लोगों ने आपके मंच <b>{{.Community}}</b> पर पोस्ट किया है 😃",
-
+		"post_on_manch_one":    "<b>{{.Name}}</b> ने आपके मंच <b>{{.Community}}</b> पर पोस्ट किया है 😃",
+		"post_on_manch_multi":  "<b>{{.Name}}</b> और <b>{{.Count}}</b> अन्य लोगों ने आपके मंच <b>{{.Community}}</b> पर पोस्ट किया है 😃",
 	},
 
 	"te": {
@@ -506,8 +505,8 @@ var HtmlStrings = map[string]map[string]string{
 		"repost_two":                 "<b>{{.Name}}</b> & <b>{{.Name2}}</b> మీ పోస్ట్ \"{{.Post}}\" ని రిపోస్ట్ చేసారు.",
 		"repost_one":                 "<b>{{.Name}}</b> మీ పోస్ట్ \"{{.Post}}\" ని రిపోస్ట్ చేసారు.",
 		"streak_milestone":           "Congratulations <b>{{.Name}}</b>, you have reached <b>{{.Count}}</b> 🎉🎉",
-		"streak_missing_title": "<b>{{.Name}}</b>, మీరు ప్రస్తుతం <b>{{.Count}}</b>",
-		"post_on_manch_one": "<b>{{.Name}}</b> మీ మంచ్ లో పోస్ట్ చేసారు. <b>{{.Community}}</b>",
-		"post_on_manch_multi": "<b>{{.Name}}</b> మరియు <b>{{.Count}}</b> ఇతరులు మీ మంచ్ లో పోస్ట్ చేసారు. <b>{{.Community}}</b>",
+		"streak_missing_title":       "<b>{{.Name}}</b>, మీరు ప్రస్తుతం <b>{{.Count}}</b>",
+		"post_on_manch_one":          "<b>{{.Name}}</b> మీ మంచ్ లో పోస్ట్ చేసారు. <b>{{.Community}}</b>",
+		"post_on_manch_multi":        "<b>{{.Name}}</b> మరియు <b>{{.Count}}</b> ఇతరులు మీ మంచ్ లో పోస్ట్ చేసారు. <b>{{.Community}}</b>",
 	},
 }
