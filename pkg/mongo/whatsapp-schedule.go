@@ -14,10 +14,10 @@ var (
 )
 
 type WhatsAppMessageBody struct {
-	MessagePlatform string        `json:"messagePlatform" bson:"messagePlatform"`
-	MessageType     string        `json:"messsageType" bson:"messsageType"`
-	Number          string        `json:"number" bson:"number"`
-	Message         string        `json:"message bson:"message"`
+	MessagePlatform string `json:"messagePlatform" bson:"messagePlatform"`
+	MessageType     string `json:"messsageType" bson:"messsageType"`
+	Number          string `json:"number" bson:"number"`
+	Message         string `json:"message bson:"message"`
 }
 
 type WhatsappSchedule struct {
