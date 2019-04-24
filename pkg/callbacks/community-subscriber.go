@@ -28,6 +28,14 @@ func CommunitySubscriberCB(subj, reply string, C *subscribers.Community) {
 		whatsappSchedule := mongo.CreateWhatsAppSchedule(user, scheduleTime, message)
 		fmt.Printf("whatsapp schedule \n%+v\n\n", whatsappSchedule)
 		mongo.AddWhatsAppSchedule(whatsappSchedule)
+
+		scheduleTime = time.Now().Add(30 * time.Minute)
+
+		templateName = "manch_creator_competition"
+		message = i18n.GetString(user.Profiles[0].Language, templateName, data)
+		whatsappSchedule = mongo.CreateWhatsAppSchedule(user, scheduleTime, message)
+		fmt.Printf("whatsapp schedule \n%+v\n\n", whatsappSchedule)
+		mongo.AddWhatsAppSchedule(whatsappSchedule)
 	}
 
 	fmt.Printf("Processed a New Community on subject %s! with Id %s\n", subj, C.Id)
