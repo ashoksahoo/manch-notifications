@@ -25,7 +25,7 @@ func CommunitySubscriberCB(subj, reply string, C *subscribers.Community) {
 		}
 		templateName := "new_manch_whatsapp"
 		message := i18n.GetString(user.Profiles[0].Language, templateName, data)
-		whatsappSchedule := mongo.CreateWhatsAppSchedule(user, scheduleTime, message)
+		whatsappSchedule := mongo.CreateWhatsAppSchedule(user, scheduleTime, message, "TEXT")
 		fmt.Printf("whatsapp schedule \n%+v\n\n", whatsappSchedule)
 		mongo.AddWhatsAppSchedule(whatsappSchedule)
 
@@ -33,7 +33,13 @@ func CommunitySubscriberCB(subj, reply string, C *subscribers.Community) {
 
 		templateName = "manch_creator_competition"
 		message = i18n.GetString(user.Profiles[0].Language, templateName, data)
-		whatsappSchedule = mongo.CreateWhatsAppSchedule(user, scheduleTime, message)
+		whatsappSchedule = mongo.CreateWhatsAppSchedule(user, scheduleTime, message, "TEXT")
+		fmt.Printf("whatsapp schedule \n%+v\n\n", whatsappSchedule)
+		mongo.AddWhatsAppSchedule(whatsappSchedule)
+
+		templateName = "manch_creator_competition_image"
+		message = i18n.GetString(user.Profiles[0].Language, templateName, data)
+		whatsappSchedule = mongo.CreateWhatsAppSchedule(user, scheduleTime, message, "IMAGE")
 		fmt.Printf("whatsapp schedule \n%+v\n\n", whatsappSchedule)
 		mongo.AddWhatsAppSchedule(whatsappSchedule)
 	}
