@@ -89,6 +89,8 @@ func CommentSubscriberCB(subj, reply string, c *subscribers.Comment) {
 		},
 	}
 
+	// create community stats
+	community := mongo.GetCommunityById(comment.Post.CommunityIds[0].Hex())
 	mongo.CreateCommunityStats(mongo.CommunityStatsModel{
 		CommunityId:   comment.Post.CommunityIds[0],
 		Action:        "comment",
@@ -97,6 +99,9 @@ func CommentSubscriberCB(subj, reply string, c *subscribers.Comment) {
 		ProfileId:     comment.Created.ProfileId,
 		CommentsCount: 1,
 		ActionSource:  comment.Post.SourcedBy,
+		CommunityCreatorType: community.Created.Type,
+		CreatorType: comment.Created.UserType,
+		ParticipatingEntityId: comment.Id,
 	})
 
 	// get replied on comment

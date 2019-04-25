@@ -49,13 +49,18 @@ func VotePostSubscriberCB(subj, reply string, v *subscribers.Vote) {
 
 	vote := post.GetVote(v.Id)
 
+	// create community stats
+	community := mongo.GetCommunityById(post.CommunityIds[0].Hex())
 	mongo.CreateCommunityStats(mongo.CommunityStatsModel{
-		CommunityId:  post.CommunityIds[0],
-		Action:       "vote",
-		EntityId:     vote.Id,
-		EntityType:   "vote",
-		ProfileId:    post.Created.ProfileId,
-		ActionSource: post.SourcedBy,
+		CommunityId:           post.CommunityIds[0],
+		Action:                "vote",
+		EntityId:              vote.Id,
+		EntityType:            "vote",
+		ProfileId:             post.Created.ProfileId,
+		ActionSource:          post.SourcedBy,
+		CommunityCreatorType:  community.Created.Type,
+		CreatorType:           vote.Created.UserType,
+		ParticipatingEntityId: vote.Id,
 	})
 
 	if vote.Created.ProfileId == post.Created.ProfileId {
