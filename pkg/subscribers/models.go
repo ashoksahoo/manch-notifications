@@ -138,5 +138,5 @@ type Profile struct {
 	Name                           string    `json:"name"`
 	Avatar                         string    `json:"avatar"`
 	DisplayProfileChangedUpdated   bool      `json:"display_profile_changed_updated"`
-	DisplayProfileChangedUpdatedAt time.Time `json:"display_profile_changed_updated_at"`
+	DisplayProfileChangedUpdatedAt time.Time `json:"display_profile_changed_at"`
 }
