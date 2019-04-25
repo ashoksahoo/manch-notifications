@@ -27,9 +27,9 @@ func ProfileModifiedCB(subj, reply string, updatedProfile *subscribers.Profile) 
 	fmt.Println("requested displayprofilechange", profile.DisplayProfileChangedUpdatedAt)
 	if isUpdated && updatedProfile.DisplayProfileChangedUpdatedAt == profile.DisplayProfileChangedUpdatedAt {
 		// update post
-		mongo.UpdatePostByItr(query, bson.M{"$set": update})
+		mongo.UpdateAllPostsByQuery(query, bson.M{"$set": update})
 		// update comment
-		mongo.UpdateCommentByItr(query, bson.M{"$set": update})
+		mongo.UpdateAllCommentsByQuery(query, bson.M{"$set": update})
 		// update profile
 		mongo.UpdateProfileById(profile.Id,
 			bson.M{
