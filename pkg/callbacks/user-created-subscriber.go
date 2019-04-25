@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"notification-service/pkg/mongo"
 	"notification-service/pkg/subscribers"
+	"notification-service/pkg/i18n"
 	"time"
 )
 
@@ -15,7 +16,13 @@ func UserCreatedSubscriberCB(subj, reply string, u *subscribers.User) {
 	// schedule welcome message
 	scheduleTime := time.Now().Add(time.Duration(10) * time.Minute)
 	userCoinScheduleTime := time.Now().Add(time.Duration(15) * time.Minute)
-	whatsappSchedule := mongo.CreateWhatsAppSchedule(user, scheduleTime)
+
+	data := i18n.DataModel{
+		Name: "",
+	}
+	templateName := "welcome_message"
+	message := i18n.GetString(user.Profiles[0].Language, templateName, data)
+	whatsappSchedule := mongo.CreateWhatsAppSchedule(user, scheduleTime, message, "TEXT")
 	fmt.Printf("whatsapp schedule \n%+v\n\n", whatsappSchedule)
 	mongo.AddWhatsAppSchedule(whatsappSchedule)
 

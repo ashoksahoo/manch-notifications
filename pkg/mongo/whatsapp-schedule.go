@@ -3,7 +3,6 @@ package mongo
 import (
 	"fmt"
 	"notification-service/pkg/constants"
-	"notification-service/pkg/i18n"
 	"time"
 
 	"github.com/globalsign/mgo/bson"
@@ -14,10 +13,11 @@ var (
 )
 
 type WhatsAppMessageBody struct {
-	MessagePlatform string        `json:"messagePlatform" bson:"messagePlatform"`
-	MessageType     string        `json:"messsageType" bson:"messsageType"`
-	Number          string        `json:"number" bson:"number"`
-	Message         string        `json:"message bson:"message"`
+	MessagePlatform string `json:"messagePlatform" bson:"messagePlatform"`
+	MessageType     string `json:"messsageType" bson:"messsageType"`
+	Number          string `json:"number" bson:"number"`
+	Message         string `json:"message bson:"message"`
+	MessageCaption  string `json:"image_caption"`
 }
 
 type WhatsappSchedule struct {
@@ -29,7 +29,7 @@ type WhatsappSchedule struct {
 	UpdatedAt   time.Time           `json:"updatedAt" bson:"updatedAt"`
 }
 
-func CreateWhatsAppSchedule(user UserModel, scheduleTime time.Time) WhatsappSchedule {
+func CreateWhatsAppSchedule(user UserModel, scheduleTime time.Time, message, messageType string) WhatsappSchedule {
 
 	currentTime := time.Now()
 	profile := user.Profiles[0]
@@ -47,16 +47,14 @@ func CreateWhatsAppSchedule(user UserModel, scheduleTime time.Time) WhatsappSche
 		Scheduletime: scheduleTime,
 		Created:      c,
 	}
-	data := i18n.DataModel{
-		Name: "",
-	}
-	message := i18n.GetString(profile.Language, "welcome_message", data)
+
 	messageBody := WhatsAppMessageBody{
 		MessagePlatform: "WHATSAPP",
-		MessageType:     "TEXT",
+		MessageType:     messageType,
 		Number:          "91" + user.Phone,
 		Message:         message,
 	}
+
 	return WhatsappSchedule{
 		Id:          bson.NewObjectId(),
 		ProfileId:   profile.Id,

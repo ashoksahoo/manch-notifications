@@ -3,6 +3,7 @@ package mongo
 import (
 	"fmt"
 	"notification-service/pkg/constants"
+	"time"
 
 	"github.com/globalsign/mgo/bson"
 )
@@ -115,16 +116,14 @@ func UpdateOnePostsByQuery(query, update bson.M) {
 	}
 }
 
-func UpdatePostByItr(query, update bson.M) {
+func GetUniquePostCreatorOnManch(communityId bson.ObjectId, adminIds []bson.ObjectId, startAt time.Time) int {
 	s := session.Clone()
 	defer s.Close()
 	P := s.DB("manch").C(POSTS_MODEL)
-	itr := P.Find(query).Iter()
-	post := PostModel{}
-	for itr.Next(&post) {
-		UpdateOnePostsByQuery(bson.M{"_id": post.Id}, update)
-	}
-	if err := itr.Close(); err != nil {
-		fmt.Println("error while updating bulk post")
-	}
+	var result []bson.ObjectId
+	fmt.Println("communityId", communityId)
+	fmt.Printf("admin ids \n%+v\n", adminIds)
+	fmt.Println("start AT", startAt)
+	P.Find(bson.M{"community_ids": communityId, "createdAt": bson.M{"$gte": startAt}, "created.profile_id": bson.M{"$nin": adminIds}}).Distinct("created.profile_id", &result)
+	return len(result)
 }

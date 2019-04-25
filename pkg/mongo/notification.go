@@ -63,6 +63,7 @@ type NotificationModel struct {
 	MessageHtml           string          `json:"message_html" bson:"message_html"`
 	PlaceHolderIcon       []string        `json:"place_holder_icons" bson:"place_holder_icons"`
 	PurposeIcon           PurposeIcon     `json:"purpose_icon" bson:"purpose_icon"`
+	PushType              string          `json:"push_type" bson:"push_type"`
 	NotificationUpdatedAt time.Time       `json:"notification_updated_at" bson:"notification_updated_at"`
 }
 
@@ -120,6 +121,12 @@ func CreateNotification(notification NotificationModel) NotificationModel {
 		UpdatedAt:             time.Now(),
 		Delivered:             false,
 		NotificationUpdatedAt: time.Now(),
+	}
+
+	if notification.PushType == "" {
+		n.PushType = "manch:N"
+	} else {
+		n.PushType = notification.PushType
 	}
 
 	// get participants avatar
