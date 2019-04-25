@@ -103,6 +103,9 @@ func main() {
 	// received a user streak missed event
 	subscribers.UserStreakMissingSubscriber(callbacks.UserSTreakMissingCB)
 
+	// received profile update
+	subscribers.ProfileModifiedSubscriber(callbacks.ProfileModifiedCB)
+
 	// received a new community
 	subscribers.CommunitySubscriber(callbacks.CommunitySubscriberCB)
 	// listen on http server 5000

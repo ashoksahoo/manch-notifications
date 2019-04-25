@@ -182,13 +182,13 @@ func MileStoneSubscriberCB(subj, reply string, m *subscribers.MileStone) {
 		err := mongo.UpdateUser(query, update)
 		if err == nil {
 			// update post and comment of this profile
-			mongo.UpdatePostsByQuery(bson.M{
+			mongo.UpdateAllPostsByQuery(bson.M{
 				"created.profile_id": profile.Id,
 			}, bson.M{
 				"$set": bson.M{"created.current_badge": badge},
 			})
 
-			mongo.UpdateCommentsByQuery(bson.M{
+			mongo.UpdateAllCommentsByQuery(bson.M{
 				"created.profile_id": profile.Id,
 			}, bson.M{
 				"$set": bson.M{"created.current_badge": badge},
@@ -279,13 +279,13 @@ func MileStoneSubscriberCB(subj, reply string, m *subscribers.MileStone) {
 		err := mongo.UpdateUser(query, update)
 		if err == nil {
 			// update post and comment of this profile
-			mongo.UpdatePostsByQuery(bson.M{
+			mongo.UpdateAllPostsByQuery(bson.M{
 				"created.profile_id": profile.Id,
 			}, bson.M{
 				"$set": bson.M{"created.current_badge": badge},
 			})
 
-			mongo.UpdateCommentsByQuery(bson.M{
+			mongo.UpdateAllCommentsByQuery(bson.M{
 				"created.profile_id": profile.Id,
 			}, bson.M{
 				"$set": bson.M{"created.current_badge": badge},
@@ -376,13 +376,13 @@ func MileStoneSubscriberCB(subj, reply string, m *subscribers.MileStone) {
 		err := mongo.UpdateUser(query, update)
 		if err == nil {
 			// update post and comment of this profile
-			mongo.UpdatePostsByQuery(bson.M{
+			mongo.UpdateAllPostsByQuery(bson.M{
 				"created.profile_id": profile.Id,
 			}, bson.M{
 				"$set": bson.M{"created.current_badge": badge},
 			})
 
-			mongo.UpdateCommentsByQuery(bson.M{
+			mongo.UpdateAllCommentsByQuery(bson.M{
 				"created.profile_id": profile.Id,
 			}, bson.M{
 				"$set": bson.M{"created.current_badge": badge},
