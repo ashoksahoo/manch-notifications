@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"notification-service/pkg/mongo"
 	"notification-service/pkg/subscribers"
-	"time"
 
 	"github.com/globalsign/mgo/bson"
 )
@@ -23,8 +22,7 @@ func ProfileModifiedCB(subj, reply string, updatedProfile *subscribers.Profile) 
 		isUpdated = true
 		update["created.avatar"] = updatedProfile.Avatar
 	}
-	fmt.Println("requested displayprofilechange", updatedProfile.DisplayProfileChangedUpdatedAt)
-	fmt.Println("requested displayprofilechange", profile.DisplayProfileChangedUpdatedAt)
+
 	if isUpdated && updatedProfile.DisplayProfileChangedUpdatedAt == profile.DisplayProfileChangedUpdatedAt {
 		// update post
 		mongo.UpdateAllPostsByQuery(query, bson.M{"$set": update})
@@ -34,8 +32,7 @@ func ProfileModifiedCB(subj, reply string, updatedProfile *subscribers.Profile) 
 		mongo.UpdateProfileById(profile.Id,
 			bson.M{
 				"$set": bson.M{
-					"profiles.$.display_profile_changed_updated":    false,
-					"profiles.$.display_profile_changed_at": time.Now(),
+					"profiles.$.display_profile_changed_updated": true,
 				},
 			})
 	}
