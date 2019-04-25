@@ -39,7 +39,7 @@ func UserFollowSubscriberCB(subj, reply string, uf *subscribers.Subscription) {
 				FollowersCount:        1,
 				CommunityCreatorType:  community.Created.Type,
 				CreatorType:           follower.Type,
-				ParticipatingEntityId: bson.ObjectIdHex(uf.Resource),
+				ParticipatingEntityId: bson.ObjectIdHex(uf.ProfileId),
 			})
 
 			// send join manch notification to admins for closed m-manch
