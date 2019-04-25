@@ -45,27 +45,31 @@ type CommunityModel struct {
 	Status       string            `json:"status" bson:"status"`
 	Visibility   string            `json:"visibility" bson:"visibility"`
 	Admins       []Actor           `json:"admins" bson:"admins"`
+	Created      Actor             `json:"created" bson:"created"`
 }
 
 type CommunityStatsModel struct {
-	Id             bson.ObjectId     `json:"_id,omitempty" bson:"_id,omitempty"`
-	CommunityId    bson.ObjectId     `json:"community_id" bson:"community_id"`
-	Type           string            `json:"type" bson:"type"`
-	Language       string            `json:"language" bson:"language"`
-	InterestId     bson.ObjectId     `json:"interest_id" bson:"interest_id"`
-	DirectParent   CommunityParent   `json:"direct_parent" bson:"direct_parent"`
-	Parents        []CommunityParent `json:"parents" bson:"parents"`
-	Action         string            `json:"action" bson:"action"`
-	EntityId       bson.ObjectId     `json:"entity_id" bson:"entity_id"`
-	EntityType     string            `json:"entity_type" bson:"entity_type"`
-	CreatedAt      time.Time         `json:"createdAt" bson:"createdAt"`
-	UpdatedAt      time.Time         `json:"updatedAt" bson:"updatedAt"`
-	ProfileId      bson.ObjectId     `json:"profile_id" bson:"profile_id"`
-	Score          float32           `json:"score" bson:"score"`
-	FollowersCount int               `json:"no_of_followers" bson:"no_of_followers"`
-	PostsCount     int               `json:"no_of_posts" bson:"no_of_posts"`
-	CommentsCount  int               `json:"no_of_comments" bson:"no_of_comments"`
-	ActionSource   string            `json:"action_source" bson:"action_source"`
+	Id                    bson.ObjectId     `json:"_id,omitempty" bson:"_id,omitempty"`
+	CommunityId           bson.ObjectId     `json:"community_id" bson:"community_id"`
+	Type                  string            `json:"type" bson:"type"`
+	Language              string            `json:"language" bson:"language"`
+	InterestId            bson.ObjectId     `json:"interest_id" bson:"interest_id"`
+	DirectParent          CommunityParent   `json:"direct_parent" bson:"direct_parent"`
+	Parents               []CommunityParent `json:"parents" bson:"parents"`
+	Action                string            `json:"action" bson:"action"`
+	EntityId              bson.ObjectId     `json:"entity_id" bson:"entity_id"`
+	EntityType            string            `json:"entity_type" bson:"entity_type"`
+	CreatedAt             time.Time         `json:"createdAt" bson:"createdAt"`
+	UpdatedAt             time.Time         `json:"updatedAt" bson:"updatedAt"`
+	ProfileId             bson.ObjectId     `json:"profile_id" bson:"profile_id"`
+	Score                 float32           `json:"score" bson:"score"`
+	FollowersCount        int               `json:"no_of_followers" bson:"no_of_followers"`
+	PostsCount            int               `json:"no_of_posts" bson:"no_of_posts"`
+	CommentsCount         int               `json:"no_of_comments" bson:"no_of_comments"`
+	ActionSource          string            `json:"action_source" bson:"action_source"`
+	CommunityCreatorType  string            `json:"community_creator_type" bson:"community_creator_type"`
+	CreatorType           string            `json:"creator_type" bson:"creator_type"`
+	ParticipatingEntityId bson.ObjectId     `json:"participating_entity_id" bson:"participating_entity_id"`
 }
 
 func GetCommunityById(Id string) CommunityModel {
@@ -117,4 +121,3 @@ func CreateCommunityStats(communityStats CommunityStatsModel) {
 		fmt.Println("created community stats successfully", communityStats.Id)
 	}
 }
-

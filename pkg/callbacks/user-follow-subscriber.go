@@ -21,22 +21,28 @@ func UserFollowSubscriberCB(subj, reply string, uf *subscribers.Subscription) {
 		}
 	}()
 
+	follower := mongo.GetProfileById(bson.ObjectIdHex(uf.ProfileId))
+	// fmt.Printf("\nfollower %+v\n", follower)
+
 	if uf.ResourceType != "user" {
 		fmt.Println("Not a user resource follows")
 		if uf.ResourceType == "community" {
 			// create community stats
+			community := mongo.GetCommunityById(uf.Resource)
+
 			mongo.CreateCommunityStats(mongo.CommunityStatsModel{
-				CommunityId:    bson.ObjectIdHex(uf.Resource),
-				Action:         "community-follow",
-				EntityId:       bson.ObjectIdHex(uf.ProfileId),
-				EntityType:     "user",
-				ProfileId:      bson.ObjectIdHex(uf.ProfileId),
-				FollowersCount: 1,
+				CommunityId:           bson.ObjectIdHex(uf.Resource),
+				Action:                "community-follow",
+				EntityId:              bson.ObjectIdHex(uf.Resource),
+				EntityType:            "user",
+				ProfileId:             bson.ObjectIdHex(uf.ProfileId),
+				FollowersCount:        1,
+				CommunityCreatorType:  community.Created.Type,
+				CreatorType:           follower.Type,
+				ParticipatingEntityId: bson.ObjectIdHex(uf.ProfileId),
 			})
 
 			// send join manch notification to admins for closed m-manch
-
-			community := mongo.GetCommunityById(uf.Resource)
 
 			if community.Type == "m_manch" {
 				admins := community.Admins
@@ -123,8 +129,6 @@ func UserFollowSubscriberCB(subj, reply string, uf *subscribers.Subscription) {
 
 	userFollow := mongo.GetUserFollowById(uf.Id)
 	// fmt.Printf("\nuser follow %+v\n", userFollow)
-	follower := mongo.GetProfileById(userFollow.ProfileId)
-	// fmt.Printf("\nfollower %+v\n", follower)
 	followsTo := mongo.GetProfileById(userFollow.ResourceId)
 	// fmt.Printf("\nfollowsTo %+v\n", followsTo)
 	tokens := mongo.GetTokensByProfiles([]bson.ObjectId{userFollow.ResourceId})

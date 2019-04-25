@@ -68,7 +68,7 @@ func PostSubscriberCB(subj, reply string, p *subscribers.Post) {
 				Data:         data,
 			}
 
-			deepLink := "manch://posts/" + post.Id.Hex()
+			deepLink := "manch://manch/" + community.Id.Hex()
 
 			entities := []mongo.Entity{
 				{
@@ -188,13 +188,16 @@ func PostSubscriberCB(subj, reply string, p *subscribers.Post) {
 
 	// create community stats
 	mongo.CreateCommunityStats(mongo.CommunityStatsModel{
-		CommunityId:  post.CommunityIds[0],
-		Action:       "post",
-		EntityId:     post.Id,
-		EntityType:   "post",
-		ProfileId:    post.Created.ProfileId,
-		ActionSource: post.SourcedBy,
-		PostsCount:   1,
+		CommunityId:           post.CommunityIds[0],
+		Action:                "post",
+		EntityId:              post.Id,
+		EntityType:            "post",
+		ProfileId:             post.Created.ProfileId,
+		ActionSource:          post.SourcedBy,
+		PostsCount:            1,
+		CommunityCreatorType:  community.Created.Type,
+		CreatorType:           post.Created.UserType,
+		ParticipatingEntityId: post.Id,
 	})
 
 	mongo.CreateUserScore(mongo.UserScore{
