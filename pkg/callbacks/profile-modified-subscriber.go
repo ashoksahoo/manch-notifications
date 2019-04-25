@@ -35,7 +35,7 @@ func ProfileModifiedCB(subj, reply string, updatedProfile *subscribers.Profile) 
 			bson.M{
 				"$set": bson.M{
 					"profiles.$.display_profile_changed_updated":    false,
-					"profiles.$.display_profile_changed_updated_at": time.Now(),
+					"profiles.$.display_profile_changed_at": time.Now(),
 				},
 			})
 	}

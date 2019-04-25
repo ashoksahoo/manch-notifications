@@ -58,7 +58,7 @@ type Profile struct {
 	AchievedMileStones             []Milestone   `json:"achieved_milestones" bson:"achieved_milestones"`
 	CommentsCount                  int           `json:"no_of_comments" bson:"no_of_comments"`
 	DisplayProfileChangedUpdated   bool          `json:"display_profile_changed_updated" bson:"display_profile_changed_updated"`
-	DisplayProfileChangedUpdatedAt time.Time     `json:"display_profile_changed_updated_at" bson:"display_profile_changed_updated_at"`
+	DisplayProfileChangedUpdatedAt time.Time     `json:"display_profile_changed_at" bson:"display_profile_changed_at"`
 }
 
 type Creator struct {
