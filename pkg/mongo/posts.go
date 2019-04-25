@@ -92,7 +92,7 @@ func GetPostCountByQuery(query bson.M) int {
 	return n
 }
 
-func UpdatePostsByQuery(query, update bson.M) {
+func UpdateAllPostsByQuery(query, update bson.M) {
 	s := session.Clone()
 	defer s.Close()
 	P := s.DB("manch").C(POSTS_MODEL)
@@ -101,6 +101,18 @@ func UpdatePostsByQuery(query, update bson.M) {
 		fmt.Println("error on updating post", err)
 	} else {
 		fmt.Println("post update info", info)
+	}
+}
+
+func UpdateOnePostsByQuery(query, update bson.M) {
+	s := session.Clone()
+	defer s.Close()
+	P := s.DB("manch").C(POSTS_MODEL)
+	err := P.Update(query, update)
+	if err != nil {
+		fmt.Println("error on updating post", err)
+	} else {
+		fmt.Println("updated post")
 	}
 }
 

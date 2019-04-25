@@ -1,18 +1,19 @@
 package firebase
 
 import (
-	"time"
-	"notification-service/pkg/constants"
-	"github.com/globalsign/mgo/bson"
 	"encoding/json"
-	"firebase.google.com/go"
-	"firebase.google.com/go/messaging"
 	"fmt"
-	"golang.org/x/net/context"
-	"google.golang.org/api/option"
 	"log"
+	"notification-service/pkg/constants"
 	"notification-service/pkg/mongo"
 	"os"
+	"time"
+
+	firebase "firebase.google.com/go"
+	"firebase.google.com/go/messaging"
+	"github.com/globalsign/mgo/bson"
+	"golang.org/x/net/context"
+	"google.golang.org/api/option"
 )
 
 var client *messaging.Client
@@ -44,34 +45,34 @@ String MSG_CAMPAIGN_ID = "mnc_acid";
 String MSG_AB_TEST_VARIATION = "mnc_atv";
 // notification date attribute
 String MSG_DATE = "mnc_ad";
- */
+*/
 type ManchMessage struct {
-	Id          	string `json:"mnc_nid,omitempty"`
-	Namespace   	string `json:"mnc_ns,omitempty"`
-	Title       	string `json:"mnc_nt,omitempty"`
-	Message     	string `json:"mnc_nm,omitempty"`
-	Icon        	string `json:"mnc_ico,omitempty"`
-	DeepLink    	string `json:"mnc_dl,omitempty"`
-	Sound       	string `json:"mnc_sound,omitempty"`
-	BigPicture  	string `json:"mnc_bp,omitempty"`
-	BadgeIcon   	string `json:"mnc_bi,omitempty"`
-	BadgeCount  	string `json:"mnc_bc,omitempty"`
-	ChannelId   	string `json:"mnc_cid,omitempty"`
-	CollapseKey 	string `json:"mnc_ck,omitempty"`
-	Priority    	string `json:"mnc_pr,omitempty"`
-	Actions     	string `json:"mnc_acts,omitempty"`
-	Silent      	string `json:"mns_sn,omitempty"`
-	MNCID 			string `json:"mnc_id" bson:"mnc_id"`
-	MessageType 	string `json:"mnc_at" bson:"mnc_at"`
-	Purpose 		string `json:"mnc_ap" bson:"mnc_ap"`
-	CampaignId 		string `json:"mnc_acid" bson:"mnc_acid"`
-	TestVariation 	string `json:"mnc_atv" bson:"mnc_atv"`
-	Date 			string `json:"mnc_ad" bson:"mnc_ad"`
-	Status 			string `json:"status" bson:"status"`
-	BlockedTill 	string `json:"blocked_till" bson:"blocked_till"`
-	BlockedOn 		string `json:"blocked_on" bson:"blocked_on"`
-	Reason 			string `json:"reason" bson:"reason"`
-	LastWarned 		string `json:"last_warned_on" bson:"last_warned_on"`
+	Id            string `json:"mnc_nid,omitempty"`
+	Namespace     string `json:"mnc_ns,omitempty"`
+	Title         string `json:"mnc_nt,omitempty"`
+	Message       string `json:"mnc_nm,omitempty"`
+	Icon          string `json:"mnc_ico,omitempty"`
+	DeepLink      string `json:"mnc_dl,omitempty"`
+	Sound         string `json:"mnc_sound,omitempty"`
+	BigPicture    string `json:"mnc_bp,omitempty"`
+	BadgeIcon     string `json:"mnc_bi,omitempty"`
+	BadgeCount    string `json:"mnc_bc,omitempty"`
+	ChannelId     string `json:"mnc_cid,omitempty"`
+	CollapseKey   string `json:"mnc_ck,omitempty"`
+	Priority      string `json:"mnc_pr,omitempty"`
+	Actions       string `json:"mnc_acts,omitempty"`
+	Silent        string `json:"mns_sn,omitempty"`
+	MNCID         string `json:"mnc_id" bson:"mnc_id"`
+	MessageType   string `json:"mnc_at" bson:"mnc_at"`
+	Purpose       string `json:"mnc_ap" bson:"mnc_ap"`
+	CampaignId    string `json:"mnc_acid" bson:"mnc_acid"`
+	TestVariation string `json:"mnc_atv" bson:"mnc_atv"`
+	Date          string `json:"mnc_ad" bson:"mnc_ad"`
+	Status        string `json:"status" bson:"status"`
+	BlockedTill   string `json:"blocked_till" bson:"blocked_till"`
+	BlockedOn     string `json:"blocked_on" bson:"blocked_on"`
+	Reason        string `json:"reason" bson:"reason"`
+	LastWarned    string `json:"last_warned_on" bson:"last_warned_on"`
 }
 
 func MessageBuilder(m ManchMessage) map[string]string {
@@ -132,9 +133,9 @@ func SendMessage(m ManchMessage, token string, notification mongo.NotificationMo
 		fmt.Println("update")
 		mongo.UpdateNotification(bson.M{"_id": notification.Id}, bson.M{
 			"push": mongo.PushMeta{
-				Status: constants.NotificationStatus["FAILED"],
+				Status:     constants.NotificationStatus["FAILED"],
 				FailReason: err.Error(),
-				CreatedAt: time.Now(),
+				CreatedAt:  time.Now(),
 			},
 		})
 	} else {
@@ -143,8 +144,8 @@ func SendMessage(m ManchMessage, token string, notification mongo.NotificationMo
 		// update push info
 		mongo.UpdateNotification(bson.M{"_id": notification.Id}, bson.M{
 			"push": mongo.PushMeta{
-				Status: constants.NotificationStatus["SENT"],
-				PushId: response,
+				Status:    constants.NotificationStatus["SENT"],
+				PushId:    response,
 				CreatedAt: time.Now(),
 			},
 		})
@@ -152,7 +153,7 @@ func SendMessage(m ManchMessage, token string, notification mongo.NotificationMo
 
 }
 
-func init() () {
+func init() {
 	var filename string
 	switch os.Getenv("env") {
 	case "staging":

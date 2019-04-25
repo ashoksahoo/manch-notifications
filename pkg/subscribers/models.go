@@ -132,3 +132,11 @@ type UserStreak struct {
 	LastStreak    Streak `json:"last_streak" bson:"last_streak"`
 	LongestStreak Streak `json:"longest_streak" bson:"longest_streak"`
 }
+
+type Profile struct {
+	Id                             string    `json:"_id"`
+	Name                           string    `json:"name"`
+	Avatar                         string    `json:"avatar"`
+	DisplayProfileChangedUpdated   bool      `json:"display_profile_changed_updated"`
+	DisplayProfileChangedUpdatedAt time.Time `json:"display_profile_changed_at"`
+}
