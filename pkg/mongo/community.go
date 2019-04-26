@@ -70,6 +70,7 @@ type CommunityStatsModel struct {
 	CommunityCreatorType  string            `json:"community_creator_type" bson:"community_creator_type"`
 	CreatorType           string            `json:"creator_type" bson:"creator_type"`
 	ParticipatingEntityId bson.ObjectId     `json:"participating_entity_id" bson:"participating_entity_id"`
+	UserScore             int               `json:"user_score" bson:"user_score"`
 }
 
 func GetCommunityById(Id string) CommunityModel {
@@ -112,6 +113,11 @@ func CreateCommunityStats(communityStats CommunityStatsModel) {
 		communityStats.Score = 0.5
 	} else if communityStats.Action == "community-follow" {
 		communityStats.Score = 0.1
+	}
+	
+	communityStats.UserScore = 10
+	if communityStats.CreatorType == "bot" {
+		communityStats.UserScore = 5
 	}
 	fmt.Printf("community stats %+v\n\n", communityStats)
 	err := C.Insert(communityStats)
