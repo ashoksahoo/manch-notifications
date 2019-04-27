@@ -68,7 +68,7 @@ type CommunityStatsModel struct {
 	CommentsCount         int               `json:"no_of_comments" bson:"no_of_comments"`
 	ActionSource          string            `json:"action_source" bson:"action_source"`
 	CommunityCreatorType  string            `json:"community_creator_type" bson:"community_creator_type"`
-	CreatorType           string            `json:"creator_type" bson:"creator_type"`
+	ActorType             string            `json:"actor_type" bson:"actor_type"`
 	ParticipatingEntityId bson.ObjectId     `json:"participating_entity_id" bson:"participating_entity_id"`
 }
 
