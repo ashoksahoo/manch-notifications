@@ -104,14 +104,9 @@ func CreateCommunityStats(communityStats CommunityStatsModel) {
 	communityStats.UpdatedAt = now
 	communityStats.Language = community.Language
 
-	if communityStats.Action == "comment" {
-		communityStats.Score = 5
-	} else if communityStats.Action == "vote" {
-		communityStats.Score = 1
-	} else if communityStats.Action == "post" {
-		communityStats.Score = 0.5
-	} else if communityStats.Action == "community-follow" {
-		communityStats.Score = 0.1
+	communityStats.Score = 10.0
+	if communityStats.CreatorType == "bot" {
+		communityStats.Score = 5.0
 	}
 	fmt.Printf("community stats %+v\n\n", communityStats)
 	err := C.Insert(communityStats)
