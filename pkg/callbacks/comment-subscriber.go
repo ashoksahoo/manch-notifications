@@ -101,7 +101,7 @@ func CommentSubscriberCB(subj, reply string, c *subscribers.Comment) {
 		ActionSource:  comment.Post.SourcedBy,
 		CommunityCreatorType: community.Created.Type,
 		CreatorType: comment.Created.UserType,
-		ParticipatingEntityId: comment.Id,
+		ParticipatingEntityId: comment.PostId,
 	})
 
 	// get replied on comment
