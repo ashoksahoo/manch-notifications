@@ -62,7 +62,7 @@ type CommunityStatsModel struct {
 	CreatedAt             time.Time         `json:"createdAt" bson:"createdAt"`
 	UpdatedAt             time.Time         `json:"updatedAt" bson:"updatedAt"`
 	ProfileId             bson.ObjectId     `json:"profile_id" bson:"profile_id"`
-	Score                 int           `json:"score" bson:"score"`
+	Score                 float32           `json:"score" bson:"score"`
 	FollowersCount        int               `json:"no_of_followers" bson:"no_of_followers"`
 	PostsCount            int               `json:"no_of_posts" bson:"no_of_posts"`
 	CommentsCount         int               `json:"no_of_comments" bson:"no_of_comments"`
@@ -104,9 +104,9 @@ func CreateCommunityStats(communityStats CommunityStatsModel) {
 	communityStats.UpdatedAt = now
 	communityStats.Language = community.Language
 
-	communityStats.Score = 10
+	communityStats.Score = 10.0
 	if communityStats.CreatorType == "bot" {
-		communityStats.Score = 5
+		communityStats.Score = 5.0
 	}
 	fmt.Printf("community stats %+v\n\n", communityStats)
 	err := C.Insert(communityStats)
