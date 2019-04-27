@@ -196,7 +196,7 @@ func PostSubscriberCB(subj, reply string, p *subscribers.Post) {
 		ActionSource:          post.SourcedBy,
 		PostsCount:            1,
 		CommunityCreatorType:  community.Created.Type,
-		CreatorType:           post.Created.UserType,
+		ActorType:             post.Created.UserType,
 		ParticipatingEntityId: post.Id,
 	})
 

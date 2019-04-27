@@ -68,7 +68,7 @@ type CommunityStatsModel struct {
 	CommentsCount         int               `json:"no_of_comments" bson:"no_of_comments"`
 	ActionSource          string            `json:"action_source" bson:"action_source"`
 	CommunityCreatorType  string            `json:"community_creator_type" bson:"community_creator_type"`
-	CreatorType           string            `json:"creator_type" bson:"creator_type"`
+	ActorType             string            `json:"actor_type" bson:"actor_type"`
 	ParticipatingEntityId bson.ObjectId     `json:"participating_entity_id" bson:"participating_entity_id"`
 }
 
@@ -105,7 +105,7 @@ func CreateCommunityStats(communityStats CommunityStatsModel) {
 	communityStats.Language = community.Language
 
 	communityStats.Score = 10.0
-	if communityStats.CreatorType == "bot" {
+	if communityStats.ActorType == "bot" {
 		communityStats.Score = 5.0
 	}
 	fmt.Printf("community stats %+v\n\n", communityStats)
