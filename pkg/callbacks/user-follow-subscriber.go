@@ -38,7 +38,7 @@ func UserFollowSubscriberCB(subj, reply string, uf *subscribers.Subscription) {
 				ProfileId:             bson.ObjectIdHex(uf.ProfileId),
 				FollowersCount:        1,
 				CommunityCreatorType:  community.Created.Type,
-				CreatorType:           follower.Type,
+				ActorType:             follower.Type,
 				ParticipatingEntityId: bson.ObjectIdHex(uf.ProfileId),
 			})
 

@@ -59,7 +59,7 @@ func VotePostSubscriberCB(subj, reply string, v *subscribers.Vote) {
 		ProfileId:             post.Created.ProfileId,
 		ActionSource:          post.SourcedBy,
 		CommunityCreatorType:  community.Created.Type,
-		CreatorType:           vote.Created.UserType,
+		ActorType:             vote.Created.UserType,
 		ParticipatingEntityId: post.Id,
 	})
 

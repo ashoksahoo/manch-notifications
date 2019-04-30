@@ -125,12 +125,14 @@ func UserStreakCB(subj, reply string, userStreak *subscribers.UserStreak) {
 			// update post and comment of this profile
 			mongo.UpdateAllPostsByQuery(bson.M{
 				"created.profile_id": profile.Id,
+				"anonymous":          bson.M{"$ne": true},
 			}, bson.M{
 				"$set": bson.M{"created.current_badge": badge},
 			})
 
 			mongo.UpdateAllCommentsByQuery(bson.M{
 				"created.profile_id": profile.Id,
+				"anonymous":          bson.M{"$ne": true},
 			}, bson.M{
 				"$set": bson.M{"created.current_badge": badge},
 			})
