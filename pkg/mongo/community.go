@@ -105,7 +105,7 @@ func CreateCommunityStats(communityStats CommunityStatsModel) {
 	communityStats.Language = community.Language
 
 	communityStats.Score = 10.0
-	if communityStats.ActorType == "bot" {
+	if communityStats.CommunityCreatorType == "bot" {
 		communityStats.Score = 5.0
 	}
 	fmt.Printf("community stats %+v\n\n", communityStats)

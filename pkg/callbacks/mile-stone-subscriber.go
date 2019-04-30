@@ -184,12 +184,14 @@ func MileStoneSubscriberCB(subj, reply string, m *subscribers.MileStone) {
 			// update post and comment of this profile
 			mongo.UpdateAllPostsByQuery(bson.M{
 				"created.profile_id": profile.Id,
+				"anonymous":          bson.M{"$ne": true},
 			}, bson.M{
 				"$set": bson.M{"created.current_badge": badge},
 			})
 
 			mongo.UpdateAllCommentsByQuery(bson.M{
 				"created.profile_id": profile.Id,
+				"anonymous":          bson.M{"$ne": true},
 			}, bson.M{
 				"$set": bson.M{"created.current_badge": badge},
 			})
@@ -281,12 +283,14 @@ func MileStoneSubscriberCB(subj, reply string, m *subscribers.MileStone) {
 			// update post and comment of this profile
 			mongo.UpdateAllPostsByQuery(bson.M{
 				"created.profile_id": profile.Id,
+				"anonymous":          bson.M{"$ne": true},
 			}, bson.M{
 				"$set": bson.M{"created.current_badge": badge},
 			})
 
 			mongo.UpdateAllCommentsByQuery(bson.M{
 				"created.profile_id": profile.Id,
+				"anonymous":          bson.M{"$ne": true},
 			}, bson.M{
 				"$set": bson.M{"created.current_badge": badge},
 			})
@@ -378,12 +382,14 @@ func MileStoneSubscriberCB(subj, reply string, m *subscribers.MileStone) {
 			// update post and comment of this profile
 			mongo.UpdateAllPostsByQuery(bson.M{
 				"created.profile_id": profile.Id,
+				"anonymous":          bson.M{"$ne": true},
 			}, bson.M{
 				"$set": bson.M{"created.current_badge": badge},
 			})
 
 			mongo.UpdateAllCommentsByQuery(bson.M{
 				"created.profile_id": profile.Id,
+				"anonymous":          bson.M{"$ne": true},
 			}, bson.M{
 				"$set": bson.M{"created.current_badge": badge},
 			})

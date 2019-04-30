@@ -12,7 +12,7 @@ func ProfileModifiedCB(subj, reply string, updatedProfile *subscribers.Profile) 
 	fmt.Printf("Received a New User on subject %s! with User %+v\n", subj, updatedProfile)
 	isUpdated := false
 	update := bson.M{}
-	query := bson.M{"created.profile_id": bson.ObjectIdHex(updatedProfile.Id)}
+	query := bson.M{"created.profile_id": bson.ObjectIdHex(updatedProfile.Id), "anonymous": bson.M{"$ne": true}}
 	profile := mongo.GetProfileById(bson.ObjectIdHex(updatedProfile.Id))
 	if updatedProfile.Name != "" {
 		isUpdated = true
