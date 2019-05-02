@@ -81,6 +81,7 @@ func PostSubscriberCB(subj, reply string, p *subscribers.Post) {
 					Receiver:        adminProfile.ProfileId,
 					Identifier:      adminProfile.ProfileId.Hex() + "post_on_manch",
 					Participants:    []bson.ObjectId{post.Created.ProfileId},
+					PlaceHolderIcon: []string{post.Created.Avatar},
 					DisplayTemplate: constants.NotificationTemplate["TRANSACTIONAL"],
 					EntityGroupId:   post.Id.Hex(),
 					ActionId:        post.Id,

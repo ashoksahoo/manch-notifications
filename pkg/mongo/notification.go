@@ -128,21 +128,24 @@ func CreateNotification(notification NotificationModel) NotificationModel {
 	} else {
 		n.PushType = notification.PushType
 	}
+	if len(notification.PlaceHolderIcon) > 0 {
+		n.PlaceHolderIcon = notification.PlaceHolderIcon
+	} else {
+		// get participants avatar
+		placeHolderIcons := []string{}
+		participantsIdsString := []string{}
+		// convert objectid to string for participants
+		for _, participantId := range notification.Participants {
+			participantsIdsString = append(participantsIdsString, participantId.Hex())
+		}
 
-	// get participants avatar
-	placeHolderIcons := []string{}
-	participantsIdsString := []string{}
-	// convert objectid to string for participants
-	for _, participantId := range notification.Participants {
-		participantsIdsString = append(participantsIdsString, participantId.Hex())
+		participants := GetProfilesByIds(participantsIdsString)
+		for _, participant := range participants {
+			placeHolderIcons = append(placeHolderIcons, participant.Avatar)
+		}
+
+		n.PlaceHolderIcon = placeHolderIcons
 	}
-
-	participants := GetProfilesByIds(participantsIdsString)
-	for _, participant := range participants {
-		placeHolderIcons = append(placeHolderIcons, participant.Avatar)
-	}
-
-	n.PlaceHolderIcon = placeHolderIcons
 	// notification purpose icon
 	n.PurposeIcon = PurposeIcon{
 		ResourceId: constants.NotificationPurposeResource[n.Purpose],
