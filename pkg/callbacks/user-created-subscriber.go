@@ -2,9 +2,9 @@ package callbacks
 
 import (
 	"fmt"
+	"notification-service/pkg/i18n"
 	"notification-service/pkg/mongo"
 	"notification-service/pkg/subscribers"
-	"notification-service/pkg/i18n"
 	"time"
 )
 
@@ -14,7 +14,7 @@ func UserCreatedSubscriberCB(subj, reply string, u *subscribers.User) {
 	user := mongo.GetUserById(u.Id)
 
 	// schedule welcome message
-	scheduleTime := time.Now().Add(time.Duration(10) * time.Minute)
+	scheduleTime := time.Now().Add(time.Duration(3) * time.Minute)
 	userCoinScheduleTime := time.Now().Add(time.Duration(15) * time.Minute)
 
 	data := i18n.DataModel{
