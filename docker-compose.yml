@@ -1,0 +1,22 @@
+version: "3"
+
+services:
+  web:
+    environment:
+      - GO111MODULE=on
+      - MONGO_DB=mongodb://host.docker.internal:27017/manch
+      - NATS=nats://host.docker.internal:4222
+      - REDIS_HOST=host.docker.internal:6379
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+    - "5000:5000"
+    volumes:
+      - .:/go/src/go-with-compose
+    working_dir: /go/src/go-with-compose
+    command: go run main.go
+#    links:
+#      - es
+#  es:
+#    image: elasticsearch:7.0.1

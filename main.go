@@ -32,6 +32,7 @@ func Routes() *chi.Mux {
 }
 
 func main() {
+	fmt.Println("Initializing Notification Service.")
 	router := Routes()
 	router.Get("/ping", func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("pong"))
