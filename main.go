@@ -7,7 +7,11 @@ import (
 	"notification-service/pkg/subscribers"
 
 	"notification-service/pkg/api"
+	"notification-service/pkg/elasticsearch"
 
+	// "notification-service/pkg/mongo"
+
+	"github.com/globalsign/mgo/bson"
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
 	"github.com/go-chi/render"
@@ -35,8 +39,16 @@ func main() {
 	router := Routes()
 	router.Get("/ping", func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("pong"))
+		// elasticsearch.AddTagIndexFromPost(mongo.PostModel{
+		// 	Title: "Election result 2019",
+		// 	Tags: []string{"#ModiVsRahul", "#2019election", "#smritiIrani"},
+		// })
+		// elasticsearch.GetDocumentById("#rahulVsModi", "tags")
+		query := bson.M{
+			"keyword": "#Modi",
+		}
+		fmt.Println(elasticsearch.SearchHashTags(query))
 	})
-
 	// received a post
 	subscribers.PostSubscriber(callbacks.PostSubscriberCB)
 

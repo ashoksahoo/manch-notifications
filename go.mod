@@ -5,6 +5,9 @@ require (
 	firebase.google.com/go v3.4.0+incompatible
 	github.com/cosiner/argv v0.0.1 // indirect
 	github.com/derekparker/delve v1.1.0 // indirect
+	github.com/elastic/go-elasticsearch v0.0.0
+	github.com/elastic/go-elasticsearch/v7 v7.1.1
+	github.com/elastic/go-elasticsearch/v8 v8.0.0-20190524105426-8ed748708d21 // indirect
 	github.com/globalsign/mgo v0.0.0-20181015135952-eeefdecb41b8
 	github.com/go-chi/chi v3.3.3+incompatible
 	github.com/go-chi/render v1.0.1

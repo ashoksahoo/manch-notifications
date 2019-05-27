@@ -9,6 +9,7 @@ import (
 	"notification-service/pkg/mongo"
 	"notification-service/pkg/subscribers"
 	"notification-service/pkg/utils"
+	"notification-service/pkg/elasticsearch"
 	"time"
 
 	"github.com/globalsign/mgo/bson"
@@ -27,6 +28,9 @@ func PostSubscriberCB(subj, reply string, p *subscribers.Post) {
 
 	// update user score for new post
 	_, post := mongo.GetPostById(p.Id)
+
+	// process hashtags
+	elasticsearch.AddTagIndexFromPost(post)
 
 	// send notification to manch owner
 	community := mongo.GetCommunityById(post.CommunityIds[0].Hex())

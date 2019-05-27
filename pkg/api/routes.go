@@ -8,6 +8,8 @@ import (
 
 func Routes() *chi.Mux {
 	router := chi.NewRouter()
+	router.Get("/search", SearchHashTags)
+	router.Get("/search/{id}", GetTagByID)
 	router.Get("/notifications", GetAllNotification)
 	router.Get("/notifications/{id}", GetNotificationById)
 	router.Post("/notifications/{id}", UpdateNotificationById)
