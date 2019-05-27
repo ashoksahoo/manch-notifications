@@ -40,7 +40,6 @@ type HashTag struct {
 
 func GetDocumentById(id, index string) (error, map[string]interface{}) {
 	var r map[string]interface{}
-	id = "#ModiVsRahul"
 	req := esapi.GetRequest{
 		Index:      index,
 		DocumentID: id,

@@ -39,6 +39,12 @@ func SearchHashTags(w http.ResponseWriter, r *http.Request) {
 	bsonQuery["skip"] = skip
 	bsonQuery["limit"] = limit
 
+	
+	if len(queries["keyword"]) == 0 {
+		w.WriteHeader(400)
+		w.Write([]byte("keyword is required"))
+		return
+	}
 	bsonQuery["keyword"] = queries["keyword"][0]
 	// get notification
 	err, response := elasticsearch.SearchHashTags(bsonQuery)
