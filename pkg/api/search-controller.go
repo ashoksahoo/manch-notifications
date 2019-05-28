@@ -9,7 +9,12 @@ import (
 	"github.com/globalsign/mgo/bson"
 	"github.com/go-chi/chi"
 	"github.com/go-chi/render"
+	"encoding/json"
 )
+
+type UpdateMeta struct {
+	AdditionalScore int `json:"additional_score"`
+}
 
 func SearchHashTags(w http.ResponseWriter, r *http.Request) {
 	queries := r.URL.Query()
@@ -84,12 +89,9 @@ func GetTagByID(w http.ResponseWriter, r *http.Request) {
 func UpdateHashtagWeight(w http.ResponseWriter, r *http.Request) {
 	id := chi.URLParam(r, "id")
 	id = strings.ToLower(id)
-	queries := r.URL.Query()
-	var additionalScore int
-	if len(queries["addition_score"]) != 0 {
-		additionalScore, _ = strconv.Atoi(queries["skip"][0])
-	}
-	err, response := elasticsearch.UpdateTagWeight(id, additionalScore)
+	updateMeta := UpdateMeta{}
+	err := json.NewDecoder(r.Body).Decode(&updateMeta)
+	err, response := elasticsearch.UpdateTagWeight(id, updateMeta.AdditionalScore)
 
 	if err != nil {
 		w.WriteHeader(400)
