@@ -7,7 +7,7 @@ import (
 	"fmt"
 	"log"
 	"strings"
-
+	"notification-service/pkg/utils"
 	// "github.com/elastic/go-elasticsearch/v7"
 	// "github.com/elastic/go-elasticsearch/v7/esapi"
 	"time"
@@ -33,10 +33,10 @@ type HashTag struct {
 	NoOfPosts          int       `json:"no_of_posts"`
 	NoOfLikes          int       `json:"no_of_likes"`
 	NoOfComments       int       `json:"no_of_comments"`
-	ActualCreationTime time.Time `json:"actual_creation_time"`
-	LastUpdatedTime    time.Time `json:"last_updated_time"`
+	ActualCreationTime string `json:"actual_creation_time"`
+	LastUpdatedTime    string `json:"last_updated_time"`
 	Resurfaced         bool      `json:"resurfaced"`
-	ResurfacedDate     time.Time `json:"resurfaced_date"`
+	ResurfacedDate     string `json:"resurfaced_date"`
 }
 
 func GetDocumentById(id, index string) (error, map[string]interface{}) {
@@ -61,16 +61,15 @@ func GetDocumentById(id, index string) (error, map[string]interface{}) {
 		log.Printf("Error parsing the response body: %s", err)
 		return errors.New("Error parsing the response body"), r
 	}
-	log.Println("response", r)
 	return nil, r
 }
 
 func AddTagToIndex(tags []string, image string) {
-
+	currentISOTime := utils.ISOFormat(time.Now())
 	hashTagData := HashTag{
-		ActualCreationTime: time.Now(),
-		LastUpdatedTime:    time.Now(),
-		ResurfacedDate:     time.Now(),
+		ActualCreationTime: currentISOTime,
+		LastUpdatedTime:    currentISOTime,
+		ResurfacedDate:     currentISOTime,
 		Image:              image,
 	}
 
@@ -89,6 +88,7 @@ func AddTagToIndex(tags []string, image string) {
 			hashTagDataEncoded, _ := json.Marshal(hashTagData)
 			json.Unmarshal(hashTagDataEncoded, &upsertData)
 
+			fmt.Println("uspert data", upsertData)
 			// Build the request body.
 			body := esutil.NewJSONReader(StringInterface{
 				"script": StringInterface{
@@ -101,7 +101,6 @@ func AddTagToIndex(tags []string, image string) {
 				},
 				"upsert": upsertData,
 			})
-			fmt.Println("requesting", body)
 			// create update request
 			req := esapi.UpdateRequest{
 				Index:      "tags",
@@ -111,7 +110,6 @@ func AddTagToIndex(tags []string, image string) {
 			}
 			// Perform the request with the client.
 			res, err := req.Do(context.Background(), es)
-			fmt.Println("response of", tagName, res)
 			if err != nil {
 				log.Fatalf("Error getting response: %s", err)
 			}
@@ -195,7 +193,8 @@ func SearchHashTags(query bson.M) (error, interface{}) {
 }
 
 func getScore(baseTime string, noOfPost int, additionScore int) int {
-	return (noOfPost*10 + additionScore)
+	t :=utils.ParseISOToTime(baseTime)
+	return (int(t.Unix()) + noOfPost*10 + additionScore)
 }
 
 /*
