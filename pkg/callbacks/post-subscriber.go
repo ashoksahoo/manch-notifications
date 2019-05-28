@@ -4,12 +4,12 @@ import (
 	"fmt"
 	"math/rand"
 	"notification-service/pkg/constants"
+	"notification-service/pkg/elasticsearch"
 	"notification-service/pkg/firebase"
 	"notification-service/pkg/i18n"
 	"notification-service/pkg/mongo"
 	"notification-service/pkg/subscribers"
 	"notification-service/pkg/utils"
-	"notification-service/pkg/elasticsearch"
 	"time"
 
 	"github.com/globalsign/mgo/bson"
@@ -30,7 +30,7 @@ func PostSubscriberCB(subj, reply string, p *subscribers.Post) {
 	_, post := mongo.GetPostById(p.Id)
 
 	// process hashtags
-	elasticsearch.AddTagIndexFromPost(post)
+	elasticsearch.AddTagToIndex(post.Tags)
 
 	// send notification to manch owner
 	community := mongo.GetCommunityById(post.CommunityIds[0].Hex())

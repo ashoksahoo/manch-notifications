@@ -58,10 +58,11 @@ func SearchHashTags(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	// create meta info
+	responseLength := len(response.([]map[string]interface{}))
 	metaInfo := bson.M{"limit": limit, "skip": skip}
-	metaInfo["offset"] = skip + len(response.([]interface{}))
+	metaInfo["offset"] = skip + responseLength
 
-	if len(response.([]interface{})) == 0 {
+	if responseLength == 0 {
 		metaInfo["has_next"] = false
 	} else {
 		metaInfo["has_next"] = true

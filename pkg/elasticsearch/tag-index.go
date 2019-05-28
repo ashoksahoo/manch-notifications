@@ -6,7 +6,6 @@ import (
 	"errors"
 	"fmt"
 	"log"
-	"notification-service/pkg/mongo"
 
 	// "github.com/elastic/go-elasticsearch/v7"
 	// "github.com/elastic/go-elasticsearch/v7/esapi"
@@ -36,6 +35,7 @@ type HashTag struct {
 	ActualCreationTime time.Time `json:"actual_creation_time"`
 	LastUpdatedTime    time.Time `json:"last_updated_time"`
 	Resurfaced         bool      `json:"resurfaced"`
+	ResurfacedDate     time.Time `json:"resurfaced_date"`
 }
 
 func GetDocumentById(id, index string) (error, map[string]interface{}) {
@@ -64,16 +64,16 @@ func GetDocumentById(id, index string) (error, map[string]interface{}) {
 	return nil, r
 }
 
-func AddTagIndexFromPost(post mongo.PostModel) {
+func AddTagToIndex(tags []string) {
 
 	hashTagData := HashTag{
-		Title:              post.Title,
 		ActualCreationTime: time.Now(),
 		LastUpdatedTime:    time.Now(),
+		ResurfacedDate:     time.Now(),
 	}
 
 	var wg sync.WaitGroup
-	for i, tag := range post.Tags {
+	for i, tag := range tags {
 		wg.Add(1)
 
 		go func(tagName string) {
@@ -82,24 +82,40 @@ func AddTagIndexFromPost(post mongo.PostModel) {
 			hashTagData.Keyword = TypeInput{
 				Input: []string{tagName},
 			}
+			hashTagData.Title = tagName
+
+			// upsert data
+			var upsertData StringInterface
+			hashTagDataEncoded, _ := json.Marshal(hashTagData)
+			json.Unmarshal(hashTagDataEncoded, &upsertData)
+
 			// Build the request body.
-			body := esutil.NewJSONReader(hashTagData)
+			body := esutil.NewJSONReader(StringInterface{
+				"script": StringInterface{
+					"source": "ctx._source.no_of_posts += params.count;ctx._source.last_updated_time=params.last_updated",
+					"lang":   "painless",
+					"params": StringInterface{
+						"count":        1,
+						"last_updated": hashTagData.LastUpdatedTime,
+					},
+				},
+				"upsert": upsertData,
+			})
 			fmt.Println("requesting", body)
-			// Set up the request object.
-			req := esapi.IndexRequest{
+			// create update request
+			req := esapi.UpdateRequest{
 				Index:      "tags",
 				DocumentID: hashTagData.ID,
 				Body:       body,
 				Refresh:    "true",
 			}
-
 			// Perform the request with the client.
 			res, err := req.Do(context.Background(), es)
 			if err != nil {
 				log.Fatalf("Error getting response: %s", err)
 			}
 			defer res.Body.Close()
-
+			fmt.Println("response is", res)
 			if res.IsError() {
 				log.Printf("[%s] Error indexing document ID=%d", res.Status(), i+1)
 			} else {
@@ -150,6 +166,7 @@ func SearchHashTags(query bson.M) (error, interface{}) {
 	req := esapi.SearchRequest{
 		Index: []string{index},
 		Body:  body,
+		SourceExcludes: []string{"*"},
 	}
 	res, err := req.Do(context.Background(), es)
 	if err != nil {
@@ -166,6 +183,11 @@ func SearchHashTags(query bson.M) (error, interface{}) {
 		return errors.New("Error parsing the response body"), x
 	}
 	// log.Printf("response\n%+v", r)
-	response := r["suggest"].(map[string]interface{})["hashtags"].([]interface{})[0].(map[string]interface{})
-	return nil, response["options"]
+	options := r["suggest"].(map[string]interface{})["hashtags"].([]interface{})[0].(map[string]interface{})["options"]
+	var response []map[string]interface{}
+	for _, v := range options.([]interface{}) {
+		id := v.(map[string]interface{})["_id"].(string)
+		response = append(response, map[string]interface{}{"id": id})
+	}
+	return nil, response
 }
