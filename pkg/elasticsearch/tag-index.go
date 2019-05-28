@@ -10,7 +10,6 @@ import (
 
 	// "github.com/elastic/go-elasticsearch/v7"
 	// "github.com/elastic/go-elasticsearch/v7/esapi"
-	"sync"
 	"time"
 
 	"github.com/elastic/go-elasticsearch/v7/esapi"
@@ -75,12 +74,9 @@ func AddTagToIndex(tags []string, image string) {
 		Image:              image,
 	}
 
-	var wg sync.WaitGroup
 	for i, tag := range tags {
-		wg.Add(1)
 
-		go func(tagName string) {
-			defer wg.Done()
+		func(tagName string) {
 			fmt.Println("indexing..", tagName)
 			hashTagData.ID = strings.ToLower(tagName)
 			hashTagData.Keyword = TypeInput{
@@ -135,7 +131,6 @@ func AddTagToIndex(tags []string, image string) {
 			}
 		}(tag)
 	}
-	wg.Wait()
 }
 
 func SearchHashTags(query bson.M) (error, interface{}) {
@@ -217,8 +212,6 @@ func UpdateTagWeight(tag string, additionScore int) (error, int) {
 	baseTime := source["resurfaced_date"].(string)
 	weight := getScore(baseTime, int(noOfPost), 0)
 
-	// update score to suggested field
-	// Build the request body.
 	body := esutil.NewJSONReader(StringInterface{
 		"script": StringInterface{
 			"source": "ctx._source.keyword.weight = params.weight",

@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"notification-service/pkg/elasticsearch"
 	"strconv"
-
+	"strings"
 	"github.com/globalsign/mgo/bson"
 	"github.com/go-chi/chi"
 	"github.com/go-chi/render"
@@ -71,6 +71,7 @@ func SearchHashTags(w http.ResponseWriter, r *http.Request) {
 
 func GetTagByID(w http.ResponseWriter, r *http.Request) {
 	id := chi.URLParam(r, "id")
+	id = strings.ToLower(id)
 	err, response := elasticsearch.GetDocumentById(id, "tags")
 	if err != nil {
 		w.WriteHeader(400)
@@ -82,6 +83,7 @@ func GetTagByID(w http.ResponseWriter, r *http.Request) {
 
 func UpdateHashtagWeight(w http.ResponseWriter, r *http.Request) {
 	id := chi.URLParam(r, "id")
+	id = strings.ToLower(id)
 	queries := r.URL.Query()
 	var additionalScore int
 	if len(queries["addition_score"]) != 0 {
@@ -99,6 +101,7 @@ func UpdateHashtagWeight(w http.ResponseWriter, r *http.Request) {
 
 func GetHashTagImageById(w http.ResponseWriter, r *http.Request) {
 	id := chi.URLParam(r, "id")
+	id = strings.ToLower(id)
 	err, response := elasticsearch.GetImageById(id)
 	if err != nil {
 		w.WriteHeader(400)
