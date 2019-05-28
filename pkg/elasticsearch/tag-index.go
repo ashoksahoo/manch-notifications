@@ -164,8 +164,8 @@ func SearchHashTags(query bson.M) (error, interface{}) {
 	index := "tags"
 	var r StringInterface
 	req := esapi.SearchRequest{
-		Index: []string{index},
-		Body:  body,
+		Index:          []string{index},
+		Body:           body,
 		SourceExcludes: []string{"*"},
 	}
 	res, err := req.Do(context.Background(), es)
@@ -190,4 +190,60 @@ func SearchHashTags(query bson.M) (error, interface{}) {
 		response = append(response, map[string]interface{}{"id": id})
 	}
 	return nil, response
+}
+
+func getScore(baseTime time.Time, noOfPost int, additionScore int) int {
+	return (noOfPost*10 + additionScore)
+}
+
+/**
+* update hashtag weight and returns the weight
+* it takes tagName and additionScore
+ */
+func UpdateTagWeight(tag string, additionScore int) (error, int) {
+	err, doc := GetDocumentById(tag, "tags")
+	if err != nil {
+		return err, 0
+	}
+	source := doc["_source"].(map[string]interface{})
+	noOfPost := source["no_of_posts"].(int)
+	baseTime := source["resurfaced_date"].(time.Time)
+	weight := getScore(baseTime, noOfPost, 0)
+
+	// update score to suggested field
+	// Build the request body.
+	body := esutil.NewJSONReader(StringInterface{
+		"script": StringInterface{
+			"source": "ctx._source.keyword.weight = params.weight",
+			"params": StringInterface{
+				"weight": weight,
+			},
+		},
+	})
+	fmt.Println("requesting", body)
+	// create update request
+	req := esapi.UpdateRequest{
+		Index:      "tags",
+		DocumentID: tag,
+		Body:       body,
+		Refresh:    "true",
+	}
+	// Perform the request with the client.
+	res, err := req.Do(context.Background(), es)
+	if err != nil {
+		log.Fatalf("Error getting response: %s", err)
+		return errors.New("Error getting response"), 0
+	}
+	defer res.Body.Close()
+	fmt.Println("response is", res)
+	if res.IsError() {
+		return errors.New("Error getting response"), 0
+	}
+	// Deserialize the response into a map.
+	var r map[string]interface{}
+	if err := json.NewDecoder(res.Body).Decode(&r); err != nil {
+		return errors.New("Error parsing the response body"), 0
+	}
+	log.Printf("[%s] %s; version=%d", res.Status(), r["result"], int(r["_version"].(float64)))
+	return nil, weight
 }

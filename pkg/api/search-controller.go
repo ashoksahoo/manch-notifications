@@ -81,3 +81,20 @@ func GetTagByID(w http.ResponseWriter, r *http.Request) {
 	}
 	render.JSON(w, r, bson.M{"data": response})
 }
+
+func UpdateHashtagWeight(w http.ResponseWriter, r *http.Request) {
+	id := chi.URLParam(r, "id")
+	queries := r.URL.Query()
+	var additionalScore int
+	if len(queries["addition_score"]) != 0 {
+		additionalScore, _ = strconv.Atoi(queries["skip"][0])
+	}
+	err, response := elasticsearch.UpdateTagWeight(id, additionalScore)
+
+	if err != nil {
+		w.WriteHeader(400)
+		w.Write([]byte(err.Error()))
+		return
+	}
+	render.JSON(w, r, bson.M{"data": map[string]interface{}{"weight": response}})
+}
