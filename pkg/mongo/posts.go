@@ -22,6 +22,12 @@ type BlockReason struct {
 	IgnoreFeedReason string `json:"ignore_from_feed_reason" bson:"ignore_from_feed_reason"`
 }
 
+type TagPositions struct {
+	Tag      string `json:"tag" bson:"tag"`
+	TagStart int    `json:"tag_start" bson:"tag_end"`
+	TagEnd   int    `json:"tag_end" bson:"tag_end"`
+}
+
 type PostModel struct {
 	Id             bson.ObjectId   `json:"_id" bson:"_id"`
 	Title          string          `json:"title" bson:"title"`
@@ -41,6 +47,8 @@ type PostModel struct {
 	SourcedBy      string          `json:"sourced_by" bson:"sourced_by"`
 	RepostedPostId bson.ObjectId   `json:"reposted_post_id" bson:"reposted_post_id"`
 	RepostCount    int             `json:"no_of_reposts" bson:"no_of_reposts"`
+	Tags           []string        `json:"tags" bson:"tags"`
+	TagsPosition   TagPositions    `json:"tag_positions" bson:"tag_positions"`
 }
 
 func GetPost(Id bson.ObjectId) PostModel {

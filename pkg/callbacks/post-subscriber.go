@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"math/rand"
 	"notification-service/pkg/constants"
+	"notification-service/pkg/elasticsearch"
 	"notification-service/pkg/firebase"
 	"notification-service/pkg/i18n"
 	"notification-service/pkg/mongo"
@@ -27,6 +28,10 @@ func PostSubscriberCB(subj, reply string, p *subscribers.Post) {
 
 	// update user score for new post
 	_, post := mongo.GetPostById(p.Id)
+
+	// process hashtags
+	image := mongo.ExtractThumbNailFromPost(post)
+	elasticsearch.AddTagToIndex(post.Tags, image)
 
 	// send notification to manch owner
 	community := mongo.GetCommunityById(post.CommunityIds[0].Hex())
