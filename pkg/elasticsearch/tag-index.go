@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"log"
+	"strings"
 
 	// "github.com/elastic/go-elasticsearch/v7"
 	// "github.com/elastic/go-elasticsearch/v7/esapi"
@@ -27,6 +28,7 @@ type TypeInput struct {
 type HashTag struct {
 	ID                 string    `json:"id"`
 	Keyword            TypeInput `json:"keyword"`
+	TagName            string    `json:"tagname"`
 	Title              string    `json:"title"`
 	Image              string    `json:"image"`
 	NoOfPosts          int       `json:"no_of_posts"`
@@ -50,7 +52,7 @@ func GetDocumentById(id, index string) (error, map[string]interface{}) {
 		return err, r
 	}
 	defer res.Body.Close()
-
+	fmt.Println("response getdocumentbyid", res)
 	if res.IsError() {
 		log.Printf("Error on getting data")
 		return errors.New("Error on getting data"), r
@@ -64,12 +66,13 @@ func GetDocumentById(id, index string) (error, map[string]interface{}) {
 	return nil, r
 }
 
-func AddTagToIndex(tags []string) {
+func AddTagToIndex(tags []string, image string) {
 
 	hashTagData := HashTag{
 		ActualCreationTime: time.Now(),
 		LastUpdatedTime:    time.Now(),
 		ResurfacedDate:     time.Now(),
+		Image:              image,
 	}
 
 	var wg sync.WaitGroup
@@ -78,12 +81,13 @@ func AddTagToIndex(tags []string) {
 
 		go func(tagName string) {
 			defer wg.Done()
-			hashTagData.ID = tagName
+			fmt.Println("indexing..", tagName)
+			hashTagData.ID = strings.ToLower(tagName)
 			hashTagData.Keyword = TypeInput{
 				Input: []string{tagName},
 			}
 			hashTagData.Title = tagName
-
+			hashTagData.TagName = tagName
 			// upsert data
 			var upsertData StringInterface
 			hashTagDataEncoded, _ := json.Marshal(hashTagData)
@@ -111,6 +115,7 @@ func AddTagToIndex(tags []string) {
 			}
 			// Perform the request with the client.
 			res, err := req.Do(context.Background(), es)
+			fmt.Println("response of", tagName, res)
 			if err != nil {
 				log.Fatalf("Error getting response: %s", err)
 			}
@@ -166,7 +171,7 @@ func SearchHashTags(query bson.M) (error, interface{}) {
 	req := esapi.SearchRequest{
 		Index:          []string{index},
 		Body:           body,
-		SourceExcludes: []string{"*"},
+		SourceIncludes: []string{"tagname"},
 	}
 	res, err := req.Do(context.Background(), es)
 	if err != nil {
@@ -187,16 +192,18 @@ func SearchHashTags(query bson.M) (error, interface{}) {
 	var response []map[string]interface{}
 	for _, v := range options.([]interface{}) {
 		id := v.(map[string]interface{})["_id"].(string)
-		response = append(response, map[string]interface{}{"id": id})
+		source := v.(map[string]interface{})["_source"].(map[string]interface{})
+		tagname := source["tagname"]
+		response = append(response, map[string]interface{}{"_id": id, "tagname": tagname})
 	}
 	return nil, response
 }
 
-func getScore(baseTime time.Time, noOfPost int, additionScore int) int {
+func getScore(baseTime string, noOfPost int, additionScore int) int {
 	return (noOfPost*10 + additionScore)
 }
 
-/**
+/*
 * update hashtag weight and returns the weight
 * it takes tagName and additionScore
  */
@@ -206,9 +213,9 @@ func UpdateTagWeight(tag string, additionScore int) (error, int) {
 		return err, 0
 	}
 	source := doc["_source"].(map[string]interface{})
-	noOfPost := source["no_of_posts"].(int)
-	baseTime := source["resurfaced_date"].(time.Time)
-	weight := getScore(baseTime, noOfPost, 0)
+	noOfPost := source["no_of_posts"].(float64)
+	baseTime := source["resurfaced_date"].(string)
+	weight := getScore(baseTime, int(noOfPost), 0)
 
 	// update score to suggested field
 	// Build the request body.
@@ -246,4 +253,13 @@ func UpdateTagWeight(tag string, additionScore int) (error, int) {
 	}
 	log.Printf("[%s] %s; version=%d", res.Status(), r["result"], int(r["_version"].(float64)))
 	return nil, weight
+}
+
+
+func GetImageById(id string) (error, string) {
+	err, doc := GetDocumentById(id, "tags")
+	if err != nil {
+		return err, ""
+	}
+	return nil, doc["_source"].(map[string]interface{})["image"].(string)
 }

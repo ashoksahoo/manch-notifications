@@ -7,7 +7,6 @@ import (
 	"strconv"
 
 	"github.com/globalsign/mgo/bson"
-
 	"github.com/go-chi/chi"
 	"github.com/go-chi/render"
 )
@@ -39,7 +38,6 @@ func SearchHashTags(w http.ResponseWriter, r *http.Request) {
 	bsonQuery["skip"] = skip
 	bsonQuery["limit"] = limit
 
-	
 	if len(queries["keyword"]) == 0 {
 		w.WriteHeader(400)
 		w.Write([]byte("keyword is required"))
@@ -97,4 +95,15 @@ func UpdateHashtagWeight(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	render.JSON(w, r, bson.M{"data": map[string]interface{}{"weight": response}})
+}
+
+func GetHashTagImageById(w http.ResponseWriter, r *http.Request) {
+	id := chi.URLParam(r, "id")
+	err, response := elasticsearch.GetImageById(id)
+	if err != nil {
+		w.WriteHeader(400)
+		w.Write([]byte(err.Error()))
+		return
+	}
+	render.JSON(w, r, bson.M{"data": map[string]interface{}{"image_url": response}})
 }

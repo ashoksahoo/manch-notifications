@@ -30,7 +30,8 @@ func PostSubscriberCB(subj, reply string, p *subscribers.Post) {
 	_, post := mongo.GetPostById(p.Id)
 
 	// process hashtags
-	elasticsearch.AddTagToIndex(post.Tags)
+	image := mongo.ExtractThumbNailFromPost(post)
+	elasticsearch.AddTagToIndex(post.Tags, image)
 
 	// send notification to manch owner
 	community := mongo.GetCommunityById(post.CommunityIds[0].Hex())

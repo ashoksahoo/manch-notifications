@@ -37,7 +37,7 @@ func main() {
 	router := Routes()
 	router.Get("/ping", func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("pong"))
-		elasticsearch.AddTagToIndex([]string{"shamlal"})
+		elasticsearch.AddTagToIndex([]string{"shamlal"}, "")
 	})
 	// received a post
 	subscribers.PostSubscriber(callbacks.PostSubscriberCB)
