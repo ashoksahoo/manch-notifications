@@ -33,6 +33,9 @@ func PostSubscriberCB(subj, reply string, p *subscribers.Post) {
 	image := mongo.ExtractThumbNailFromPost(post)
 	elasticsearch.AddTagToIndex(post.Tags, image)
 
+	// create or update user hashtags 
+	mongo.CreateUserTags(post)
+
 	// send notification to manch owner
 	community := mongo.GetCommunityById(post.CommunityIds[0].Hex())
 

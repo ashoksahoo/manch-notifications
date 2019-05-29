@@ -136,6 +136,7 @@ var ModelNames = map[string]string{
 	"USER_COINS_SCHEDULE_MODEL": "user_coins_scheduleds",
 	"COMMUNITIES_STATS_MODEL":   "community_stats",
 	"REFERRALS":                 "referrals",
+	"USER_TAGS":                 "user_tags",
 }
 
 var BlackListStatus = map[string]string{

@@ -6,8 +6,9 @@ import (
 	"errors"
 	"fmt"
 	"log"
-	"strings"
 	"notification-service/pkg/utils"
+	"strings"
+
 	// "github.com/elastic/go-elasticsearch/v7"
 	// "github.com/elastic/go-elasticsearch/v7/esapi"
 	"time"
@@ -33,10 +34,10 @@ type HashTag struct {
 	NoOfPosts          int       `json:"no_of_posts"`
 	NoOfLikes          int       `json:"no_of_likes"`
 	NoOfComments       int       `json:"no_of_comments"`
-	ActualCreationTime string `json:"actual_creation_time"`
-	LastUpdatedTime    string `json:"last_updated_time"`
+	ActualCreationTime string    `json:"actual_creation_time"`
+	LastUpdatedTime    string    `json:"last_updated_time"`
 	Resurfaced         bool      `json:"resurfaced"`
-	ResurfacedDate     string `json:"resurfaced_date"`
+	ResurfacedDate     string    `json:"resurfaced_date"`
 }
 
 func GetDocumentById(id, index string) (error, map[string]interface{}) {
@@ -193,7 +194,7 @@ func SearchHashTags(query bson.M) (error, interface{}) {
 }
 
 func getScore(baseTime string, noOfPost int, additionScore int) int {
-	t :=utils.ParseISOToTime(baseTime)
+	t := utils.ParseISOToTime(baseTime)
 	return (int(t.Unix()) + noOfPost*10 + additionScore)
 }
 
@@ -201,13 +202,15 @@ func getScore(baseTime string, noOfPost int, additionScore int) int {
 * update hashtag weight and returns the weight
 * it takes tagName and additionScore
  */
-func UpdateTagWeight(tag string, additionScore int) (error, int) {
+func UpdateTagWeight(tag string, additionScore int) (error, map[string]interface{}) {
+	response := map[string]interface{}{}
 	err, doc := GetDocumentById(tag, "tags")
 	if err != nil {
-		return err, 0
+		return err, response
 	}
 	source := doc["_source"].(map[string]interface{})
 	noOfPost := source["no_of_posts"].(float64)
+	tagname := source["tagname"].(string)
 	baseTime := source["resurfaced_date"].(string)
 	weight := getScore(baseTime, int(noOfPost), 0)
 
@@ -231,22 +234,23 @@ func UpdateTagWeight(tag string, additionScore int) (error, int) {
 	res, err := req.Do(context.Background(), es)
 	if err != nil {
 		log.Fatalf("Error getting response: %s", err)
-		return errors.New("Error getting response"), 0
+		return errors.New("Error getting response"), response
 	}
 	defer res.Body.Close()
 	fmt.Println("response is", res)
 	if res.IsError() {
-		return errors.New("Error getting response"), 0
+		return errors.New("Error getting response"), response
 	}
 	// Deserialize the response into a map.
 	var r map[string]interface{}
 	if err := json.NewDecoder(res.Body).Decode(&r); err != nil {
-		return errors.New("Error parsing the response body"), 0
+		return errors.New("Error parsing the response body"), response
 	}
 	log.Printf("[%s] %s; version=%d", res.Status(), r["result"], int(r["_version"].(float64)))
-	return nil, weight
+	response["weight"] = weight
+	response["tagname"] = tagname
+	return nil, response
 }
-
 
 func GetImageById(id string) (error, string) {
 	err, doc := GetDocumentById(id, "tags")

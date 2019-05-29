@@ -98,7 +98,7 @@ func UpdateHashtagWeight(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte(err.Error()))
 		return
 	}
-	render.JSON(w, r, bson.M{"data": map[string]interface{}{"weight": response}})
+	render.JSON(w, r, bson.M{"data": response})
 }
 
 func GetHashTagImageById(w http.ResponseWriter, r *http.Request) {
