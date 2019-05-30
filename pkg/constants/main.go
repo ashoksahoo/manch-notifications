@@ -160,3 +160,8 @@ var CommunityStatus = map[string]string{
 	"APPROVED":         "approved",
 	"ACTIVATED":        "activated",
 }
+
+var IndexNames = map[string]string{
+	"TAGS":  "tags",
+	"USERS": "users",
+}

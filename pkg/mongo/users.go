@@ -59,6 +59,16 @@ type Profile struct {
 	CommentsCount                  int           `json:"no_of_comments" bson:"no_of_comments"`
 	DisplayProfileChangedUpdated   bool          `json:"display_profile_changed_updated" bson:"display_profile_changed_updated"`
 	DisplayProfileChangedUpdatedAt time.Time     `json:"display_profile_changed_at" bson:"display_profile_changed_at"`
+	AboutMe                        string        `json:"about_me" bson:"about_me"`
+	NoOfPosts                      int           `json:"no_of_posts" bson:"no_of_posts"`
+	NoOfLikes                      int           `json:"no_of_likes" bson:"no_of_likes"`
+	NoOfShares                     int           `json:"no_of_shares" bson:"no_of_shares"`
+	NoOfFollowing                  int           `json:"no_of_following" bson:"no_of_following"`
+	NoOfManchFollowing             int           `json:"no_of_manch_following" bson:"no_of_manch_following"`
+	LastActiveHour                 time.Time     `json:"last_active_hour" bson:"last_active_hour"`
+	TotalCoins                     int           `json:"total_coins" bson:"total_coins"`
+	TotalManchCreated              int           `json:"total_manch_created" bson:"total_manch_created"`
+	BranchLink                     string        `json:"branch_link" bson:"branch_link"`
 }
 
 type Creator struct {

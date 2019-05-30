@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"log"
+	"notification-service/pkg/constants"
 	"notification-service/pkg/utils"
 	"strings"
 
@@ -16,6 +17,10 @@ import (
 	"github.com/elastic/go-elasticsearch/v7/esapi"
 	"github.com/elastic/go-elasticsearch/v7/esutil"
 	"github.com/globalsign/mgo/bson"
+)
+
+var (
+	TAG_INDEX = constants.IndexNames["TAGS"]
 )
 
 type StringInterface map[string]interface{}
@@ -104,7 +109,7 @@ func AddTagToIndex(tags []string, image string) {
 			})
 			// create update request
 			req := esapi.UpdateRequest{
-				Index:      "tags",
+				Index:      TAG_INDEX,
 				DocumentID: hashTagData.ID,
 				Body:       body,
 				Refresh:    "true",
@@ -160,10 +165,9 @@ func SearchHashTags(query bson.M) (error, interface{}) {
 			},
 		},
 	})
-	index := "tags"
 	var r StringInterface
 	req := esapi.SearchRequest{
-		Index:          []string{index},
+		Index:          []string{TAG_INDEX},
 		Body:           body,
 		SourceIncludes: []string{"tagname"},
 	}
@@ -225,7 +229,7 @@ func UpdateTagWeight(tag string, additionScore int) (error, map[string]interface
 	fmt.Println("requesting", body)
 	// create update request
 	req := esapi.UpdateRequest{
-		Index:      "tags",
+		Index:      TAG_INDEX,
 		DocumentID: tag,
 		Body:       body,
 		Refresh:    "true",

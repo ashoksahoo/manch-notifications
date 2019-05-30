@@ -3,6 +3,7 @@ package callbacks
 import (
 	"fmt"
 	"math/rand"
+	"notification-service/pkg/elasticsearch"
 	"notification-service/pkg/mongo"
 	"notification-service/pkg/subscribers"
 	"notification-service/pkg/utils"
@@ -19,6 +20,33 @@ func UserSubscriberCB(subj, reply string, u *subscribers.User) {
 	// get user from db
 	user := mongo.GetUserById(u.Id)
 	userProfileId := user.Profiles[0].Id
+
+	profile := user.Profiles[0]
+	// index user
+	currentISOTime := utils.ISOFormat(time.Now())
+	elasticsearch.CreateUserIndex(elasticsearch.UserIndex{
+		ID:   profile.Id.Hex(),
+		Name: profile.Name,
+		NameKeyword: elasticsearch.TypeInput{
+			Input: []string{profile.Name},
+		},
+		Avatar:             profile.Avatar,
+		AboutMe:            profile.AboutMe,
+		Type:               profile.Type,
+		NoOfPosts:          profile.NoOfPosts,
+		NoOfLikes:          profile.NoOfLikes,
+		NoOfComments:       profile.CommentsCount,
+		NoOfShares:         profile.NoOfShares,
+		NoOfFollowers:      profile.FollowerCount,
+		NoOfFollowing:      profile.NoOfFollowing,
+		NoOfManchFollowing: profile.NoOfManchFollowing,
+		LastActiveHour:     profile.LastActiveHour,
+		TotalCoins:         profile.TotalCoins,
+		TotalManchCreated:  profile.TotalManchCreated,
+		BranchLink:         profile.BranchLink,
+		CreatedAt:          currentISOTime,
+		UpdatedAt:          currentISOTime,
+	})
 
 	m, botProfilesHi := mongo.GetBotProfilesIds("hi")
 	n, botProfilesTe := mongo.GetBotProfilesIds("te")
