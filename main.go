@@ -36,7 +36,6 @@ func main() {
 	router.Get("/ping", func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("pong"))
 	})
-
 	// received a post
 	subscribers.PostSubscriber(callbacks.PostSubscriberCB)
 
