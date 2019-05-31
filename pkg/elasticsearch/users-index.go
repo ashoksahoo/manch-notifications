@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"log"
 	"notification-service/pkg/constants"
+	"notification-service/pkg/utils"
 	"time"
 
 	"github.com/elastic/go-elasticsearch/v7/esapi"
@@ -34,7 +35,7 @@ type UserIndex struct {
 	NoOfFollowers      int       `json:"no_of_followers,omitempty"`
 	NoOfFollowing      int       `json:"no_of_following,omitempty"`
 	NoOfManchFollowing int       `json:"no_of_manch_following,omitempty"`
-	LastActiveHour     time.Time `json:"last_active_hour,omitempty"`
+	LastActiveHour     string    `json:"last_active_hour,omitempty"`
 	TotalCoins         int       `json:"total_coins,omitempty"`
 	TotalManchCreated  int       `json:"total_manch_created,omitempty"`
 	BranchLink         string    `json:"branch_link,omitempty"`
@@ -79,6 +80,8 @@ func CreateUserIndex(userIndex UserIndex) {
 }
 
 func UpdateUserIndex(userIndex UserIndex) {
+	currentISOTime := utils.ISOFormat(time.Now())
+	userIndex.UpdatedAt = currentISOTime
 	var updateData StringInterface
 	encodedUserIndex, _ := json.Marshal(userIndex)
 	json.Unmarshal(encodedUserIndex, &updateData)
@@ -116,7 +119,7 @@ func UpdateUserIndex(userIndex UserIndex) {
 	}
 }
 
-func SuggestUsers(query bson.M) (error, map[string]interface{}) {
+func SuggestUsers(query bson.M) (error, interface{}) {
 	var r StringInterface
 	fmt.Println("Query is ", query)
 	limit, limitOk := query["limit"]
@@ -141,9 +144,8 @@ func SuggestUsers(query bson.M) (error, map[string]interface{}) {
 	})
 
 	req := esapi.SearchRequest{
-		Index:          []string{USERS_INDEX},
-		Body:           body,
-		SourceIncludes: []string{"tagname"},
+		Index: []string{USERS_INDEX},
+		Body:  body,
 	}
 	res, err := req.Do(context.Background(), es)
 	if err != nil {
@@ -160,7 +162,7 @@ func SuggestUsers(query bson.M) (error, map[string]interface{}) {
 		return errors.New("Error parsing the response body"), r
 	}
 	// log.Printf("response\n%+v", r)
-	options := r["suggest"].(map[string]interface{})["users"].([]interface{})[0];
-	return nil, options.(map[string]interface{})
+	options := r["suggest"].(map[string]interface{})["users"].([]interface{})[0]
+	return nil, options.(map[string]interface{})["options"]
 
 }

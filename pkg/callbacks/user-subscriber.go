@@ -40,7 +40,7 @@ func UserSubscriberCB(subj, reply string, u *subscribers.User) {
 		NoOfFollowers:      profile.FollowerCount,
 		NoOfFollowing:      profile.NoOfFollowing,
 		NoOfManchFollowing: profile.NoOfManchFollowing,
-		LastActiveHour:     profile.LastActiveHour,
+		LastActiveHour:     utils.ISOFormat(profile.LastActiveHour),
 		TotalCoins:         profile.TotalCoins,
 		TotalManchCreated:  profile.TotalManchCreated,
 		BranchLink:         profile.BranchLink,
