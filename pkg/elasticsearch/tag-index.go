@@ -20,7 +20,13 @@ import (
 )
 
 var (
-	TAG_INDEX = constants.IndexNames["TAGS"]
+	TAG_INDEX   = constants.IndexNames["TAGS"]
+	TrendingBgs = []string{
+		"https://manch-dev.s3.ap-south-1.amazonaws.com/app-banners/bg_trending_blue.jpg'",
+		"https://manch-dev.s3.ap-south-1.amazonaws.com/app-banners/bg_trending_green.jpg'",
+		"https://manch-dev.s3.ap-south-1.amazonaws.com/app-banners/bg_trending_red.jpg'",
+		"https://manch-dev.s3.ap-south-1.amazonaws.com/app-banners/bg_trending_voilet.jpg",
+	}
 )
 
 type StringInterface map[string]interface{}
@@ -43,6 +49,11 @@ type HashTag struct {
 	LastUpdatedTime    string    `json:"last_updated_time"`
 	Resurfaced         bool      `json:"resurfaced"`
 	ResurfacedDate     string    `json:"resurfaced_date"`
+}
+
+func getTrendingBg() string {
+	randomIndex := utils.Random(0, len(TrendingBgs))
+	return TrendingBgs[randomIndex]
 }
 
 func GetDocumentById(id, index string) (error, map[string]interface{}) {
@@ -72,6 +83,9 @@ func GetDocumentById(id, index string) (error, map[string]interface{}) {
 
 func AddTagToIndex(tags []string, image string) {
 	currentISOTime := utils.ISOFormat(time.Now())
+	if image == "" {
+		image = getTrendingBg()
+	}
 	hashTagData := HashTag{
 		ActualCreationTime: currentISOTime,
 		LastUpdatedTime:    currentISOTime,
