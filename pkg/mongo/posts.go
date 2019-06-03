@@ -13,8 +13,11 @@ var (
 )
 
 type Media struct {
-	Url       string `json:"url" bson:"url"`
-	Thumbnail string `json:"thumbnail" bson:"thumbnail"`
+	Url         string `json:"url" bson:"url"`
+	Thumbnail   string `json:"thumbnail" bson:"thumbnail"`
+	Description string `json:"description" bson:"description"`
+	Filetype    string `json:"file_type" bson:"file_type"`
+	Duration    int    `json:"duration" bson:"duration"`
 }
 
 type BlockReason struct {
@@ -28,27 +31,67 @@ type TagPositions struct {
 	TagEnd   int    `json:"tag_end" bson:"tag_end"`
 }
 
+type Source struct {
+	Title       string `json:"title" bson:"title"`
+	Description string `json:"description" bson:"description"`
+	MediaType   string `json:"media_type" bson:"media_type"`
+	Url         string `json:"url" bson:"url"`
+}
+
+type Moderation struct {
+	Done        bool  `json:"done" bson:"done"`
+	ModeratedBy Actor `json:"moderated_by" bson:"moderated_by"`
+}
+
+type CommunityMeta struct {
+	CommunityId   bson.ObjectId `json:"community_id" bson:"community_id"`
+	Name          string        `json:"name" bson:"name"`
+	Icon          string        `json:"icon" bson:"icon"`
+	Language      string        `json:"language" bson:"language"`
+	GeoRegion     string        `json:"geo_region"`
+	GeoRegionName string        `json:"geo_region_name" bson:"geo_region_name"`
+	Type          string        `json:"type" bson:"type"`
+	Scope         string        `json:"scope" bson:"scope"`
+}
+
 type PostModel struct {
-	Id             bson.ObjectId   `json:"_id" bson:"_id"`
-	Title          string          `json:"title" bson:"title"`
-	Created        Creator         `json:"created" bson:"created"`
-	CommunityIds   []bson.ObjectId `json:"community_ids" bson:"community_ids"`
-	CommentCount   int             `json:"no_of_comments" bson:"no_of_comments"`
-	UpVotes        int             `json:"up_votes" bson:"up_votes"`
-	DownVotes      int             `json:"down_votes" bson:"down_votes"`
-	Views          int             `json:"no_of_views" bson:"no_of_views"`
-	Impressions    int             `json:"no_of_impressions" bson:"no_of_impressions"`
-	MediaUrls      []Media         `json:"media_urls" bson:"media_urls"`
-	IgnoreFromFeed bool            `json:"ignore_from_feed" bson:"ignore_from_feed"`
-	IgnoreReason   string          `json:"ignore_reason" bson:"ignore_reason"`
-	PostLevel      string          `json:"post_level" bson:"post_level"`
-	Reason         BlockReason     `json:"reason" bson:"reason"`
-	Language       string          `json:"language" bson:"language"`
-	SourcedBy      string          `json:"sourced_by" bson:"sourced_by"`
-	RepostedPostId bson.ObjectId   `json:"reposted_post_id" bson:"reposted_post_id"`
-	RepostCount    int             `json:"no_of_reposts" bson:"no_of_reposts"`
-	Tags           []string        `json:"tags" bson:"tags"`
-	TagsPosition   TagPositions    `json:"tag_positions" bson:"tag_positions"`
+	Id                bson.ObjectId   `json:"_id" bson:"_id"`
+	ShortId           string          `json:"short_id" bson:"short_id"`
+	Title             string          `json:"title" bson:"title"`
+	Details           string          `json:"details" bson:"details"`
+	Created           Creator         `json:"created" bson:"created"`
+	CommunityIds      []bson.ObjectId `json:"community_ids" bson:"community_ids"`
+	CommentCount      int             `json:"no_of_comments" bson:"no_of_comments"`
+	UpVotes           int             `json:"up_votes" bson:"up_votes"`
+	DownVotes         int             `json:"down_votes" bson:"down_votes"`
+	Views             int             `json:"no_of_views" bson:"no_of_views"`
+	Impressions       int             `json:"no_of_impressions" bson:"no_of_impressions"`
+	MediaUrls         []Media         `json:"media_urls" bson:"media_urls"`
+	IgnoreFromFeed    bool            `json:"ignore_from_feed" bson:"ignore_from_feed"`
+	IgnoreReason      string          `json:"ignore_reason" bson:"ignore_reason"`
+	PostLevel         string          `json:"post_level" bson:"post_level"`
+	Reason            BlockReason     `json:"reason" bson:"reason"`
+	Language          string          `json:"language" bson:"language"`
+	SourcedBy         string          `json:"sourced_by" bson:"sourced_by"`
+	RepostedPostId    bson.ObjectId   `json:"reposted_post_id" bson:"reposted_post_id"`
+	RepostCount       int             `json:"no_of_reposts" bson:"no_of_reposts"`
+	Tags              []string        `json:"tags" bson:"tags"`
+	TagsPosition      TagPositions    `json:"tag_positions" bson:"tag_positions"`
+	Source            Source          `json:"source" bson:"source"`
+	Moderation        Moderation      `json:"moderation" bson:"moderation"`
+	Communities       []CommunityMeta `json:"communities" bson:"communities"`
+	Anonymous         bool            `json:"anonymous" bson:"anonymous"`
+	PostType          string          `json:"post_type" bson:"post_type"`
+	PostFormat        string          `json:"post_format" bson:"post_format"`
+	EngagementToday   int             `json:"engagement_today,omitempty" bson:"engagement_today"`
+	TrendingNotified  bool            `json:"trending_notified,omitempty"`
+	ContentSource     string          `json:"content_source,omitempty" bson:"content_source"`
+	Popularity        int             `json:"popularity,omitempty" bson:"popularity"`
+	FeedBaseTimeStamp time.Time       `json:"feed_base_ts,omitempty" bson:"feed_base_ts"`
+	CommentModerated  bool            `json:"comment_moderated,omitempty" bson:"comment_moderated"`
+	StoryTime         int             `json:"story_time,omitempty" bson:"story_time"`
+	CreatedAt         time.Time          `json:"createdAt,omitempty" bson:"createdAt"`
+	UpdatedAt         time.Time          `json:"updatedAt,omitempty" bson:"updatedAt"`
 }
 
 func GetPost(Id bson.ObjectId) PostModel {

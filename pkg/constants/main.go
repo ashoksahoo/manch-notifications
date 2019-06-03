@@ -164,4 +164,5 @@ var CommunityStatus = map[string]string{
 var IndexNames = map[string]string{
 	"TAGS":  "tags",
 	"USERS": "users",
+	"POSTS": "posts",
 }

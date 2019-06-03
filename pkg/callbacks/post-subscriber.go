@@ -33,6 +33,9 @@ func PostSubscriberCB(subj, reply string, p *subscribers.Post) {
 	image := mongo.ExtractThumbNailFromPost(post)
 	elasticsearch.AddTagToIndex(post.Tags, image)
 
+	// index posts
+	elasticsearch.CreatePostIndex(post)
+
 	// create or update user hashtags 
 	mongo.CreateUserTags(post)
 
