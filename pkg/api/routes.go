@@ -9,6 +9,7 @@ import (
 func Routes() *chi.Mux {
 	router := chi.NewRouter()
 	router.Get("/search", SearchHashTags)
+	// router.GET("/search/post")
 	router.Get("/search/{id}", GetTagByID)
 	router.Post("/hashtag-weight/{id}", UpdateHashtagWeight)
 	router.Get("/hashtag/image/{id}", GetHashTagImageById)

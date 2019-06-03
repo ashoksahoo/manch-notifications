@@ -37,6 +37,7 @@ func main() {
 		w.Write([]byte("pong"))
 	})
 	// received a post
+	fmt.Println("I have reached here")
 	subscribers.PostSubscriber(callbacks.PostSubscriberCB)
 
 	// received a comment

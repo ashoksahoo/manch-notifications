@@ -11,10 +11,29 @@ import (
 var (
 	POSTS_MODEL = constants.ModelNames["POSTS"]
 )
-
+type Type struct{
+	Height float64 `json:"height" bson:"height"`
+	Width float64	`json:"width" bson:"width"`
+	AspectRatio float64 `json:"aspect_ratio" bson:"aspect_ratio"`
+}
+type Source struct{
+	Title string `json:"title" bson:"title"`
+	Description string `json:"description" bson:"description"`
+	MediaType string `json:"media_type" bson:"media_type"`
+	Url string `json:"url" bson:"url"`
+}
+type Dimensions struct{
+	Type Type `json:"type" bson:"type"`
+	Required bool `json:"required" bson:"required"`
+}	
 type Media struct {
 	Url       string `json:"url" bson:"url"`
 	Thumbnail string `json:"thumbnail" bson:"thumbnail"`
+	Type 	  string  `json:"type" bson:"type"`
+	UploadedOn string `json:"uploadedOn" bson:"uploadedOn"`
+	Description string `json:"description" bson:"description"`
+	FileType 	string `json:"file_type" bson:"file_type"`
+	Dimensions Dimensions `json:"dimensions" bson:"dimensions"`
 }
 
 type BlockReason struct {
@@ -26,6 +45,9 @@ type TagPositions struct {
 	Tag      string `json:"tag" bson:"tag"`
 	TagStart int    `json:"tag_start" bson:"tag_end"`
 	TagEnd   int    `json:"tag_end" bson:"tag_end"`
+}
+type Moderation struct {
+	Done bool `json:"done" bson:"done"`
 }
 
 type PostModel struct {
@@ -49,6 +71,12 @@ type PostModel struct {
 	RepostCount    int             `json:"no_of_reposts" bson:"no_of_reposts"`
 	Tags           []string        `json:"tags" bson:"tags"`
 	TagsPosition   TagPositions    `json:"tag_positions" bson:"tag_positions"`
+	Anonymous	   bool			   `json:"anonymous" bson:"anonymous"`
+	ContentTextForm string		   `json:"content_text_form" bson:"content_text_form"`
+	Details        string 		   `json:"details" bson:"details"`
+	ShortID 	   string 		   `json:"short_id" bson:"short_id"`
+	Source         Source		   `json:"source" bson:"source"`
+	Moderation 	   Moderation	   `json:"moderation" bson:"moderation"`
 }
 
 func GetPost(Id bson.ObjectId) PostModel {

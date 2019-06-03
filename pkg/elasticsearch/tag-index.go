@@ -75,7 +75,6 @@ func AddTagToIndex(tags []string, image string) {
 	}
 
 	for i, tag := range tags {
-
 		func(tagName string) {
 			fmt.Println("indexing..", tagName)
 			hashTagData.ID = strings.ToLower(tagName)
