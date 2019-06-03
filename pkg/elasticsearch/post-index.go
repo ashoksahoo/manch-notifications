@@ -213,5 +213,65 @@ func UpdatePostIndex(postIndex PostIndex) {
 }
 
 func SearchPost(query bson.M) (error, interface{}) {
-	
+	var r StringInterface
+	q := query["q"]
+	fmt.Println("Query is ", query)
+	limit, limitOk := query["limit"]
+	delete(query, "limit")
+	if !limitOk {
+		limit = 20
+	}
+	skip, skipOk := query["skip"]
+	delete(query, "skip")
+	if !skipOk {
+		skip = 0
+	}
+
+	var size, from int
+	size = limit.(int)
+	from = skip.(int)
+
+	body := esutil.NewJSONReader(StringInterface{
+		"query": StringInterface{
+			"match": StringInterface{
+				"search_text": StringInterface{
+					"query":     q,
+					"fuzziness": "2",
+				},
+			},
+		},
+	})
+
+	req := esapi.SearchRequest{
+		Index: []string{POST_INDEX},
+		Body:  body,
+		Size:  &size,
+		From:  &from,
+	}
+
+	res, err := req.Do(context.Background(), es)
+
+	log.Printf("Response got\n%+v", res)
+
+	if err != nil {
+		log.Fatalf("Error getting response: %s", err)
+		return err, r
+	}
+
+	defer res.Body.Close()
+	if res.IsError() {
+		return errors.New("Error on getting data"), r
+	}
+	// Deserialize the response into a map.
+	if err := json.NewDecoder(res.Body).Decode(&r); err != nil {
+		return errors.New("Error parsing the response body"), r
+	}
+
+	hits := r["hits"].(map[string]interface{})["hits"].([]interface{})
+	var response []map[string]interface{}
+	for _, hit := range hits {
+		source := hit.(map[string]interface{})["_source"].(map[string]interface{})
+		response = append(response, source)
+	}
+	return nil, response
 }

@@ -11,6 +11,7 @@ func Routes() *chi.Mux {
 	router.Get("/search", SearchHashTags)
 	router.Get("/search/{id}", GetTagByID)
 	router.Get("/users/search", HandleUserSearch)
+	router.Get("/posts/search", HandlePostSearch)
 	router.Post("/hashtag-weight/{id}", UpdateHashtagWeight)
 	router.Get("/hashtag/image/{id}", GetHashTagImageById)
 	router.Get("/notifications", GetAllNotification)
