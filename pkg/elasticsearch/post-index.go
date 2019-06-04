@@ -60,7 +60,7 @@ type PostIndex struct {
 	PostType          string                `json:"post_type,omitempty"`
 	PostFormat        string                `json:"post_format,omitempty"`
 	Language          string                `json:"language,omitempty"`
-	Source            mongo.Source          `json:"source"`
+	Source            mongo.Source          `json:"source",omitempty`
 	Upvotes           int                   `json:"up_votes,omitempty"`
 	Downvotes         int                   `json:"down_votes,omitempty"`
 	NoOfViews         int                   `json:"no_of_views,omitempty"`
