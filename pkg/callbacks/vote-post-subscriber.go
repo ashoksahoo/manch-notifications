@@ -81,9 +81,6 @@ func VotePostSubscriberCB(subj, reply string, v *subscribers.Vote) {
 		mongo.RemoveParticipants((post.Id.Hex() + "_vote"), false, vote.Created.ProfileId)
 		return
 	}
-	postCreator := mongo.GetProfileById(post.Created.ProfileId)
-	tokens := mongo.GetTokensByProfiles([]bson.ObjectId{post.Created.ProfileId})
-	// notification := mongo.CreateNotification(post.Id, "like", "post", vote.Created.ProfileId)
 
 	entities := []mongo.Entity{
 		{
@@ -95,6 +92,74 @@ func VotePostSubscriberCB(subj, reply string, v *subscribers.Vote) {
 			EntityType: "vote",
 		},
 	}
+
+	// schedule vote for the user likes
+	if vote.Created.UserType != "bot" {
+		// schedule vote to the post
+		// get unique bot profiles
+	}
+
+	postCreator := mongo.GetProfileById(post.Created.ProfileId)
+	upVotes := post.CoinsEarned
+	// notification for karma points
+	if upVotes != 0 && upVotes%50 == 0 {
+		templateName := "post_karma_points"
+		data := i18n.DataModel{
+			Count: upVotes,
+		}
+		msgStr := i18n.GetString(postCreator.Language, templateName, data)
+		htmlMsgStr := i18n.GetHtmlString(postCreator.Language, templateName, data)
+		title := i18n.GetAppTitle(postCreator.Language)
+
+		messageMeta := mongo.MessageMeta{
+			TemplateName: templateName,
+			Template:     i18n.Strings[postCreator.Language][templateName],
+			Data:         data,
+		}
+		// update notification message
+		deepLink := "manch://posts/" + post.Id.Hex()
+		notification := mongo.CreateNotification(mongo.NotificationModel{
+			Receiver:        postCreator.Id,
+			Identifier:      postCreator.Id.Hex() + "_karma_points",
+			Participants:    []bson.ObjectId{postCreator.Id},
+			DisplayTemplate: constants.NotificationTemplate["TRANSACTIONAL"],
+			EntityGroupId:   post.Id.Hex(),
+			ActionId:        post.Id,
+			ActionType:      "comment",
+			Purpose:         constants.NotificationPurpose["KARMA_POINTS"],
+			Entities:        entities,
+			Message:         msgStr,
+			MessageMeta:     messageMeta,
+			MessageHtml:     htmlMsgStr,
+			DeepLink:        deepLink,
+		})
+
+		icon := mongo.ExtractThumbNailFromPost(post)
+
+		if icon == "" {
+			icon = vote.Created.Avatar
+		}
+
+		msg := firebase.ManchMessage{
+			Title:    title,
+			Message:  msgStr,
+			Icon:     icon,
+			DeepLink: deepLink,
+			Id:       notification.NId,
+		}
+
+		tokens := mongo.GetTokensByProfiles([]bson.ObjectId{post.Created.ProfileId})
+		fmt.Printf("\nGCM Message %+v\n", msg)
+		if tokens != nil {
+			for _, token := range tokens {
+				go firebase.SendMessage(msg, token.Token, notification)
+			}
+		} else {
+			fmt.Printf("No token")
+		}
+
+	}
+
 	notification := mongo.NotificationModel{
 		Receiver:        postCreator.Id,
 		Identifier:      post.Id.Hex() + "_vote",
@@ -157,7 +222,6 @@ func VotePostSubscriberCB(subj, reply string, v *subscribers.Vote) {
 		templateName = "post_like_multi"
 	}
 
-	notification = mongo.CreateNotification(notification)
 	msgStr = i18n.GetString(postCreator.Language, templateName, data)
 	htmlMsgStr := i18n.GetHtmlString(postCreator.Language, templateName, data)
 	if count > 25 {
@@ -173,24 +237,32 @@ func VotePostSubscriberCB(subj, reply string, v *subscribers.Vote) {
 	}
 	// update notification message
 	deepLink := "manch://posts/" + post.Id.Hex()
-	mongo.UpdateNotification(bson.M{"_id": notification.Id}, bson.M{
-		"message":      msgStr,
-		"message_meta": messageMeta,
-		"message_html": htmlMsgStr,
-		"deep_link":    deepLink,
-	})
+
+	notification.Message = msgStr
+	notification.MessageMeta = messageMeta
+	notification.MessageHtml = htmlMsgStr
+	notification.DeepLink = deepLink
+
+	notification = mongo.CreateNotification(notification)
+
+	icon := mongo.ExtractThumbNailFromPost(post)
+
+	if icon == "" {
+		icon = vote.Created.Avatar
+	}
 
 	msg := firebase.ManchMessage{
 		Title:    title,
 		Message:  msgStr,
-		Icon:     mongo.ExtractThumbNailFromPost(post),
+		Icon:     icon,
 		DeepLink: deepLink,
 		Id:       notification.NId,
 	}
 
-	upvoteNumbers := []int{5, 25, 50, 75}
+	upvoteBucket := []int{1, 5, 25, 50, 75, 100}
 
-	if utils.Contains(upvoteNumbers, count+1) || (((count + 1) % 100) == 0) {
+	if utils.Contains(upvoteBucket, count+1) || (((count + 1) % 50) == 0) {
+		tokens := mongo.GetTokensByProfiles([]bson.ObjectId{post.Created.ProfileId})
 		fmt.Printf("\nGCM Message %+v\n", msg)
 		if tokens != nil {
 			for _, token := range tokens {

@@ -41,11 +41,6 @@ func VoteCommentSubscriberCB(subj, reply string, v *subscribers.Vote) {
 		//Do not process downvotes and unvote
 		return
 	}
-
-	err, post := mongo.GetPostById(comment.PostId.Hex())
-	if err != nil {
-		return
-	}
 	commentCreator := mongo.GetProfileById(comment.Created.ProfileId)
 	// notification := mongo.CreateNotification(comment.Id, "like", "comment", vote.Created.ProfileId)
 
@@ -63,20 +58,6 @@ func VoteCommentSubscriberCB(subj, reply string, v *subscribers.Vote) {
 			EntityType: "vote",
 		},
 	}
-	notification := mongo.CreateNotification(mongo.NotificationModel{
-		Receiver:        commentCreator.Id,
-		Identifier:      comment.Id.Hex() + "_vote",
-		Participants:    []bson.ObjectId{vote.Created.ProfileId},
-		DisplayTemplate: constants.NotificationTemplate["TRANSACTIONAL"],
-		EntityGroupId:   comment.Id.Hex(),
-		ActionId:        vote.Id,
-		ActionType:      "vote",
-		Purpose:         constants.NotificationPurpose["VOTE"],
-		Entities:        entities,
-		NUUID:           "",
-	})
-
-	tokens := mongo.GetTokensByProfiles([]bson.ObjectId{comment.Created.ProfileId})
 
 	commentTitle := utils.TruncateTitle(comment.Content, 4)
 
@@ -106,34 +87,37 @@ func VoteCommentSubscriberCB(subj, reply string, v *subscribers.Vote) {
 	}
 
 	deepLink := "manch://posts/" + comment.PostId.Hex()
-	// update notification message
-	mongo.UpdateNotification(bson.M{"_id": notification.Id}, bson.M{
-		"message":      msgStr,
-		"message_meta": messageMeta,
-		"message_html": htmlMsgStr,
-		"deep_link":    deepLink,
+	notification := mongo.CreateNotification(mongo.NotificationModel{
+		Receiver:        commentCreator.Id,
+		Identifier:      comment.Id.Hex() + "_vote",
+		Participants:    []bson.ObjectId{vote.Created.ProfileId},
+		DisplayTemplate: constants.NotificationTemplate["TRANSACTIONAL"],
+		EntityGroupId:   comment.Id.Hex(),
+		ActionId:        vote.Id,
+		ActionType:      "vote",
+		Purpose:         constants.NotificationPurpose["VOTE"],
+		Entities:        entities,
+		Message:         msgStr,
+		MessageMeta:     messageMeta,
+		MessageHtml:     htmlMsgStr,
+		DeepLink:        deepLink,
 	})
 
 	msg := firebase.ManchMessage{
 		Title:    title,
 		Message:  msgStr,
-		Icon:     mongo.ExtractThumbNailFromPost(post),
+		Icon:     vote.Created.Avatar,
 		DeepLink: deepLink,
 		Id:       notification.NId,
 	}
-
-
-	upvoteNumbers := []int{1, 2, 5, 10, 25, 50}
-
-	if utils.Contains(upvoteNumbers, comment.UpVotes) || ((comment.UpVotes % 100) == 0) {
-		fmt.Printf("\nGCM Message %+v\n", msg)
-		if tokens != nil {
-			for _, token := range tokens {
-				go firebase.SendMessage(msg, token.Token, notification)
-			}
-		} else {
-			fmt.Printf("No token")
+	fmt.Printf("\nGCM Message %+v\n", msg)
+	tokens := mongo.GetTokensByProfiles([]bson.ObjectId{comment.Created.ProfileId})
+	if tokens != nil {
+		for _, token := range tokens {
+			go firebase.SendMessage(msg, token.Token, notification)
 		}
+	} else {
+		fmt.Printf("No token")
 	}
 	fmt.Printf("Processed a Vote on subject %s! with Vote Id %s\n", subj, v.Id)
 
