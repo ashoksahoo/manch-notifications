@@ -81,7 +81,6 @@ func VotePostSubscriberCB(subj, reply string, v *subscribers.Vote) {
 		mongo.RemoveParticipants((post.Id.Hex() + "_vote"), false, vote.Created.ProfileId)
 		return
 	}
-	postCreator := mongo.GetProfileById(post.Created.ProfileId)
 
 	entities := []mongo.Entity{
 		{
@@ -93,6 +92,74 @@ func VotePostSubscriberCB(subj, reply string, v *subscribers.Vote) {
 			EntityType: "vote",
 		},
 	}
+
+	// schedule vote for the user likes
+	if vote.Created.UserType != "bot" {
+		// schedule vote to the post
+		// get unique bot profiles
+	}
+
+	postCreator := mongo.GetProfileById(post.Created.ProfileId)
+	upVotes := post.CoinsEarned
+	// notification for karma points
+	if upVotes != 0 && upVotes%50 == 0 {
+		templateName := "post_karma_points"
+		data := i18n.DataModel{
+			Count: upVotes,
+		}
+		msgStr := i18n.GetString(postCreator.Language, templateName, data)
+		htmlMsgStr := i18n.GetHtmlString(postCreator.Language, templateName, data)
+		title := i18n.GetAppTitle(postCreator.Language)
+
+		messageMeta := mongo.MessageMeta{
+			TemplateName: templateName,
+			Template:     i18n.Strings[postCreator.Language][templateName],
+			Data:         data,
+		}
+		// update notification message
+		deepLink := "manch://posts/" + post.Id.Hex()
+		notification := mongo.CreateNotification(mongo.NotificationModel{
+			Receiver:        postCreator.Id,
+			Identifier:      postCreator.Id.Hex() + "_karma_points",
+			Participants:    []bson.ObjectId{postCreator.Id},
+			DisplayTemplate: constants.NotificationTemplate["TRANSACTIONAL"],
+			EntityGroupId:   post.Id.Hex(),
+			ActionId:        post.Id,
+			ActionType:      "comment",
+			Purpose:         constants.NotificationPurpose["KARMA_POINTS"],
+			Entities:        entities,
+			Message:         msgStr,
+			MessageMeta:     messageMeta,
+			MessageHtml:     htmlMsgStr,
+			DeepLink:        deepLink,
+		})
+
+		icon := mongo.ExtractThumbNailFromPost(post)
+
+		if icon == "" {
+			icon = vote.Created.Avatar
+		}
+
+		msg := firebase.ManchMessage{
+			Title:    title,
+			Message:  msgStr,
+			Icon:     icon,
+			DeepLink: deepLink,
+			Id:       notification.NId,
+		}
+
+		tokens := mongo.GetTokensByProfiles([]bson.ObjectId{post.Created.ProfileId})
+		fmt.Printf("\nGCM Message %+v\n", msg)
+		if tokens != nil {
+			for _, token := range tokens {
+				go firebase.SendMessage(msg, token.Token, notification)
+			}
+		} else {
+			fmt.Printf("No token")
+		}
+
+	}
+
 	notification := mongo.NotificationModel{
 		Receiver:        postCreator.Id,
 		Identifier:      post.Id.Hex() + "_vote",
