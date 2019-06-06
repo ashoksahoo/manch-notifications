@@ -106,8 +106,10 @@ func CommentSubscriberCB(subj, reply string, c *subscribers.Comment) {
 	})
 
 	// get replied on comment
-	var replyOnComment = mongo.GetCommentById(comment.CommentId.Hex())
-
+	var replyOnComment mongo.CommentModel
+	if len(comment.Parents) >=2 {
+		replyOnComment = mongo.GetCommentById(comment.CommentId.Hex())
+	}
 	// notification for reply on a comment
 	if len(comment.Parents) >= 2 && replyOnComment.Created.ProfileId != comment.Created.ProfileId && replyOnComment.Created.ProfileId != replyOnComment.Post.Created.ProfileId {
 		fmt.Printf("reply on comments %+v\n", replyOnComment)

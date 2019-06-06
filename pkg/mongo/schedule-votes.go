@@ -13,7 +13,7 @@ var (
 )
 
 type VoteScheduleModelPost struct {
-	Id           bson.ObjectId `json:"_id" bson:"_id"`
+	Id           bson.ObjectId `json:"_id,omitempty" bson:"_id,omitempty"`
 	ResourceType string        `json:"resource_type" bson:"resource_type"`
 	Resource     bson.ObjectId `json:"resource" bson:"resource"`
 	Created      Creator       `json:"created" bson:"created"`

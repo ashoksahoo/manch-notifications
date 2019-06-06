@@ -41,7 +41,7 @@ func UserFollowSubscriberCB(subj, reply string, uf *subscribers.Subscription) {
 	}
 	var msgStr string
 	var templateName string
-	if count > 1 {
+	if count >= 1 {
 		templateName = "follow_user_multi"
 	} else {
 		templateName = "follow_user_one"
