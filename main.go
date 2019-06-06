@@ -55,10 +55,10 @@ func main() {
 	subscribers.UserFollowSubscriber(callbacks.UserFollowSubscriberCB)
 
 	// received user-follow removed
-	subscribers.UserFollowRemovedSubscriber(callbacks.UserFollowRemovedSubscriberCB)
+	// subscribers.UserFollowRemovedSubscriber(callbacks.UserFollowRemovedSubscriberCB)
 
 	// received re-post event
-	subscribers.RepostSubscriber(callbacks.RepostSubscriberCB)
+	// subscribers.RepostSubscriber(callbacks.RepostSubscriberCB)
 
 	// received share-post event
 	subscribers.SharePostSubscriber(callbacks.SharePostSubscriberCB)
@@ -70,10 +70,10 @@ func main() {
 	subscribers.ShareSubscriber(callbacks.ShareSubscriberCB)
 
 	// received Live Topics Comment
-	subscribers.LiveTopicsCommentSubscriber(callbacks.LiveTopicsCommentSubscriberCB)
+	// subscribers.LiveTopicsCommentSubscriber(callbacks.LiveTopicsCommentSubscriberCB)
 
 	// received live topics winners
-	subscribers.LiveTopicsWinnerSubscriber(callbacks.LiveTopicsWinnerSubscriberCB)
+	// subscribers.LiveTopicsWinnerSubscriber(callbacks.LiveTopicsWinnerSubscriberCB)
 
 	// received user blacklist update
 	subscribers.BlackListUserSubscriber(callbacks.BlackListUserSubscriberCB)
@@ -85,16 +85,16 @@ func main() {
 	subscribers.MileStoneSubscriber(callbacks.MileStoneSubscriberCB)
 
 	// received user-follow
-	subscribers.UserFollowApprovedSubscriber(callbacks.UserFollowApprovedCB)
+	// subscribers.UserFollowApprovedSubscriber(callbacks.UserFollowApprovedCB)
 
 	// received follower update on community
-	subscribers.CommunityFollowersUpdateSubscriber(callbacks.CommunityFollowersUpdateCB)
+	// subscribers.CommunityFollowersUpdateSubscriber(callbacks.CommunityFollowersUpdateCB)
 
 	// received status updated on community
-	subscribers.CommunityStatusUpdatedSubscriber(callbacks.CommunityStatusUpdatedCB)
+	// subscribers.CommunityStatusUpdatedSubscriber(callbacks.CommunityStatusUpdatedCB)
 
 	// received live topic poll results
-	subscribers.LiveTopicsPollResultSubscriber(callbacks.LiveTopicsPollResultCB)
+	// subscribers.LiveTopicsPollResultSubscriber(callbacks.LiveTopicsPollResultCB)
 
 	// received a user streak
 	subscribers.UserStreakSubscriber(callbacks.UserStreakCB)
@@ -106,7 +106,7 @@ func main() {
 	subscribers.ProfileModifiedSubscriber(callbacks.ProfileModifiedCB)
 
 	// received a new community
-	subscribers.CommunitySubscriber(callbacks.CommunitySubscriberCB)
+	// subscribers.CommunitySubscriber(callbacks.CommunitySubscriberCB)
 	// listen on http server 5000
 	http.ListenAndServe(":5000", router)
 }
