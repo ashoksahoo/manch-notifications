@@ -52,15 +52,13 @@ func PostModeratedSubscriberCB(subj, reply string, p *subscribers.Post) {
 	if post.PostLevel == "2" {
 		no_of_votes = utils.Random(40, 50)
 		if post.PostType == "VIDEO" {
-			no_of_votes =utils.Random(80, 100)
+			no_of_votes = utils.Random(80, 100)
 		}
 	} else if post.PostLevel == "1" {
 		no_of_votes = utils.Random(5, 10)
 	} else if post.PostLevel == "0" {
 		no_of_votes = utils.Random(0, 3)
 	}
-
-
 	j := 0
 	fmt.Println("no_of_votes: ", no_of_votes)
 	t := utils.SplitTimeInRange(1, 60*24, no_of_votes, time.Minute)
