@@ -47,6 +47,7 @@ type HashTag struct {
 	LastUpdatedTime    string    `json:"last_updated_time"`
 	Resurfaced         bool      `json:"resurfaced"`
 	ResurfacedDate     string    `json:"resurfaced_date"`
+	AdditionalScore    int       `json:"additional_score"`
 }
 
 func getTrendingBg() string {
@@ -79,16 +80,16 @@ func GetDocumentById(id, index string) (error, map[string]interface{}) {
 	return nil, r
 }
 
-func AddTagToIndex(tags []string, image string) {
+func AddTagToIndex(tags []string, additionalScore int) {
 	currentISOTime := utils.ISOFormat(time.Now())
-	if image == "" {
-		image = getTrendingBg()
-	}
+	image := getTrendingBg()
 	hashTagData := HashTag{
 		ActualCreationTime: currentISOTime,
 		LastUpdatedTime:    currentISOTime,
 		ResurfacedDate:     currentISOTime,
 		Image:              image,
+		AdditionalScore:    additionalScore,
+		NoOfPosts:          1,
 	}
 
 	for i, tag := range tags {
@@ -110,11 +111,12 @@ func AddTagToIndex(tags []string, image string) {
 			// Build the request body.
 			body := esutil.NewJSONReader(StringInterface{
 				"script": StringInterface{
-					"source": "ctx._source.no_of_posts += params.count;ctx._source.last_updated_time=params.last_updated",
+					"source": "ctx._source.no_of_posts += params.count;ctx._source.additional_score += params.additional_score;ctx._source.last_updated_time=params.last_updated",
 					"lang":   "painless",
 					"params": StringInterface{
-						"count":        1,
-						"last_updated": hashTagData.LastUpdatedTime,
+						"count":            1,
+						"last_updated":     hashTagData.LastUpdatedTime,
+						"additional_score": hashTagData.AdditionalScore,
 					},
 				},
 				"upsert": upsertData,
@@ -212,7 +214,7 @@ func SearchHashTags(query bson.M) (error, interface{}) {
 
 func getScore(baseTime string, noOfPost int, additionScore int) int {
 	t := utils.ParseISOToTime(baseTime)
-	return (int(t.Unix()) + noOfPost*10 + additionScore)
+	return (int(t.Unix()) + noOfPost*10*60 + additionScore)
 }
 
 /*
@@ -229,8 +231,12 @@ func UpdateTagWeight(tag string, additionScore int) (error, map[string]interface
 	noOfPost := source["no_of_posts"].(float64)
 	tagname := source["tagname"].(string)
 	baseTime := source["resurfaced_date"].(string)
-	weight := getScore(baseTime, int(noOfPost), 0)
-
+	fmt.Println("source is", source["additional_score"])
+	if source["additional_score"] != nil {
+		additionScore = int(source["additional_score"].(float64))	
+	}
+	weight := getScore(baseTime, int(noOfPost), additionScore)
+	fmt.Println("weight is", weight)
 	body := esutil.NewJSONReader(StringInterface{
 		"script": StringInterface{
 			"source": "ctx._source.keyword.weight = params.weight",
@@ -266,6 +272,7 @@ func UpdateTagWeight(tag string, additionScore int) (error, map[string]interface
 	log.Printf("[%s] %s; version=%d", res.Status(), r["result"], int(r["_version"].(float64)))
 	response["weight"] = weight
 	response["tagname"] = tagname
+	response["no_of_posts"] = int(noOfPost)
 	return nil, response
 }
 
