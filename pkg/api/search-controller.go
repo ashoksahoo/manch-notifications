@@ -1,19 +1,21 @@
 package api
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"notification-service/pkg/elasticsearch"
 	"strconv"
 	"strings"
+
 	"github.com/globalsign/mgo/bson"
 	"github.com/go-chi/chi"
 	"github.com/go-chi/render"
-	"encoding/json"
 )
 
 type UpdateMeta struct {
-	AdditionalScore int `json:"additional_score"`
+	AdditionalScore int    `json:"additional_score"`
+	ImageUrl        string `json:"image_url"`
 }
 
 func SearchHashTags(w http.ResponseWriter, r *http.Request) {
@@ -105,6 +107,20 @@ func GetHashTagImageById(w http.ResponseWriter, r *http.Request) {
 	id := chi.URLParam(r, "id")
 	id = strings.ToLower(id)
 	err, response := elasticsearch.GetImageById(id)
+	if err != nil {
+		w.WriteHeader(400)
+		w.Write([]byte(err.Error()))
+		return
+	}
+	render.JSON(w, r, bson.M{"data": map[string]interface{}{"image_url": response}})
+}
+
+func UpdateHashtagImage(w http.ResponseWriter, r *http.Request) {
+	id := chi.URLParam(r, "id")
+	id = strings.ToLower(id)
+	updateMeta := UpdateMeta{}
+	err := json.NewDecoder(r.Body).Decode(&updateMeta)
+	err, response := elasticsearch.UpdateImageById(id, updateMeta.ImageUrl)
 	if err != nil {
 		w.WriteHeader(400)
 		w.Write([]byte(err.Error()))

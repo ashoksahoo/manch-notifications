@@ -34,8 +34,13 @@ func PostModeratedSubscriberCB(subj, reply string, p *subscribers.Post) {
 		return
 	}
 	// process hashtags
-	image := mongo.ExtractThumbNailFromPost(post)
-	elasticsearch.AddTagToIndex(post.Tags, image)
+	var additionalScore int
+	if post.Created.UserType == "bot" {
+		additionalScore = 50 * 60
+	} else {
+		additionalScore = 5 * 60
+	}
+	elasticsearch.AddTagToIndex(post.Tags, additionalScore)
 
 	// create or update user hashtags
 	mongo.CreateUserTags(post)

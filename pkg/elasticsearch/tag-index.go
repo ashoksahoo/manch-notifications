@@ -18,6 +18,15 @@ import (
 	"github.com/globalsign/mgo/bson"
 )
 
+var (
+	TrendingBgs = []string{
+		"https://manch-dev.s3.ap-south-1.amazonaws.com/app-banners/bg_trending_blue.jpg'",
+		"https://manch-dev.s3.ap-south-1.amazonaws.com/app-banners/bg_trending_green.jpg'",
+		"https://manch-dev.s3.ap-south-1.amazonaws.com/app-banners/bg_trending_red.jpg'",
+		"https://manch-dev.s3.ap-south-1.amazonaws.com/app-banners/bg_trending_voilet.jpg",
+	}
+)
+
 type StringInterface map[string]interface{}
 
 type TypeInput struct {
@@ -38,6 +47,12 @@ type HashTag struct {
 	LastUpdatedTime    string    `json:"last_updated_time"`
 	Resurfaced         bool      `json:"resurfaced"`
 	ResurfacedDate     string    `json:"resurfaced_date"`
+	AdditionalScore    int       `json:"additional_score"`
+}
+
+func getTrendingBg() string {
+	randomIndex := utils.Random(0, len(TrendingBgs))
+	return TrendingBgs[randomIndex]
 }
 
 func GetDocumentById(id, index string) (error, map[string]interface{}) {
@@ -65,13 +80,16 @@ func GetDocumentById(id, index string) (error, map[string]interface{}) {
 	return nil, r
 }
 
-func AddTagToIndex(tags []string, image string) {
+func AddTagToIndex(tags []string, additionalScore int) {
 	currentISOTime := utils.ISOFormat(time.Now())
+	image := getTrendingBg()
 	hashTagData := HashTag{
 		ActualCreationTime: currentISOTime,
 		LastUpdatedTime:    currentISOTime,
 		ResurfacedDate:     currentISOTime,
 		Image:              image,
+		AdditionalScore:    additionalScore,
+		NoOfPosts:          1,
 	}
 
 	for i, tag := range tags {
@@ -93,11 +111,12 @@ func AddTagToIndex(tags []string, image string) {
 			// Build the request body.
 			body := esutil.NewJSONReader(StringInterface{
 				"script": StringInterface{
-					"source": "ctx._source.no_of_posts += params.count;ctx._source.last_updated_time=params.last_updated",
+					"source": "ctx._source.no_of_posts += params.count;ctx._source.additional_score += params.additional_score;ctx._source.last_updated_time=params.last_updated",
 					"lang":   "painless",
 					"params": StringInterface{
-						"count":        1,
-						"last_updated": hashTagData.LastUpdatedTime,
+						"count":            1,
+						"last_updated":     hashTagData.LastUpdatedTime,
+						"additional_score": hashTagData.AdditionalScore,
 					},
 				},
 				"upsert": upsertData,
@@ -195,7 +214,7 @@ func SearchHashTags(query bson.M) (error, interface{}) {
 
 func getScore(baseTime string, noOfPost int, additionScore int) int {
 	t := utils.ParseISOToTime(baseTime)
-	return (int(t.Unix()) + noOfPost*10 + additionScore)
+	return (int(t.Unix()) + noOfPost*10*60 + additionScore)
 }
 
 /*
@@ -212,8 +231,12 @@ func UpdateTagWeight(tag string, additionScore int) (error, map[string]interface
 	noOfPost := source["no_of_posts"].(float64)
 	tagname := source["tagname"].(string)
 	baseTime := source["resurfaced_date"].(string)
-	weight := getScore(baseTime, int(noOfPost), 0)
-
+	fmt.Println("source is", source["additional_score"])
+	if source["additional_score"] != nil {
+		additionScore = int(source["additional_score"].(float64))
+	}
+	weight := getScore(baseTime, int(noOfPost), additionScore)
+	fmt.Println("weight is", weight)
 	body := esutil.NewJSONReader(StringInterface{
 		"script": StringInterface{
 			"source": "ctx._source.keyword.weight = params.weight",
@@ -249,6 +272,7 @@ func UpdateTagWeight(tag string, additionScore int) (error, map[string]interface
 	log.Printf("[%s] %s; version=%d", res.Status(), r["result"], int(r["_version"].(float64)))
 	response["weight"] = weight
 	response["tagname"] = tagname
+	response["no_of_posts"] = int(noOfPost)
 	return nil, response
 }
 
@@ -258,4 +282,47 @@ func GetImageById(id string) (error, string) {
 		return err, ""
 	}
 	return nil, doc["_source"].(map[string]interface{})["image"].(string)
+}
+
+func UpdateImageById(id, imageUrl string) (error, string) {
+
+	body := esutil.NewJSONReader(StringInterface{
+		"script": StringInterface{
+			"source": "ctx._source.image = params.image_url;",
+			"lang":   "painless",
+			"params": StringInterface{
+				"image_url": imageUrl,
+			},
+		},
+	})
+	// create update request
+	req := esapi.UpdateRequest{
+		Index:      "tags",
+		DocumentID: id,
+		Body:       body,
+		Refresh:    "true",
+	}
+	// Perform the request with the client.
+	res, err := req.Do(context.Background(), es)
+	if err != nil {
+		log.Fatalf("Error getting response: %s", err)
+		return err, ""
+	}
+	defer res.Body.Close()
+	fmt.Println("response is", res)
+	if res.IsError() {
+		log.Printf("[%s] Error indexing document ID=%d", res.Status(), id)
+		return err, ""
+	} else {
+		// Deserialize the response into a map.
+		var r map[string]interface{}
+		if err := json.NewDecoder(res.Body).Decode(&r); err != nil {
+			log.Printf("Error parsing the response body: %s", err)
+			return err, ""
+		} else {
+			// Print the response status and indexed document version.
+			log.Printf("[%s] %s; version=%d", res.Status(), r["result"], int(r["_version"].(float64)))
+			return nil, imageUrl
+		}
+	}
 }
