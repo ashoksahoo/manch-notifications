@@ -233,7 +233,7 @@ func UpdateTagWeight(tag string, additionScore int) (error, map[string]interface
 	baseTime := source["resurfaced_date"].(string)
 	fmt.Println("source is", source["additional_score"])
 	if source["additional_score"] != nil {
-		additionScore = int(source["additional_score"].(float64))	
+		additionScore = int(source["additional_score"].(float64))
 	}
 	weight := getScore(baseTime, int(noOfPost), additionScore)
 	fmt.Println("weight is", weight)
@@ -282,4 +282,47 @@ func GetImageById(id string) (error, string) {
 		return err, ""
 	}
 	return nil, doc["_source"].(map[string]interface{})["image"].(string)
+}
+
+func UpdateImageById(id, imageUrl string) (error, string) {
+
+	body := esutil.NewJSONReader(StringInterface{
+		"script": StringInterface{
+			"source": "ctx._source.image = params.image_url;",
+			"lang":   "painless",
+			"params": StringInterface{
+				"image_url": imageUrl,
+			},
+		},
+	})
+	// create update request
+	req := esapi.UpdateRequest{
+		Index:      "tags",
+		DocumentID: id,
+		Body:       body,
+		Refresh:    "true",
+	}
+	// Perform the request with the client.
+	res, err := req.Do(context.Background(), es)
+	if err != nil {
+		log.Fatalf("Error getting response: %s", err)
+		return err, ""
+	}
+	defer res.Body.Close()
+	fmt.Println("response is", res)
+	if res.IsError() {
+		log.Printf("[%s] Error indexing document ID=%d", res.Status(), id)
+		return err, ""
+	} else {
+		// Deserialize the response into a map.
+		var r map[string]interface{}
+		if err := json.NewDecoder(res.Body).Decode(&r); err != nil {
+			log.Printf("Error parsing the response body: %s", err)
+			return err, ""
+		} else {
+			// Print the response status and indexed document version.
+			log.Printf("[%s] %s; version=%d", res.Status(), r["result"], int(r["_version"].(float64)))
+			return nil, imageUrl
+		}
+	}
 }
