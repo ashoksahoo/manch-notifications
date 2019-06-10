@@ -9,7 +9,6 @@ import (
 	"notification-service/pkg/i18n"
 	"notification-service/pkg/mongo"
 	"notification-service/pkg/subscribers"
-	"notification-service/pkg/utils"
 
 	"github.com/globalsign/mgo/bson"
 )
@@ -32,35 +31,24 @@ func SharePostSubscriberCB(subj, reply string, share *subscribers.SharePost) {
 
 	postCreator := mongo.GetProfileById(post.Created.ProfileId)
 
-	tokens := mongo.GetTokensByProfiles([]bson.ObjectId{postCreator.Id})
-
 	entities := []mongo.Entity{
 		{
 			EntityId:   post.Id,
 			EntityType: "post",
 		},
 	}
-	notification := mongo.CreateNotification(mongo.NotificationModel{
-		Receiver:        postCreator.Id,
-		Identifier:      post.Id.Hex() + "_share",
-		Participants:    []bson.ObjectId{profile.Id},
-		DisplayTemplate: constants.NotificationTemplate["TRANSACTIONAL"],
-		EntityGroupId:   post.Id.Hex(),
-		ActionId:        post.Id,
-		ActionType:      "post",
-		Purpose:         constants.NotificationPurpose["POST_SHARE"],
-		Entities:        entities,
-		NUUID:           "",
-	})
+
 	count := share.ShareCount
 	data := i18n.DataModel{
 		Name:  profile.Name,
 		Count: count,
 	}
-	var msgStr, htmlMsgStr string
-	templates := []string{"share_post_multi", "share_post_multi_1", "share_post_multi_2", "share_post_multi_3"}
-	randomIndex := utils.Random(0, 4)
-	templateName := templates[randomIndex]
+	var msgStr, htmlMsgStr, templateName string
+	if count == 1 {
+		templateName = "share_post_one"
+	} else {
+		templateName = "share_post_multi"
+	}
 
 	msgStr = i18n.GetString(postCreator.Language, templateName, data)
 	htmlMsgStr = i18n.GetHtmlString(postCreator.Language, templateName, data)
@@ -74,12 +62,28 @@ func SharePostSubscriberCB(subj, reply string, share *subscribers.SharePost) {
 	}
 	deepLink := "manch://posts/" + post.Id.Hex()
 	// update notification message
-	mongo.UpdateNotification(bson.M{"_id": notification.Id}, bson.M{
-		"message":      msgStr,
-		"message_meta": messageMeta,
-		"message_html": htmlMsgStr,
-		"deep_link":    deepLink,
+	notification := mongo.CreateNotification(mongo.NotificationModel{
+		Receiver:        postCreator.Id,
+		Identifier:      post.Id.Hex() + "_share",
+		Participants:    []bson.ObjectId{profile.Id},
+		DisplayTemplate: constants.NotificationTemplate["TRANSACTIONAL"],
+		EntityGroupId:   post.Id.Hex(),
+		ActionId:        post.Id,
+		ActionType:      "post",
+		Purpose:         constants.NotificationPurpose["POST_SHARE"],
+		Entities:        entities,
+		NUUID:           "",
+		Message:         msgStr,
+		MessageMeta:     messageMeta,
+		MessageHtml:     htmlMsgStr,
+		DeepLink:        deepLink,
 	})
+
+	icon := mongo.ExtractThumbNailFromPost(post)
+
+	if icon == "" {
+		icon = profile.Avatar
+	}
 
 	msg := firebase.ManchMessage{
 		Title:    title,
@@ -89,6 +93,7 @@ func SharePostSubscriberCB(subj, reply string, share *subscribers.SharePost) {
 		Id:       notification.NId,
 	}
 	//firebase.SendMessage(msg, "frgp37gfvFg:APA91bHbnbfoX-bp3M_3k-ceD7E4fZ73fcmVL4b5DGB5cQn-fFEvfbj3aAI9g0wXozyApIb-6wGsJauf67auK1p3Ins5Ff7IXCN161fb5JJ5pfBnTZ4LEcRUatO6wimsbiS7EANoGDr4")
+	tokens := mongo.GetTokensByProfiles([]bson.ObjectId{postCreator.Id})
 	fmt.Printf("\nGCM Message %+v\n", msg)
 	if tokens != nil {
 		for _, token := range tokens {

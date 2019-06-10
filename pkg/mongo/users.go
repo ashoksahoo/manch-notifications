@@ -131,7 +131,7 @@ func GetProfileById(Id bson.ObjectId) Profile {
 	users := s.DB("manch").C(USERS_MODEL)
 	user := UserModel{}
 	users.Find(bson.M{"profiles._id": Id}).Select(bson.M{"email": 1, "profiles.$": 1}).One(&user)
-	fmt.Printf("Mongo Query return for Profile %+v\n", user.Profiles)
+	// fmt.Printf("Mongo Query return for Profile %+v\n", user.Profiles)
 	return user.Profiles[0]
 }
 

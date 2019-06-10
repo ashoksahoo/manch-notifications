@@ -90,8 +90,9 @@ type PostModel struct {
 	FeedBaseTimeStamp time.Time       `json:"feed_base_ts,omitempty" bson:"feed_base_ts"`
 	CommentModerated  bool            `json:"comment_moderated,omitempty" bson:"comment_moderated"`
 	StoryTime         int             `json:"story_time,omitempty" bson:"story_time"`
-	CreatedAt         time.Time          `json:"createdAt,omitempty" bson:"createdAt"`
-	UpdatedAt         time.Time          `json:"updatedAt,omitempty" bson:"updatedAt"`
+	CreatedAt         time.Time       `json:"createdAt,omitempty" bson:"createdAt"`
+	UpdatedAt         time.Time       `json:"updatedAt,omitempty" bson:"updatedAt"`
+	CoinsEarned       int             `json:"coins_earned" bson:"coins_earned"`
 }
 
 func GetPost(Id bson.ObjectId) PostModel {

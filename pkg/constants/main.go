@@ -46,6 +46,7 @@ var NotificationPurpose = map[string]string{
 	"USER_REVIEW":          "user.review",
 	"STREAK_MISSING":       "streak_missing",
 	"POST_ON_MANCH":        "post_on_manch",
+	"KARMA_POINTS":         "karma_points",
 }
 
 var NotificationPurposeResource = map[string]string{
@@ -102,6 +103,7 @@ var NotificationPurposeIcon = map[string]string{
 	"reposted_post":        "https://s3.ap-south-1.amazonaws.com/manch-dev/app-resource-icons/repost_icon.png",
 	"streak_missing":       "https://s3.ap-south-1.amazonaws.com/manch-dev/app-resource-icons/streak_miss_notification.png",
 	"post_on_manch":        "https://s3.ap-south-1.amazonaws.com/manch-dev/app-banners/MyManch_Notification_PNG.png",
+	"karma_points":         "https://s3.ap-south-1.amazonaws.com/manch-dev/app-resource-icons/ic_n_default_mic-min.png",
 }
 
 var NotificationTemplate = map[string]string{
