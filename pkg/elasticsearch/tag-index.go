@@ -111,7 +111,7 @@ func AddTagToIndex(tags []string, additionalScore int) {
 			// Build the request body.
 			body := esutil.NewJSONReader(StringInterface{
 				"script": StringInterface{
-					"source": "ctx._source.no_of_posts += params.count;ctx._source.additional_score += params.additional_score;ctx._source.last_updated_time=params.last_updated",
+					"source": "ctx._source.no_of_posts += params.count;ctx._source.last_updated_time=params.last_updated;if(ctx._source.additional_score != null) {ctx._source.additional_score += params.additional_score} else {ctx._source.additional_score = params.additional_score}",
 					"lang":   "painless",
 					"params": StringInterface{
 						"count":            1,
