@@ -160,6 +160,10 @@ func ParseISOToTime(isoString string) time.Time {
 	return t
 }
 
+func TimeStampInMillis(t time.Time) int64 {
+	return t.UnixNano() / int64(time.Millisecond)
+}
+
 func IncludesInt(s []int, e int) bool {
 	for _, a := range s {
 		if a == e {
