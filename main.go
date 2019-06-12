@@ -105,6 +105,9 @@ func main() {
 	// received profile update
 	subscribers.ProfileModifiedSubscriber(callbacks.ProfileModifiedCB)
 
+	// post title modified subscriber
+	subscribers.PostTitleModifiedSubscriber(callbacks.PostTitleModifiedCB)
+
 	// received a new community
 	// subscribers.CommunitySubscriber(callbacks.CommunitySubscriberCB)
 	// listen on http server 5000

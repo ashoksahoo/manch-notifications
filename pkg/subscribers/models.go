@@ -14,6 +14,7 @@ type Post struct {
 	New         bool     `json:"isNew"`
 	IsBot       bool     `json:"is_bot"`
 	CreatorType string   `json:"creator_type"`
+	Tags        []string `json:"tags"`
 }
 
 type Comment struct {

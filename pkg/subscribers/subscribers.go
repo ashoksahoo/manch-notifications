@@ -40,6 +40,10 @@ func PostUpdateSubscriber(callback func(subj, reply string, m *Post)) {
 	go c.QueueSubscribe(subject("post.update"), queue(), callback)
 }
 
+func PostTitleModifiedSubscriber(callback func(subj, reply string, m *Post)) {
+	go c.QueueSubscribe(subject("post.title-modified"), queue(), callback)
+}
+
 func RepostSubscriber(callback func(subj, reply string, m *Post)) {
 	go c.QueueSubscribe(subject("post.re-post"), queue(), callback)
 }
