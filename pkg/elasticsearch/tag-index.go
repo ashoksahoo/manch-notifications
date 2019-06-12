@@ -34,20 +34,27 @@ type TypeInput struct {
 	Weight int      `json:"weight"`
 }
 
+type Resurfaced struct {
+	ResurfacedStart string `json:"resurfaced_start"`
+	ResurfacedEnd   string `json:"resurfaced_end"`
+	NoOfPosts       int    `json:"no_of_posts"`
+}
+
 type HashTag struct {
-	ID                 string    `json:"id"`
-	Keyword            TypeInput `json:"keyword"`
-	TagName            string    `json:"tagname"`
-	Title              string    `json:"title"`
-	Image              string    `json:"image"`
-	NoOfPosts          int       `json:"no_of_posts"`
-	NoOfLikes          int       `json:"no_of_likes"`
-	NoOfComments       int       `json:"no_of_comments"`
-	ActualCreationTime string    `json:"actual_creation_time"`
-	LastUpdatedTime    string    `json:"last_updated_time"`
-	Resurfaced         bool      `json:"resurfaced"`
-	ResurfacedDate     string    `json:"resurfaced_date"`
-	AdditionalScore    int       `json:"additional_score"`
+	ID                 string       `json:"id"`
+	Keyword            TypeInput    `json:"keyword"`
+	TagName            string       `json:"tagname"`
+	Title              string       `json:"title"`
+	Image              string       `json:"image"`
+	NoOfPosts          int          `json:"no_of_posts"`
+	NoOfLikes          int          `json:"no_of_likes"`
+	NoOfComments       int          `json:"no_of_comments"`
+	ActualCreationTime string       `json:"actual_creation_time"`
+	LastUpdatedTime    string       `json:"last_updated_time"`
+	Resurfaced         bool         `json:"resurfaced"`
+	ResurfacedDate     string       `json:"resurfaced_date"`
+	AdditionalScore    int          `json:"additional_score"`
+	ResurfacedArchive  []Resurfaced `json:"resurfaced_archive"`
 }
 
 func getTrendingBg() string {
@@ -220,7 +227,7 @@ func getScore(baseTime time.Time, noOfPost int, additionScore int) int {
 * update hashtag weight and returns the weight
 * it takes tagName and additionScore
  */
-func UpdateTagWeight(tag string, additionScore int) (error, map[string]interface{}) {
+func UpdateTagWeight(tag string, additionScore int, isTrending bool) (error, map[string]interface{}) {
 	response := map[string]interface{}{}
 	err, doc := GetDocumentById(tag, "tags")
 
@@ -237,7 +244,7 @@ func UpdateTagWeight(tag string, additionScore int) (error, map[string]interface
 	hours := diff.Hours()
 	resurfaced := false
 
-	if hours > 24 {
+	if hours > 24 && !isTrending {
 		resurfaced = true
 	}
 
@@ -260,10 +267,16 @@ func UpdateTagWeight(tag string, additionScore int) (error, map[string]interface
 		weight = getScore(currentTime, int(noOfPost), additionScore)
 		body = esutil.NewJSONReader(StringInterface{
 			"script": StringInterface{
-				"source": "ctx._source.keyword.weight = params.weight;ctx._source.resurfaced_date=params.current_date;ctx._source.resurfaced=true;",
+				"source": "ctx._source.keyword.weight = params.weight;ctx._source.no_of_posts=params.no_of_posts;ctx._source.resurfaced_date=params.current_date;ctx._source.resurfaced=true;if(ctx._source.resurfaced_archive != null){ctx._source.resurfaced_archive.add(params.resurfaced_archive)}else{ctx._source.resurfaced_archive=[params.resurfaced_archive]}",
 				"params": StringInterface{
 					"weight":       weight,
+					"no_of_posts":  0,
 					"current_date": utils.ISOFormat(currentTime),
+					"resurfaced_archive": StringInterface{
+						"resurfaced_start": baseTime,
+						"resurfaced_end":   utils.ISOFormat(currentTime),
+						"no_of_posts":      noOfPost,
+					},
 				},
 			},
 		})
