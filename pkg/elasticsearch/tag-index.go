@@ -212,9 +212,8 @@ func SearchHashTags(query bson.M) (error, interface{}) {
 	return nil, response
 }
 
-func getScore(baseTime string, noOfPost int, additionScore int) int {
-	t := utils.ParseISOToTime(baseTime)
-	return (int(t.Unix()) + noOfPost*10*60 + additionScore)
+func getScore(baseTime time.Time, noOfPost int, additionScore int) int {
+	return (int(baseTime.Unix()) + noOfPost*10*60 + additionScore)
 }
 
 /*
@@ -224,6 +223,7 @@ func getScore(baseTime string, noOfPost int, additionScore int) int {
 func UpdateTagWeight(tag string, additionScore int) (error, map[string]interface{}) {
 	response := map[string]interface{}{}
 	err, doc := GetDocumentById(tag, "tags")
+
 	if err != nil {
 		return err, response
 	}
@@ -231,12 +231,22 @@ func UpdateTagWeight(tag string, additionScore int) (error, map[string]interface
 	noOfPost := source["no_of_posts"].(float64)
 	tagname := source["tagname"].(string)
 	baseTime := source["resurfaced_date"].(string)
+	resurfacedDate := utils.ParseISOToTime(baseTime)
+	currentTime := time.Now()
+	diff := currentTime.Sub(resurfacedDate)
+	hours := diff.Hours()
+	resurfaced := false
+
+	if hours > 24 {
+		resurfaced = true
+	}
+
 	fmt.Println("source is", source["additional_score"])
 	if source["additional_score"] != nil {
 		additionScore = int(source["additional_score"].(float64))
 	}
-	weight := getScore(baseTime, int(noOfPost), additionScore)
-	fmt.Println("weight is", weight)
+
+	weight := getScore(utils.ParseISOToTime(baseTime), int(noOfPost), additionScore)
 	body := esutil.NewJSONReader(StringInterface{
 		"script": StringInterface{
 			"source": "ctx._source.keyword.weight = params.weight",
@@ -245,6 +255,22 @@ func UpdateTagWeight(tag string, additionScore int) (error, map[string]interface
 			},
 		},
 	})
+
+	if resurfaced {
+		weight = getScore(currentTime, int(noOfPost), additionScore)
+		body = esutil.NewJSONReader(StringInterface{
+			"script": StringInterface{
+				"source": "ctx._source.keyword.weight = params.weight;ctx._source.resurfaced_date=params.current_date;ctx._source.resurfaced=true;",
+				"params": StringInterface{
+					"weight":       weight,
+					"current_date": utils.ISOFormat(currentTime),
+				},
+			},
+		})
+	}
+
+	fmt.Println("weight is", weight)
+
 	fmt.Println("requesting", body)
 	// create update request
 	req := esapi.UpdateRequest{
