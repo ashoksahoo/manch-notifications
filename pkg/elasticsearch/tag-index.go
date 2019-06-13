@@ -115,8 +115,10 @@ func AddTagToIndex(tags []string, additionalScore int, tagsPositions []mongo.Tag
 				}
 			}
 			hashTagData.ID = strings.ToLower(tagName)
+			tokenizeText := utils.TokenizeText(tagName, 4)
+
 			hashTagData.Keyword = TypeInput{
-				Input: []string{tagName},
+				Input: tokenizeText,
 			}
 			hashTagData.Title = title
 			hashTagData.TagName = title
