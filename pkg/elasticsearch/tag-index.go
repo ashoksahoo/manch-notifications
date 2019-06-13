@@ -39,6 +39,7 @@ type Resurfaced struct {
 	ResurfacedStart string `json:"resurfaced_start"`
 	ResurfacedEnd   string `json:"resurfaced_end"`
 	NoOfPosts       int    `json:"no_of_posts"`
+	AdditionalScore int    `json:"additional_score"`
 }
 
 type HashTag struct {
@@ -287,6 +288,7 @@ func UpdateTagWeight(tag string, additionScore int, isTrending bool) (error, map
 						"resurfaced_start": baseTime,
 						"resurfaced_end":   utils.ISOFormat(currentTime),
 						"no_of_posts":      noOfPost,
+						"additional_score": additionScore,
 					},
 				},
 			},
