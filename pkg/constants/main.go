@@ -153,6 +153,7 @@ var BlackListStatus = map[string]string{
 var MileStones = map[string]string{
 	"100_COIN_MILESTONE":   "100",
 	"500_COIN_MILESTONE":   "500",
+	"2500_COIN_MILESTONE":  "2500",
 	"1000_COIN_MILESTONE":  "1000",
 	"5000_COIN_MILESTONE":  "5000",
 	"10000_COIN_MILESTONE": "10000",
