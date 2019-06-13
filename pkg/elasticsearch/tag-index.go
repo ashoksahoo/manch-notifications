@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"log"
+	"notification-service/pkg/mongo"
 	"notification-service/pkg/utils"
 	"strings"
 
@@ -38,6 +39,7 @@ type Resurfaced struct {
 	ResurfacedStart string `json:"resurfaced_start"`
 	ResurfacedEnd   string `json:"resurfaced_end"`
 	NoOfPosts       int    `json:"no_of_posts"`
+	AdditionalScore int    `json:"additional_score"`
 }
 
 type HashTag struct {
@@ -87,7 +89,8 @@ func GetDocumentById(id, index string) (error, map[string]interface{}) {
 	return nil, r
 }
 
-func AddTagToIndex(tags []string, additionalScore int) {
+func AddTagToIndex(tags []string, additionalScore int, tagsPositions []mongo.TagPositions) {
+
 	currentISOTime := utils.ISOFormat(time.Now())
 	image := getTrendingBg()
 	hashTagData := HashTag{
@@ -103,12 +106,20 @@ func AddTagToIndex(tags []string, additionalScore int) {
 
 		func(tagName string) {
 			fmt.Println("indexing..", tagName)
+
+			// git title
+			var title string
+			for _, tagPosition := range tagsPositions {
+				if strings.ToLower(tagPosition.Tag) == tagName {
+					title = tagPosition.Tag
+				}
+			}
 			hashTagData.ID = strings.ToLower(tagName)
 			hashTagData.Keyword = TypeInput{
 				Input: []string{tagName},
 			}
-			hashTagData.Title = tagName
-			hashTagData.TagName = tagName
+			hashTagData.Title = title
+			hashTagData.TagName = title
 			// upsert data
 			var upsertData StringInterface
 			hashTagDataEncoded, _ := json.Marshal(hashTagData)
@@ -265,6 +276,7 @@ func UpdateTagWeight(tag string, additionScore int, isTrending bool) (error, map
 
 	if resurfaced {
 		weight = getScore(currentTime, 0, 0)
+		noOfPost = 0
 		body = esutil.NewJSONReader(StringInterface{
 			"script": StringInterface{
 				"source": "ctx._source.keyword.weight = params.weight;ctx._source.no_of_posts=params.count;ctx._source.additional_score=params.count;ctx._source.resurfaced_date=params.current_date;ctx._source.resurfaced=true;if(ctx._source.resurfaced_archive != null){ctx._source.resurfaced_archive.add(params.resurfaced_archive)}else{ctx._source.resurfaced_archive=[params.resurfaced_archive]}",
@@ -276,6 +288,7 @@ func UpdateTagWeight(tag string, additionScore int, isTrending bool) (error, map
 						"resurfaced_start": baseTime,
 						"resurfaced_end":   utils.ISOFormat(currentTime),
 						"no_of_posts":      noOfPost,
+						"additional_score": additionScore,
 					},
 				},
 			},
