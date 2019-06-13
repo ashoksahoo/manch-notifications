@@ -40,7 +40,7 @@ func PostModeratedSubscriberCB(subj, reply string, p *subscribers.Post) {
 	} else {
 		additionalScore = 5 * 60
 	}
-	elasticsearch.AddTagToIndex(post.Tags, additionalScore)
+	elasticsearch.AddTagToIndex(post.Tags, additionalScore, post.TagsPosition)
 
 	// create or update user hashtags
 	mongo.CreateUserTags(post)

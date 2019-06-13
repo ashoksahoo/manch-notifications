@@ -1,19 +1,22 @@
 package subscribers
 
 import (
+	"notification-service/pkg/mongo"
 	"time"
 )
 
 type Post struct {
-	Id          string   `json:"_id"`
-	GUID        string   `json:"guid"`
-	Title       string   `json:"title"`
-	Type        string   `json:"type"`
-	Community   []string `json:"community_ids"`
-	Language    string   `json:"language"`
-	New         bool     `json:"isNew"`
-	IsBot       bool     `json:"is_bot"`
-	CreatorType string   `json:"creator_type"`
+	Id           string               `json:"_id"`
+	GUID         string               `json:"guid"`
+	Title        string               `json:"title"`
+	Type         string               `json:"type"`
+	Community    []string             `json:"community_ids"`
+	Language     string               `json:"language"`
+	New          bool                 `json:"isNew"`
+	IsBot        bool                 `json:"is_bot"`
+	CreatorType  string               `json:"creator_type"`
+	Tags         []string             `json:"tags"`
+	TagsPosition []mongo.TagPositions `json:"tag_positions"`
 }
 
 type Comment struct {
