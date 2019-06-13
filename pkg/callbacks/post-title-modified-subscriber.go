@@ -2,8 +2,8 @@ package callbacks
 
 import (
 	"fmt"
-	"notification-service/pkg/subscribers"
 	"notification-service/pkg/elasticsearch"
+	"notification-service/pkg/subscribers"
 )
 
 func PostTitleModifiedCB(subj, reply string, p *subscribers.Post) {
@@ -14,7 +14,7 @@ func PostTitleModifiedCB(subj, reply string, p *subscribers.Post) {
 	} else {
 		additionalScore = 5 * 60
 	}
-	elasticsearch.AddTagToIndex(p.Tags, additionalScore)
+	elasticsearch.AddTagToIndex(p.Tags, additionalScore, p.TagsPosition)
 
 	fmt.Printf("Processed a post title modified on subject %s! with Post Id%s\n", subj, p.Id)
 }
