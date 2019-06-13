@@ -176,7 +176,7 @@ func IncludesInt(s []int, e int) bool {
 func TokenizeText(s string, size int) []string {
 	n := len(s)
 	results := []string{s}
-	for i := 0; i <= n-4; i++ {
+	for i := 0; i <= n-size; i++ {
 		results = append(results, s[i:i+4])
 	}
 	return results

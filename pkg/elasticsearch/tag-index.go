@@ -278,7 +278,6 @@ func UpdateTagWeight(tag string, additionScore int, isTrending bool) (error, map
 
 	if resurfaced {
 		weight = getScore(currentTime, 0, 0)
-		noOfPost = 0
 		body = esutil.NewJSONReader(StringInterface{
 			"script": StringInterface{
 				"source": "ctx._source.keyword.weight = params.weight;ctx._source.no_of_posts=params.count;ctx._source.additional_score=params.count;ctx._source.resurfaced_date=params.current_date;ctx._source.resurfaced=true;if(ctx._source.resurfaced_archive != null){ctx._source.resurfaced_archive.add(params.resurfaced_archive)}else{ctx._source.resurfaced_archive=[params.resurfaced_archive]}",
@@ -295,6 +294,7 @@ func UpdateTagWeight(tag string, additionScore int, isTrending bool) (error, map
 				},
 			},
 		})
+		noOfPost = 0
 	}
 
 	fmt.Println("weight is", weight)
