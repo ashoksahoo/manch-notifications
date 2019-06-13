@@ -159,6 +159,21 @@ var Strings = map[string]map[string]string{
 		"post_on_manch_one":               "{{.Name}} ने आपके मंच {{.Community}} पर पोस्ट किया है 😃",
 		"post_on_manch_multi":             "{{.Name}} और {{.Count}} अन्य लोगों ने आपके मंच {{.Community}} पर पोस्ट किया है 😃",
 		"post_karma_points":               "Your post got over {{.Count}} points !",
+		"500_milestone_title":             "You Are Nailing It !!",
+		"500_milestone_text":              "{{.Name}}, you are a Manch Contributor ",
+		"500_milestone_image":             "https://manch-dev.s3.ap-south-1.amazonaws.com/notifications/badges/level_contributor-min.jpg",
+
+		"2500_milestone_title": "Woah !! Force is Strong with You",
+		"2500_milestone_text":  "{{.Name}}, a Rising Star",
+		"2500_milestone_image": "https://manch-dev.s3.ap-south-1.amazonaws.com/notifications/badges/level_rising_star-min.jpg",
+
+		"10000_milestone_title": "Take A Bow !!",
+		"10000_milestone_text":  "SUPERSTAR {{.Name}}",
+		"10000_milestone_image": "https://manch-dev.s3.ap-south-1.amazonaws.com/notifications/badges/level_super_star-min.jpg",
+
+		"25000_milestone_title": "We all Bend the Knee to You !",
+		"25000_milestone_text":  "{{.Name}}, you are an Elite Member",
+		"25000_milestone_image": "https://manch-dev.s3.ap-south-1.amazonaws.com/notifications/badges/level_elite-min.jpg",
 	},
 
 	"te": {
@@ -264,7 +279,7 @@ var Strings = map[string]map[string]string{
 
 		"post_on_manch_one":   "{{.Name}} మీ మంచ్ లో పోస్ట్ చేసారు. {{.Community}}",
 		"post_on_manch_multi": "{{.Name}} మరియు {{.Count}} ఇతరులు మీ మంచ్ లో పోస్ట్ చేసారు. {{.Community}}",
-		"post_karma_points": "Your post got over {{.Count}} points !",
+		"post_karma_points":   "Your post got over {{.Count}} points !",
 	},
 }
 
@@ -430,7 +445,7 @@ var HtmlStrings = map[string]map[string]string{
 		"streak_missing_title": "<b>{{.Name}}</b> आप अभी <b>{{.Count}}</b> Day Streak पर हैं",
 		"post_on_manch_one":    "<b>{{.Name}}</b> ने आपके मंच <b>{{.Community}}</b> पर पोस्ट किया है 😃",
 		"post_on_manch_multi":  "<b>{{.Name}}</b> और <b>{{.Count}}</b> अन्य लोगों ने आपके मंच <b>{{.Community}}</b> पर पोस्ट किया है 😃",
-		"post_karma_points": "Your post got over <b>{{.Count}}</b> points !",
+		"post_karma_points":    "Your post got over <b>{{.Count}}</b> points !",
 	},
 
 	"te": {
@@ -517,6 +532,6 @@ var HtmlStrings = map[string]map[string]string{
 		"streak_missing_title":       "<b>{{.Name}}</b>, మీరు ప్రస్తుతం <b>{{.Count}}</b>",
 		"post_on_manch_one":          "<b>{{.Name}}</b> మీ మంచ్ లో పోస్ట్ చేసారు. <b>{{.Community}}</b>",
 		"post_on_manch_multi":        "<b>{{.Name}}</b> మరియు <b>{{.Count}}</b> ఇతరులు మీ మంచ్ లో పోస్ట్ చేసారు. <b>{{.Community}}</b>",
-		"post_karma_points": "Your post got over <b>{{.Count}}</b> points !",
+		"post_karma_points":          "Your post got over <b>{{.Count}}</b> points !",
 	},
 }

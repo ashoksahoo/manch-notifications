@@ -35,6 +35,7 @@ var NotificationPurpose = map[string]string{
 	"STREAK_MILESTONE":     "streak_milestone",    // streak milestone
 	"100_COIN_REFERRAL":    "100_coin_referral",
 	"500_COIN_MILESTONE":   "500_coin_milestone",
+	"2500_COIN_MILESTONE":  "2500_coin_milestone",
 	"5000_COIN_MILESTONE":  "5000_coin_milestone",
 	"10000_COIN_MILESTONE": "10000_coin_milestone",
 	"25000_COIN_MILESTONE": "25000_coin_milestone",
@@ -65,10 +66,11 @@ var NotificationPurposeResource = map[string]string{
 	"manch_activation":     "ic_nc_my_manch", // manch activated
 	"100_coin_milestone":   "ic_earn_coin",
 	"100_coin_referral":    "ic_earn_coin",
-	"500_coin_milestone":   "ic_milestone_manch_member",
+	"500_coin_milestone":   "ic_badge_contributor",
+	"2500_coin_milestone":  "ic_badge_rising_star",
 	"5000_coin_milestone":  "ic_milestone_super_user",
-	"10000_coin_milestone": "ic_milestone_super_user",
-	"25000_coin_milestone": "ic_milestone_manch_creator",
+	"10000_coin_milestone": "ic_badge_super_star",
+	"25000_coin_milestone": "ic_badge_elite",
 	"1_streak_milestone":   "ic_milestone_1_day_steak",
 	"7_streak_milestone":   "ic_milestone_7_day_steak",
 	"30_streak_milestone":  "ic_milestone_30_day_steak",
@@ -90,10 +92,11 @@ var NotificationPurposeIcon = map[string]string{
 	"join_manch_approved":  "https://s3.ap-south-1.amazonaws.com/manch-dev/app-banners/MyManch_Notification_PNG.png",    // join manch approved
 	"manch_100_members":    "https://s3.ap-south-1.amazonaws.com/manch-dev/app-banners/MyManch_Notification_PNG.png",    // manch achieved 100 members
 	"manch_activation":     "https://s3.ap-south-1.amazonaws.com/manch-dev/app-banners/MyManch_Notification_PNG.png",    // manch activated
-	"500_coin_milestone":   "https://s3.ap-south-1.amazonaws.com/manch-dev/notifications/badges/ic_milestone_manch_member.png",
+	"500_coin_milestone":   "https://s3.ap-south-1.amazonaws.com/manch-dev/profile_levels/ic_badge_contributor.png",
+	"2500_coin_milestone":  "https://s3.ap-south-1.amazonaws.com/manch-dev/profile_levels/ic_badge_rising_star.png",
 	"5000_coin_milestone":  "https://s3.ap-south-1.amazonaws.com/manch-dev/notifications/badges/ic_milestone_super_user.png",
-	"10000_coin_milestone": "https://s3.ap-south-1.amazonaws.com/manch-dev/notifications/badges/ic_milestone_super_user.png",
-	"25000_coin_milestone": "https://s3.ap-south-1.amazonaws.com/manch-dev/notifications/badges/ic_milestone_manch_creator.png",
+	"10000_coin_milestone": "https://s3.ap-south-1.amazonaws.com/manch-dev/profile_levels/ic_badge_super_star.png",
+	"25000_coin_milestone": "https://s3.ap-south-1.amazonaws.com/manch-dev/profile_levels/ic_badge_elite.png",
 	"1_streak_milestone":   "https://s3.ap-south-1.amazonaws.com/manch-dev/notifications/badges/ic_milestone_1_day_steak.png",
 	"7_streak_milestone":   "https://s3.ap-south-1.amazonaws.com/manch-dev/notifications/badges/ic_milestone_7_day_steak.png",
 	"30_streak_milestone":  "https://s3.ap-south-1.amazonaws.com/manch-dev/notifications/badges/ic_milestone_30_day_steak.png",
