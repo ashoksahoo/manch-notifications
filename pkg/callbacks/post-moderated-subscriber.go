@@ -72,7 +72,7 @@ func PostModeratedSubscriberCB(subj, reply string, p *subscribers.Post) {
 				mongo.AddVoteSchedule(vote)
 			}
 		} else {
-			randomVotes := utils.Random(40, 60)
+			randomVotes := utils.Random(30, 45)
 			no_of_votes += randomVotes
 			t = utils.SplitTimeInRange(31, 150, randomVotes, time.Minute)
 			for k := 0; j < no_of_votes; j, k = j+1, k+1 {
@@ -97,7 +97,7 @@ func PostModeratedSubscriberCB(subj, reply string, p *subscribers.Post) {
 				mongo.AddVoteSchedule(vote)
 			}
 		} else {
-			randomVotes := utils.Random(40, 60)
+			randomVotes := utils.Random(30, 45)
 			no_of_votes += randomVotes
 			t = utils.SplitTimeInRange(91, 210, randomVotes, time.Minute)
 			for k := 0; j < no_of_votes; j, k = j+1, k+1 {
