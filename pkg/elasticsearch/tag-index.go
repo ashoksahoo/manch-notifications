@@ -115,8 +115,10 @@ func AddTagToIndex(tags []string, additionalScore int, tagsPositions []mongo.Tag
 				}
 			}
 			hashTagData.ID = strings.ToLower(tagName)
+			tokenizeText := utils.TokenizeText(tagName, 4)
+
 			hashTagData.Keyword = TypeInput{
-				Input: []string{tagName},
+				Input: tokenizeText,
 			}
 			hashTagData.Title = title
 			hashTagData.TagName = title
@@ -276,7 +278,6 @@ func UpdateTagWeight(tag string, additionScore int, isTrending bool) (error, map
 
 	if resurfaced {
 		weight = getScore(currentTime, 0, 0)
-		noOfPost = 0
 		body = esutil.NewJSONReader(StringInterface{
 			"script": StringInterface{
 				"source": "ctx._source.keyword.weight = params.weight;ctx._source.no_of_posts=params.count;ctx._source.additional_score=params.count;ctx._source.resurfaced_date=params.current_date;ctx._source.resurfaced=true;if(ctx._source.resurfaced_archive != null){ctx._source.resurfaced_archive.add(params.resurfaced_archive)}else{ctx._source.resurfaced_archive=[params.resurfaced_archive]}",
@@ -293,6 +294,7 @@ func UpdateTagWeight(tag string, additionScore int, isTrending bool) (error, map
 				},
 			},
 		})
+		noOfPost = 0
 	}
 
 	fmt.Println("weight is", weight)
@@ -375,6 +377,58 @@ func UpdateImageById(id, imageUrl string) (error, string) {
 			// Print the response status and indexed document version.
 			log.Printf("[%s] %s; version=%d", res.Status(), r["result"], int(r["_version"].(float64)))
 			return nil, imageUrl
+		}
+	}
+}
+
+func UpdateTitleById(id, title string) (error, string, string) {
+
+	// get current title
+	_, doc := GetDocumentById(id, "tags")
+	source := doc["_source"].(map[string]interface{})
+	currentTitle := source["title"].(string)
+
+	if strings.ToLower(currentTitle) != strings.ToLower(title) {
+		return errors.New("Invalid title"), "", ""
+	}
+
+	body := esutil.NewJSONReader(StringInterface{
+		"script": StringInterface{
+			"source": "ctx._source.title = params.title;ctx._source.tagname=params.title",
+			"lang":   "painless",
+			"params": StringInterface{
+				"title": title,
+			},
+		},
+	})
+	// create update request
+	req := esapi.UpdateRequest{
+		Index:      "tags",
+		DocumentID: id,
+		Body:       body,
+		Refresh:    "true",
+	}
+	// Perform the request with the client.
+	res, err := req.Do(context.Background(), es)
+	if err != nil {
+		log.Fatalf("Error getting response: %s", err)
+		return err, "", ""
+	}
+	defer res.Body.Close()
+	fmt.Println("response is", res)
+	if res.IsError() {
+		log.Printf("[%s] Error indexing document ID=%d", res.Status(), id)
+		return err, "", ""
+	} else {
+		// Deserialize the response into a map.
+		var r map[string]interface{}
+		if err := json.NewDecoder(res.Body).Decode(&r); err != nil {
+			log.Printf("Error parsing the response body: %s", err)
+			return err, "", ""
+		} else {
+			// Print the response status and indexed document version.
+			log.Printf("[%s] %s; version=%d", res.Status(), r["result"], int(r["_version"].(float64)))
+			return nil, title, currentTitle
 		}
 	}
 }

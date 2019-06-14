@@ -54,32 +54,84 @@ func PostModeratedSubscriberCB(subj, reply string, p *subscribers.Post) {
 	rand.Shuffle(n, func(i, j int) { botProfilesIds[i], botProfilesIds[j] = botProfilesIds[j], botProfilesIds[i] })
 
 	var no_of_votes int
-	if post.PostLevel == "2" {
-		no_of_votes = utils.Random(40, 50)
-		if post.PostType == "VIDEO" {
-			no_of_votes = utils.Random(80, 100)
+
+	if post.Created.UserType == "bot" {
+		no_of_votes = utils.Random(40, 45)
+		j := 0
+		t := utils.SplitTimeInRange(1, 30, no_of_votes, time.Minute)
+		for k := 0; j < no_of_votes; j, k = j+1, k+1 {
+			vote := mongo.CreateVotesSchedulePost(t[k], bson.ObjectIdHex(p.Id), bson.ObjectIdHex(botProfilesIds[j]))
+			mongo.AddVoteSchedule(vote)
+		}
+		if post.PostType != "VIDEO" {
+			randomVotes := utils.Random(20, 30)
+			no_of_votes += randomVotes
+			t = utils.SplitTimeInRange(31, 90, randomVotes, time.Minute)
+			for k := 0; j < no_of_votes; j, k = j+1, k+1 {
+				vote := mongo.CreateVotesSchedulePost(t[k], bson.ObjectIdHex(p.Id), bson.ObjectIdHex(botProfilesIds[j]))
+				mongo.AddVoteSchedule(vote)
+			}
+		} else {
+			randomVotes := utils.Random(40, 60)
+			no_of_votes += randomVotes
+			t = utils.SplitTimeInRange(31, 150, randomVotes, time.Minute)
+			for k := 0; j < no_of_votes; j, k = j+1, k+1 {
+				vote := mongo.CreateVotesSchedulePost(t[k], bson.ObjectIdHex(p.Id), bson.ObjectIdHex(botProfilesIds[j]))
+				mongo.AddVoteSchedule(vote)
+			}
+		}
+	} else if post.PostLevel == "2" {
+		no_of_votes = utils.Random(40, 45)
+		j := 0
+		t := utils.SplitTimeInRange(1, 90, no_of_votes, time.Minute)
+		for k := 0; j < no_of_votes; j, k = j+1, k+1 {
+			vote := mongo.CreateVotesSchedulePost(t[k], bson.ObjectIdHex(p.Id), bson.ObjectIdHex(botProfilesIds[j]))
+			mongo.AddVoteSchedule(vote)
+		}
+		if post.PostType != "VIDEO" {
+			randomVotes := utils.Random(20, 30)
+			no_of_votes += randomVotes
+			t = utils.SplitTimeInRange(91, 150, randomVotes, time.Minute)
+			for k := 0; j < no_of_votes; j, k = j+1, k+1 {
+				vote := mongo.CreateVotesSchedulePost(t[k], bson.ObjectIdHex(p.Id), bson.ObjectIdHex(botProfilesIds[j]))
+				mongo.AddVoteSchedule(vote)
+			}
+		} else {
+			randomVotes := utils.Random(40, 60)
+			no_of_votes += randomVotes
+			t = utils.SplitTimeInRange(91, 210, randomVotes, time.Minute)
+			for k := 0; j < no_of_votes; j, k = j+1, k+1 {
+				vote := mongo.CreateVotesSchedulePost(t[k], bson.ObjectIdHex(p.Id), bson.ObjectIdHex(botProfilesIds[j]))
+				mongo.AddVoteSchedule(vote)
+			}
 		}
 	} else if post.PostLevel == "1" {
 		no_of_votes = utils.Random(5, 10)
+		j := 0
+		t := utils.SplitTimeInRange(1, 90, no_of_votes, time.Minute)
+		for k := 0; j < no_of_votes; j, k = j+1, k+1 {
+			vote := mongo.CreateVotesSchedulePost(t[k], bson.ObjectIdHex(p.Id), bson.ObjectIdHex(botProfilesIds[j]))
+			mongo.AddVoteSchedule(vote)
+		}
 	} else if post.PostLevel == "0" {
 		no_of_votes = utils.Random(0, 3)
+		j := 0
+		t := utils.SplitTimeInRange(1, 90, no_of_votes, time.Minute)
+		for k := 0; j < no_of_votes; j, k = j+1, k+1 {
+			vote := mongo.CreateVotesSchedulePost(t[k], bson.ObjectIdHex(p.Id), bson.ObjectIdHex(botProfilesIds[j]))
+			mongo.AddVoteSchedule(vote)
+		}
 	}
-	j := 0
-	fmt.Println("no_of_votes: ", no_of_votes)
-	t := utils.SplitTimeInRange(1, 90, no_of_votes, time.Minute)
-	for k := 0; j < no_of_votes; j, k = j+1, k+1 {
-		vote := mongo.CreateVotesSchedulePost(t[k], bson.ObjectIdHex(p.Id), bson.ObjectIdHex(botProfilesIds[j]))
-		fmt.Printf("Adding \n%+v\n", vote)
-		mongo.AddVoteSchedule(vote)
-	}
+
+	fmt.Println("No. of Vote added", no_of_votes)
 
 	// schedule shares on posts
 	var no_of_shares int
 	no_of_shares = utils.Random(5, 10)
 
-	j = 0
+	j := 0
 	fmt.Println("no_of_shares: ", no_of_shares)
-	t = utils.SplitTimeInRange(1, 240, no_of_shares, time.Minute)
+	t := utils.SplitTimeInRange(1, 240, no_of_shares, time.Minute)
 	for k := 0; j < no_of_shares; j, k = j+1, k+1 {
 		share := mongo.CreateShareSchedule(t[k], bson.ObjectIdHex(p.Id), bson.ObjectIdHex(botProfilesIds[j]))
 		mongo.AddShareSchedule(share)

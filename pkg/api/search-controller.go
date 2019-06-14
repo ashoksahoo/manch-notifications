@@ -17,6 +17,7 @@ type UpdateMeta struct {
 	AdditionalScore int    `json:"additional_score"`
 	ImageUrl        string `json:"image_url"`
 	IsTrending      bool   `json:"is_trending"`
+	Title           string `json:"title"`
 }
 
 func SearchHashTags(w http.ResponseWriter, r *http.Request) {
@@ -128,4 +129,18 @@ func UpdateHashtagImage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	render.JSON(w, r, bson.M{"data": map[string]interface{}{"image_url": response}})
+}
+
+func UpdateHashtagTitle(w http.ResponseWriter, r *http.Request) {
+	id := chi.URLParam(r, "id")
+	id = strings.ToLower(id)
+	updateMeta := UpdateMeta{}
+	err := json.NewDecoder(r.Body).Decode(&updateMeta)
+	err, title, currentTitle := elasticsearch.UpdateTitleById(id, updateMeta.Title)
+	if err != nil {
+		w.WriteHeader(400)
+		w.Write([]byte(err.Error()))
+		return
+	}
+	render.JSON(w, r, bson.M{"data": map[string]interface{}{"title": title, "current_title": currentTitle}})
 }
