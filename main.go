@@ -82,7 +82,7 @@ func main() {
 	subscribers.UserCreatedSubscriber(callbacks.UserCreatedSubscriberCB)
 
 	// received new milestone
-	subscribers.MileStoneSubscriber(callbacks.MileStoneSubscriberCB)
+	subscribers.MileStoneSubscriber(callbacks.MileStoneSubscriberCBV2)
 
 	// received user-follow
 	// subscribers.UserFollowApprovedSubscriber(callbacks.UserFollowApprovedCB)
