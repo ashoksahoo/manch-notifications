@@ -101,7 +101,7 @@ func VotePostSubscriberCB(subj, reply string, v *subscribers.Vote) {
 			"created.type": bson.M{"$ne": "bot"},
 		})
 		fmt.Println("user no. is", userNo)
-		botProfiles := mongo.GetBotProfileByBucketId(userNo)
+		botProfiles := mongo.GetBotProfileByBucketId(userNo - 1)
 		// schedule two votes
 		randomNumber := utils.GetNRandom(0, 50, 2)
 		randomProfile := []string{botProfiles[randomNumber[0]], botProfiles[randomNumber[1]]}
