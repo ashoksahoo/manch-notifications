@@ -10,6 +10,7 @@ import (
 	"notification-service/pkg/utils"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/globalsign/mgo/bson"
 )
@@ -95,8 +96,25 @@ func VotePostSubscriberCB(subj, reply string, v *subscribers.Vote) {
 
 	// schedule vote for the user likes
 	if vote.Created.UserType != "bot" {
-		// schedule vote to the post
-		// get unique bot profiles
+		userNo := mongo.CountVoteByQuery(bson.M{
+			"resource":     post.Id,
+			"created.type": bson.M{"$ne": "bot"},
+		})
+		fmt.Println("user no. is", userNo)
+		botProfiles := mongo.GetBotProfileByBucketId(userNo)
+		// schedule two votes
+		randomNumber := utils.GetNRandom(0, 50, 2)
+		randomProfile := []string{botProfiles[randomNumber[0]], botProfiles[randomNumber[1]]}
+		fmt.Println("random Profiles", randomProfile)
+		fmt.Println("0, 1", randomProfile[0], randomProfile[1])
+		j := 0
+		noOfVotes := 2
+		t := utils.SplitTimeInRange(1, 15, noOfVotes, time.Minute)
+		for k := 0; j < noOfVotes; j, k = j+1, k+1 {
+			fmt.Println("j, k", j, k)
+			vote := mongo.CreateVotesSchedulePost(t[k], bson.ObjectIdHex(post.Id.Hex()), bson.ObjectIdHex(randomProfile[j]))
+			mongo.AddVoteSchedule(vote)
+		}
 	}
 
 	postCreator := mongo.GetProfileById(post.Created.ProfileId)

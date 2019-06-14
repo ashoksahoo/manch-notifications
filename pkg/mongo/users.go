@@ -214,3 +214,7 @@ func UpdateUser(query, update bson.M) error {
 	}
 	return err
 }
+
+func GetBotProfileByBucketId(bucketNo int) []string {
+	return utils.Profiles[bucketNo]
+}

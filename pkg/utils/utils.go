@@ -181,3 +181,25 @@ func TokenizeText(s string, size int) []string {
 	}
 	return results
 }
+
+// generate numbers between range [min, max)
+func MakeRange(min, max int) []int {
+	a := make([]int, max-min)
+	for i := range a {
+		a[i] = min + i
+	}
+	return a
+}
+
+func GetNRandom(start, end, n int) []int {
+	array := MakeRange(start, end)
+	rand.Seed(time.Now().UnixNano())
+	size := end - start
+	rand.Shuffle(size, func(i, j int) { array[i], array[j] = array[j], array[i] })
+	result := []int{}
+
+	for i := 0; i < n; i++ {
+		result = append(result, array[i])
+	}
+	return result
+}
