@@ -13,6 +13,7 @@ func Routes() *chi.Mux {
 	router.Post("/hashtag-weight/{id}", UpdateHashtagWeight)
 	router.Get("/hashtag/image/{id}", GetHashTagImageById)
 	router.Post("/hashtag/image/{id}", UpdateHashtagImage)
+	router.Post("/hashtag/title/{id}", UpdateHashtagTitle)
 	router.Get("/notifications", GetAllNotification)
 	router.Get("/notifications/{id}", GetNotificationById)
 	router.Post("/notifications/{id}", UpdateNotificationById)
