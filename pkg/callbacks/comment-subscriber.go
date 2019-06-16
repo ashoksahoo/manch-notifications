@@ -206,18 +206,18 @@ func CommentSubscriberCB(subj, reply string, c *subscribers.Comment) {
 	postCreator := mongo.GetProfileById(comment.Post.Created.ProfileId)
 
 	// update commentCreator's coin
-	mongo.CreateUserCoin(mongo.UserCoinsModel{
-		ProfileId:   comment.Created.ProfileId,
-		CoinsEarned: 2,
-		Action:      "comment",
-	})
+	// mongo.CreateUserCoin(mongo.UserCoinsModel{
+	// 	ProfileId:   comment.Created.ProfileId,
+	// 	CoinsEarned: 2,
+	// 	Action:      "comment",
+	// })
 
 	// update postCreator's coin
-	mongo.CreateUserCoin(mongo.UserCoinsModel{
-		ProfileId:   postCreator.Id,
-		CoinsEarned: 3,
-		Action:      "comment",
-	})
+	// mongo.CreateUserCoin(mongo.UserCoinsModel{
+	// 	ProfileId:   postCreator.Id,
+	// 	CoinsEarned: 3,
+	// 	Action:      "comment",
+	// })
 
 	// update user score
 	mongo.CreateUserScore(mongo.UserScore{

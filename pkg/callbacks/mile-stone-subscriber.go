@@ -83,11 +83,11 @@ func MileStoneSubscriberCB(subj, reply string, m *subscribers.MileStone) {
 			fmt.Printf("referal\n%+v", referralData)
 			referredBy := referralData.ReferringParams["profile_id"].(string)
 
-			mongo.CreateUserCoin(mongo.UserCoinsModel{
-				ProfileId:   bson.ObjectIdHex(referredBy),
-				CoinsEarned: 100,
-				Action:      "referral",
-			})
+			// mongo.CreateUserCoin(mongo.UserCoinsModel{
+			// 	ProfileId:   bson.ObjectIdHex(referredBy),
+			// 	CoinsEarned: 100,
+			// 	Action:      "referral",
+			// })
 			// send notification
 
 			referrer := mongo.GetProfileById(bson.ObjectIdHex(referredBy))
