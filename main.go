@@ -97,10 +97,10 @@ func main() {
 	// subscribers.LiveTopicsPollResultSubscriber(callbacks.LiveTopicsPollResultCB)
 
 	// received a user streak
-	subscribers.UserStreakSubscriber(callbacks.UserStreakCB)
+	// subscribers.UserStreakSubscriber(callbacks.UserStreakCB)
 
 	// received a user streak missed event
-	subscribers.UserStreakMissingSubscriber(callbacks.UserSTreakMissingCB)
+	// subscribers.UserStreakMissingSubscriber(callbacks.UserSTreakMissingCB)
 
 	// received profile update
 	subscribers.ProfileModifiedSubscriber(callbacks.ProfileModifiedCB)
