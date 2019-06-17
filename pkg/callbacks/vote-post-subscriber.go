@@ -10,6 +10,7 @@ import (
 	"notification-service/pkg/utils"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/globalsign/mgo/bson"
 )
@@ -69,12 +70,12 @@ func VotePostSubscriberCB(subj, reply string, v *subscribers.Vote) {
 		return
 	}
 
-	// // create postCreator's coin
-	// mongo.CreateUserCoin(mongo.UserCoinsModel{
-	// 	ProfileId:   post.Created.ProfileId,
-	// 	CoinsEarned: 1,
-	// 	Action:      "vote",
-	// })
+	// create postCreator's coin
+	mongo.CreateUserCoin(mongo.UserCoinsModel{
+		ProfileId:   post.Created.ProfileId,
+		CoinsEarned: 1,
+		Action:      "vote",
+	})
 
 	if dir < 1 {
 		//Do not process downvotes and unvote
@@ -100,12 +101,12 @@ func VotePostSubscriberCB(subj, reply string, v *subscribers.Vote) {
 	}
 
 	postCreator := mongo.GetProfileById(post.Created.ProfileId)
-	upVotes := post.CoinsEarned
+
 	// notification for karma points
-	if upVotes != 0 && upVotes%50 == 0 {
+	if post.UpVotes != 0 && post.UpVotes%50 == 0 {
 		templateName := "post_karma_points"
 		data := i18n.DataModel{
-			Count: upVotes,
+			Count: post.UpVotes,
 		}
 		msgStr := i18n.GetString(postCreator.Language, templateName, data)
 		htmlMsgStr := i18n.GetHtmlString(postCreator.Language, templateName, data)
@@ -158,6 +159,28 @@ func VotePostSubscriberCB(subj, reply string, v *subscribers.Vote) {
 			fmt.Printf("No token")
 		}
 
+	}
+
+	fmt.Println("vote type", vote.Created.UserType)
+	fmt.Println("post created type", post.Created.UserType)
+	// schedule follow
+	if (vote.Created.UserType == "bot" && post.Created.UserType != "bot") ||
+		(vote.Created.UserType != "bot" && post.Created.UserType == "bot") {
+		// bot follow user
+		var profileId, resourceId bson.ObjectId
+		if vote.Created.UserType == "bot" {
+			profileId = vote.Created.ProfileId
+			resourceId = post.Created.ProfileId
+		} else {
+			profileId = post.Created.ProfileId
+			resourceId = vote.Created.ProfileId
+		}
+		randomNumber := utils.Random(0, 100)
+		fmt.Println("random no.", randomNumber)
+		if randomNumber > 40 {
+			t := time.Now().Add(time.Duration(utils.Random(1, 24)) * time.Hour)
+			mongo.CreateFollowSchedule(t, profileId, resourceId)
+		}
 	}
 
 	notification := mongo.NotificationModel{

@@ -35,11 +35,11 @@ func ShareSubscriberCB(subj, reply string, share *subscribers.Share) {
 
 	fmt.Println("Count of Share is ", n)
 	if n >= 10 {
-		mongo.CreateUserCoin(mongo.UserCoinsModel{
-			ProfileId:   bson.ObjectIdHex(share.ProfileId),
-			Action:      "share",
-			CoinsEarned: 50,
-		})
+		// mongo.CreateUserCoin(mongo.UserCoinsModel{
+		// 	ProfileId:   bson.ObjectIdHex(share.ProfileId),
+		// 	Action:      "share",
+		// 	CoinsEarned: 50,
+		// })
 	}
 
 	fmt.Printf("Processed Share on subject %s! with Share ID %s\n", subj, share.Id)

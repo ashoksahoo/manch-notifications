@@ -2,9 +2,9 @@ package i18n
 
 func GetAppTitle(language string) string {
 	if language == "hi" {
-		return "मंच"
+		return "Manch"
 	} else if language == "te" {
-		return "మంచ్"		
+		return "Manch"
 	} else if language == "en" {
 		return "Manch"
 	} else {

@@ -49,7 +49,6 @@ type PostModel struct {
 	RepostCount    int             `json:"no_of_reposts" bson:"no_of_reposts"`
 	Tags           []string        `json:"tags" bson:"tags"`
 	TagsPosition   []TagPositions  `json:"tag_positions" bson:"tag_positions"`
-	CoinsEarned    int             `json:"coins_earned" bson:"coins_earned"`
 	PostType       string          `json:"post_type" bson:"post_type"`
 }
 

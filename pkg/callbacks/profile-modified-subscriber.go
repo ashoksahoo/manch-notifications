@@ -9,7 +9,7 @@ import (
 )
 
 func ProfileModifiedCB(subj, reply string, updatedProfile *subscribers.Profile) {
-	fmt.Printf("Received a New User on subject %s! with User %+v\n", subj, updatedProfile)
+	fmt.Printf("Received a User Profile Update on subject %s! with User %+v\n", subj, updatedProfile)
 	isUpdated := false
 	update := bson.M{}
 	query := bson.M{"created.profile_id": bson.ObjectIdHex(updatedProfile.Id), "anonymous": bson.M{"$ne": true}}
@@ -37,5 +37,5 @@ func ProfileModifiedCB(subj, reply string, updatedProfile *subscribers.Profile) 
 			})
 	}
 
-	fmt.Printf("Processed a New User on subject %s! with User Id %s\n", subj, updatedProfile.Id)
+	fmt.Printf("Processed a User Profile Update on subject %s! with User Id %s\n", subj, updatedProfile.Id)
 }
