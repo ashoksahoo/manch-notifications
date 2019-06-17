@@ -193,12 +193,12 @@ func PostSubscriberCB(subj, reply string, p *subscribers.Post) {
 		ParticipatingEntityId: post.Id,
 	})
 
-	mongo.CreateUserScore(mongo.UserScore{
-		ProfileId:   post.Created.ProfileId,
-		CommunityId: post.CommunityIds[0],
-		Score:       1,
-		UserType:    post.Created.UserType,
-	})
+	// mongo.CreateUserScore(mongo.UserScore{
+	// 	ProfileId:   post.Created.ProfileId,
+	// 	CommunityId: post.CommunityIds[0],
+	// 	Score:       1,
+	// 	UserType:    post.Created.UserType,
+	// })
 
 	// var no_of_votes int
 	// if p.CreatorType == "bot" {
