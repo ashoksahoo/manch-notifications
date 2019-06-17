@@ -49,7 +49,7 @@ func main() {
 	subscribers.VoteCommentSubscriber(callbacks.VoteCommentSubscriberCB)
 
 	// received a new user
-	subscribers.UserSubscriber(callbacks.UserSubscriberCB)
+	// subscribers.UserSubscriber(callbacks.UserSubscriberCB)
 
 	// received user-follow
 	subscribers.UserFollowSubscriber(callbacks.UserFollowSubscriberCB)
@@ -67,7 +67,7 @@ func main() {
 	subscribers.PostModeratedSubscriber(callbacks.PostModeratedSubscriberCB)
 
 	// received a Share event
-	subscribers.ShareSubscriber(callbacks.ShareSubscriberCB)
+	// subscribers.ShareSubscriber(callbacks.ShareSubscriberCB)
 
 	// received Live Topics Comment
 	// subscribers.LiveTopicsCommentSubscriber(callbacks.LiveTopicsCommentSubscriberCB)
@@ -79,7 +79,7 @@ func main() {
 	subscribers.BlackListUserSubscriber(callbacks.BlackListUserSubscriberCB)
 
 	// received new user created
-	subscribers.UserCreatedSubscriber(callbacks.UserCreatedSubscriberCB)
+	// subscribers.UserCreatedSubscriber(callbacks.UserCreatedSubscriberCB)
 
 	// received new milestone
 	subscribers.MileStoneSubscriber(callbacks.MileStoneSubscriberCBV2)
@@ -97,10 +97,10 @@ func main() {
 	// subscribers.LiveTopicsPollResultSubscriber(callbacks.LiveTopicsPollResultCB)
 
 	// received a user streak
-	subscribers.UserStreakSubscriber(callbacks.UserStreakCB)
+	// subscribers.UserStreakSubscriber(callbacks.UserStreakCB)
 
 	// received a user streak missed event
-	subscribers.UserStreakMissingSubscriber(callbacks.UserSTreakMissingCB)
+	// subscribers.UserStreakMissingSubscriber(callbacks.UserSTreakMissingCB)
 
 	// received profile update
 	subscribers.ProfileModifiedSubscriber(callbacks.ProfileModifiedCB)

@@ -70,12 +70,12 @@ func VotePostSubscriberCB(subj, reply string, v *subscribers.Vote) {
 		return
 	}
 
-	// // create postCreator's coin
-	// mongo.CreateUserCoin(mongo.UserCoinsModel{
-	// 	ProfileId:   post.Created.ProfileId,
-	// 	CoinsEarned: 1,
-	// 	Action:      "vote",
-	// })
+	// create postCreator's coin
+	mongo.CreateUserCoin(mongo.UserCoinsModel{
+		ProfileId:   post.Created.ProfileId,
+		CoinsEarned: 1,
+		Action:      "vote",
+	})
 
 	if dir < 1 {
 		//Do not process downvotes and unvote
@@ -114,12 +114,12 @@ func VotePostSubscriberCB(subj, reply string, v *subscribers.Vote) {
 	}
 
 	postCreator := mongo.GetProfileById(post.Created.ProfileId)
-	upVotes := post.CoinsEarned
+
 	// notification for karma points
-	if upVotes != 0 && upVotes%50 == 0 {
+	if post.UpVotes != 0 && post.UpVotes%50 == 0 {
 		templateName := "post_karma_points"
 		data := i18n.DataModel{
-			Count: upVotes,
+			Count: post.UpVotes,
 		}
 		msgStr := i18n.GetString(postCreator.Language, templateName, data)
 		htmlMsgStr := i18n.GetHtmlString(postCreator.Language, templateName, data)
