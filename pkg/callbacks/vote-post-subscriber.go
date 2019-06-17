@@ -10,6 +10,7 @@ import (
 	"notification-service/pkg/utils"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/globalsign/mgo/bson"
 )
@@ -158,6 +159,25 @@ func VotePostSubscriberCB(subj, reply string, v *subscribers.Vote) {
 			fmt.Printf("No token")
 		}
 
+	}
+
+	// schedule follow
+	if (vote.Created.UserType == "bot" && post.Created.UserType != "bot") ||
+		(vote.Created.UserType != "bot" && post.Created.UserType == "bot") {
+		// bot follow user
+		var profileId, resourceId bson.ObjectId
+		if vote.Created.UserType == "bot" {
+			profileId = vote.Created.ProfileId
+			resourceId = post.Created.ProfileId
+		} else {
+			profileId = post.Created.ProfileId
+			resourceId = vote.Created.ProfileId
+		}
+		randomNumber := utils.Random(0, 100)
+		if randomNumber > 40 {
+			t := time.Now().Add(time.Duration(utils.Random(1, 24)) * time.Hour)
+			mongo.CreateFollowSchedule(t, profileId, resourceId)
+		}
 	}
 
 	notification := mongo.NotificationModel{
