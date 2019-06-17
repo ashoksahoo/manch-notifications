@@ -380,3 +380,52 @@ func UpdateImageById(id, imageUrl string) (error, string) {
 		}
 	}
 }
+
+func UpdateTitleById(id, title string) (error, string, string) {
+
+	// get current title
+	_, doc := GetDocumentById(id, "tags")
+	source := doc["_source"].(map[string]interface{})
+	currentTitle := source["title"].(string)
+
+	if strings.ToLower(currentTitle) != strings.ToLower(title) {
+		return errors.New("Invalid title"), "", ""
+	}
+
+	body := esutil.NewJSONReader(StringInterface{
+		"doc": StringInterface{
+			"name":    title,
+			"tagname": title,
+		},
+	})
+	// create update request
+	req := esapi.UpdateRequest{
+		Index:      "tags",
+		DocumentID: id,
+		Body:       body,
+		Refresh:    "true",
+	}
+	// Perform the request with the client.
+	res, err := req.Do(context.Background(), es)
+	if err != nil {
+		log.Fatalf("Error getting response: %s", err)
+		return err, "", ""
+	}
+	defer res.Body.Close()
+	fmt.Println("response is", res)
+	if res.IsError() {
+		log.Printf("[%s] Error indexing document ID=%d", res.Status(), id)
+		return err, "", ""
+	} else {
+		// Deserialize the response into a map.
+		var r map[string]interface{}
+		if err := json.NewDecoder(res.Body).Decode(&r); err != nil {
+			log.Printf("Error parsing the response body: %s", err)
+			return err, "", ""
+		} else {
+			// Print the response status and indexed document version.
+			log.Printf("[%s] %s; version=%d", res.Status(), r["result"], int(r["_version"].(float64)))
+			return nil, title, currentTitle
+		}
+	}
+}
