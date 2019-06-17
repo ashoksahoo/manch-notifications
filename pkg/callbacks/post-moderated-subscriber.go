@@ -42,8 +42,12 @@ func PostModeratedSubscriberCB(subj, reply string, p *subscribers.Post) {
 	}
 	elasticsearch.AddTagToIndex(post.Tags, additionalScore, post.TagsPosition)
 
+	// index post
+	elasticsearch.CreatePostIndex(post)
+
 	// create or update user hashtags
 	mongo.CreateUserTags(post)
+
 
 	m, botProfilesHi := mongo.GetBotProfilesIds("hi")
 	n, botProfilesTe := mongo.GetBotProfilesIds("te")
