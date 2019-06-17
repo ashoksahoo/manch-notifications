@@ -49,7 +49,7 @@ func main() {
 	subscribers.VoteCommentSubscriber(callbacks.VoteCommentSubscriberCB)
 
 	// received a new user
-	// subscribers.UserSubscriber(callbacks.UserSubscriberCB)
+	subscribers.UserSubscriber(callbacks.UserSubscriberCB)
 
 	// received user-follow
 	subscribers.UserFollowSubscriber(callbacks.UserFollowSubscriberCB)
