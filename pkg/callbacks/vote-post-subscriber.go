@@ -161,6 +161,8 @@ func VotePostSubscriberCB(subj, reply string, v *subscribers.Vote) {
 
 	}
 
+	fmt.Println("vote type", vote.Created.UserType)
+	fmt.Println("post created type", post.Created.UserType)
 	// schedule follow
 	if (vote.Created.UserType == "bot" && post.Created.UserType != "bot") ||
 		(vote.Created.UserType != "bot" && post.Created.UserType == "bot") {
@@ -174,6 +176,7 @@ func VotePostSubscriberCB(subj, reply string, v *subscribers.Vote) {
 			resourceId = vote.Created.ProfileId
 		}
 		randomNumber := utils.Random(0, 100)
+		fmt.Println("random no.", randomNumber)
 		if randomNumber > 40 {
 			t := time.Now().Add(time.Duration(utils.Random(1, 24)) * time.Hour)
 			mongo.CreateFollowSchedule(t, profileId, resourceId)
