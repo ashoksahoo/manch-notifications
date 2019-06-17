@@ -37,47 +37,6 @@ func CommentSubscriberCB(subj, reply string, c *subscribers.Comment) {
 	}()
 	comment, uniqueCommentator := mongo.GetFullCommentById(c.Id)
 
-	commentCreator := mongo.GetProfileById(comment.Created.ProfileId)
-
-	// data notification for app ratings popup
-	if commentCreator.CommentsCount == 5 {
-		entities := []mongo.Entity{
-			{
-				EntityId:   comment.Id,
-				EntityType: "comment",
-			},
-		}
-		notification := mongo.CreateNotification(mongo.NotificationModel{
-			Receiver:        commentCreator.Id,
-			Identifier:      commentCreator.Id.Hex() + "_user_review",
-			Participants:    []bson.ObjectId{commentCreator.Id},
-			PlaceHolderIcon: []string{comment.Created.Avatar},
-			DisplayTemplate: constants.NotificationTemplate["TRANSACTIONAL"],
-			ActionId:        comment.Id,
-			ActionType:      "comment",
-			Purpose:         constants.NotificationPurpose["USER_REVIEW"],
-			Entities:        entities,
-			PushType:        "manch:D",
-		})
-
-		tokens := mongo.GetTokensByProfiles([]bson.ObjectId{commentCreator.Id})
-		msg := firebase.ManchMessage{
-			Title:     "",
-			Message:   "",
-			Namespace: "manch:D",
-			Id:        notification.NId,
-		}
-		if tokens != nil {
-			for _, token := range tokens {
-				fmt.Println("successfully sent data message")
-				go firebase.SendMessage(msg, token.Token, notification)
-			}
-		} else {
-			fmt.Printf("No token")
-		}
-
-	}
-
 	var commentEntity, replyEntity []mongo.Entity
 	commentEntity = []mongo.Entity{
 		{
@@ -107,7 +66,7 @@ func CommentSubscriberCB(subj, reply string, c *subscribers.Comment) {
 
 	// get replied on comment
 	var replyOnComment mongo.CommentModel
-	if len(comment.Parents) >=2 {
+	if len(comment.Parents) >= 2 {
 		replyOnComment = mongo.GetCommentById(comment.CommentId.Hex())
 	}
 	// notification for reply on a comment
