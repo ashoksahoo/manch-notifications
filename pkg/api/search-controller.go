@@ -16,6 +16,7 @@ import (
 type UpdateMeta struct {
 	AdditionalScore int    `json:"additional_score"`
 	ImageUrl        string `json:"image_url"`
+	IsTrending      bool   `json:"is_trending"`
 }
 
 func SearchHashTags(w http.ResponseWriter, r *http.Request) {
@@ -93,7 +94,7 @@ func UpdateHashtagWeight(w http.ResponseWriter, r *http.Request) {
 	id = strings.ToLower(id)
 	updateMeta := UpdateMeta{}
 	err := json.NewDecoder(r.Body).Decode(&updateMeta)
-	err, response := elasticsearch.UpdateTagWeight(id, updateMeta.AdditionalScore)
+	err, response := elasticsearch.UpdateTagWeight(id, updateMeta.AdditionalScore, updateMeta.IsTrending)
 
 	if err != nil {
 		w.WriteHeader(400)

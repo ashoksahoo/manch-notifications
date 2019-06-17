@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"log"
 	"notification-service/pkg/constants"
+	"notification-service/pkg/mongo"
 	"notification-service/pkg/utils"
 	"strings"
 
@@ -36,20 +37,28 @@ type TypeInput struct {
 	Weight int      `json:"weight"`
 }
 
+type Resurfaced struct {
+	ResurfacedStart string `json:"resurfaced_start"`
+	ResurfacedEnd   string `json:"resurfaced_end"`
+	NoOfPosts       int    `json:"no_of_posts"`
+	AdditionalScore int    `json:"additional_score"`
+}
+
 type HashTag struct {
-	ID                 string    `json:"id"`
-	Keyword            TypeInput `json:"keyword"`
-	TagName            string    `json:"tagname"`
-	Title              string    `json:"title"`
-	Image              string    `json:"image"`
-	NoOfPosts          int       `json:"no_of_posts"`
-	NoOfLikes          int       `json:"no_of_likes"`
-	NoOfComments       int       `json:"no_of_comments"`
-	ActualCreationTime string    `json:"actual_creation_time"`
-	LastUpdatedTime    string    `json:"last_updated_time"`
-	Resurfaced         bool      `json:"resurfaced"`
-	ResurfacedDate     string    `json:"resurfaced_date"`
-	AdditionalScore    int       `json:"additional_score"`
+	ID                 string       `json:"id"`
+	Keyword            TypeInput    `json:"keyword"`
+	TagName            string       `json:"tagname"`
+	Title              string       `json:"title"`
+	Image              string       `json:"image"`
+	NoOfPosts          int          `json:"no_of_posts"`
+	NoOfLikes          int          `json:"no_of_likes"`
+	NoOfComments       int          `json:"no_of_comments"`
+	ActualCreationTime string       `json:"actual_creation_time"`
+	LastUpdatedTime    string       `json:"last_updated_time"`
+	Resurfaced         bool         `json:"resurfaced"`
+	ResurfacedDate     string       `json:"resurfaced_date"`
+	AdditionalScore    int          `json:"additional_score"`
+	ResurfacedArchive  []Resurfaced `json:"resurfaced_archive"`
 }
 
 func getTrendingBg() string {
@@ -82,7 +91,8 @@ func GetDocumentById(id, index string) (error, map[string]interface{}) {
 	return nil, r
 }
 
-func AddTagToIndex(tags []string, additionalScore int) {
+func AddTagToIndex(tags []string, additionalScore int, tagsPositions []mongo.TagPositions) {
+
 	currentISOTime := utils.ISOFormat(time.Now())
 	image := getTrendingBg()
 	hashTagData := HashTag{
@@ -98,12 +108,22 @@ func AddTagToIndex(tags []string, additionalScore int) {
 
 		func(tagName string) {
 			fmt.Println("indexing..", tagName)
-			hashTagData.ID = strings.ToLower(tagName)
-			hashTagData.Keyword = TypeInput{
-				Input: []string{tagName},
+
+			// git title
+			var title string
+			for _, tagPosition := range tagsPositions {
+				if strings.ToLower(tagPosition.Tag) == tagName {
+					title = tagPosition.Tag
+				}
 			}
-			hashTagData.Title = tagName
-			hashTagData.TagName = tagName
+			hashTagData.ID = strings.ToLower(tagName)
+			tokenizeText := utils.TokenizeText(tagName, 4)
+
+			hashTagData.Keyword = TypeInput{
+				Input: tokenizeText,
+			}
+			hashTagData.Title = title
+			hashTagData.TagName = title
 			// upsert data
 			var upsertData StringInterface
 			hashTagDataEncoded, _ := json.Marshal(hashTagData)
@@ -113,7 +133,7 @@ func AddTagToIndex(tags []string, additionalScore int) {
 			// Build the request body.
 			body := esutil.NewJSONReader(StringInterface{
 				"script": StringInterface{
-					"source": "ctx._source.no_of_posts += params.count;ctx._source.additional_score += params.additional_score;ctx._source.last_updated_time=params.last_updated",
+					"source": "ctx._source.no_of_posts += params.count;ctx._source.last_updated_time=params.last_updated;if(ctx._source.additional_score != null) {ctx._source.additional_score += params.additional_score} else {ctx._source.additional_score = params.additional_score}",
 					"lang":   "painless",
 					"params": StringInterface{
 						"count":            1,
@@ -213,18 +233,18 @@ func SearchHashTags(query bson.M) (error, interface{}) {
 	return nil, response
 }
 
-func getScore(baseTime string, noOfPost int, additionScore int) int {
-	t := utils.ParseISOToTime(baseTime)
-	return (int(t.Unix()) + noOfPost*10*60 + additionScore)
+func getScore(baseTime time.Time, noOfPost int, additionScore int) int {
+	return (int(baseTime.Unix()) + noOfPost*10*60 + additionScore)
 }
 
 /*
 * update hashtag weight and returns the weight
 * it takes tagName and additionScore
  */
-func UpdateTagWeight(tag string, additionScore int) (error, map[string]interface{}) {
+func UpdateTagWeight(tag string, additionScore int, isTrending bool) (error, map[string]interface{}) {
 	response := map[string]interface{}{}
 	err, doc := GetDocumentById(tag, "tags")
+
 	if err != nil {
 		return err, response
 	}
@@ -232,12 +252,22 @@ func UpdateTagWeight(tag string, additionScore int) (error, map[string]interface
 	noOfPost := source["no_of_posts"].(float64)
 	tagname := source["tagname"].(string)
 	baseTime := source["resurfaced_date"].(string)
+	resurfacedDate := utils.ParseISOToTime(baseTime)
+	currentTime := time.Now()
+	diff := currentTime.Sub(resurfacedDate)
+	hours := diff.Hours()
+	resurfaced := false
+
+	if hours > 24 && !isTrending {
+		resurfaced = true
+	}
+
 	fmt.Println("source is", source["additional_score"])
 	if source["additional_score"] != nil {
 		additionScore = int(source["additional_score"].(float64))
 	}
-	weight := getScore(baseTime, int(noOfPost), additionScore)
-	fmt.Println("weight is", weight)
+
+	weight := getScore(utils.ParseISOToTime(baseTime), int(noOfPost), additionScore)
 	body := esutil.NewJSONReader(StringInterface{
 		"script": StringInterface{
 			"source": "ctx._source.keyword.weight = params.weight",
@@ -246,6 +276,30 @@ func UpdateTagWeight(tag string, additionScore int) (error, map[string]interface
 			},
 		},
 	})
+
+	if resurfaced {
+		weight = getScore(currentTime, 0, 0)
+		body = esutil.NewJSONReader(StringInterface{
+			"script": StringInterface{
+				"source": "ctx._source.keyword.weight = params.weight;ctx._source.no_of_posts=params.count;ctx._source.additional_score=params.count;ctx._source.resurfaced_date=params.current_date;ctx._source.resurfaced=true;if(ctx._source.resurfaced_archive != null){ctx._source.resurfaced_archive.add(params.resurfaced_archive)}else{ctx._source.resurfaced_archive=[params.resurfaced_archive]}",
+				"params": StringInterface{
+					"weight":       weight,
+					"count":        0,
+					"current_date": utils.ISOFormat(currentTime),
+					"resurfaced_archive": StringInterface{
+						"resurfaced_start": baseTime,
+						"resurfaced_end":   utils.ISOFormat(currentTime),
+						"no_of_posts":      noOfPost,
+						"additional_score": additionScore,
+					},
+				},
+			},
+		})
+		noOfPost = 0
+	}
+
+	fmt.Println("weight is", weight)
+
 	fmt.Println("requesting", body)
 	// create update request
 	req := esapi.UpdateRequest{

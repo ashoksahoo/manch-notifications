@@ -27,7 +27,7 @@ type BlockReason struct {
 
 type TagPositions struct {
 	Tag      string `json:"tag" bson:"tag"`
-	TagStart int    `json:"tag_start" bson:"tag_end"`
+	TagStart int    `json:"tag_start" bson:"tag_start"`
 	TagEnd   int    `json:"tag_end" bson:"tag_end"`
 }
 
@@ -76,7 +76,7 @@ type PostModel struct {
 	RepostedPostId    bson.ObjectId   `json:"reposted_post_id" bson:"reposted_post_id"`
 	RepostCount       int             `json:"no_of_reposts" bson:"no_of_reposts"`
 	Tags              []string        `json:"tags" bson:"tags"`
-	TagsPosition      TagPositions    `json:"tag_positions" bson:"tag_positions"`
+	TagsPosition      []TagPositions  `json:"tag_positions" bson:"tag_positions"`
 	Source            Source          `json:"source" bson:"source"`
 	Moderation        Moderation      `json:"moderation" bson:"moderation"`
 	Communities       []CommunityMeta `json:"communities" bson:"communities"`
