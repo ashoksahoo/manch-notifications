@@ -101,15 +101,17 @@ func VotePostSubscriberCB(subj, reply string, v *subscribers.Vote) {
 			"created.type": bson.M{"$ne": "bot"},
 		})
 		botProfiles := mongo.GetBotProfileByBucketId(userNo - 1)
-		// schedule two votes
-		randomIndexes := utils.GetNRandom(0, 50, 2)
-		randomProfile := []string{botProfiles[randomIndexes[0]], botProfiles[randomIndexes[1]]}
-		j := 0
-		noOfVotes := 2
-		t := utils.SplitTimeInRange(1, 15, noOfVotes, time.Minute)
-		for k := 0; j < noOfVotes; j, k = j+1, k+1 {
-			vote := mongo.CreateVotesSchedulePost(t[k], bson.ObjectIdHex(post.Id.Hex()), bson.ObjectIdHex(randomProfile[j]))
-			mongo.AddVoteSchedule(vote)
+		if len(botProfiles) != 0 {
+			// schedule two votes
+			randomIndexes := utils.GetNRandom(0, 50, 2)
+			randomProfile := []string{botProfiles[randomIndexes[0]], botProfiles[randomIndexes[1]]}
+			j := 0
+			noOfVotes := 2
+			t := utils.SplitTimeInRange(1, 15, noOfVotes, time.Minute)
+			for k := 0; j < noOfVotes; j, k = j+1, k+1 {
+				vote := mongo.CreateVotesSchedulePost(t[k], bson.ObjectIdHex(post.Id.Hex()), bson.ObjectIdHex(randomProfile[j]))
+				mongo.AddVoteSchedule(vote)
+			}
 		}
 	}
 
