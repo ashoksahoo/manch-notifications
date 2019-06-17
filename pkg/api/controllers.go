@@ -24,6 +24,48 @@ type NotificationUpdateMeta struct {
 	IsRead bool `json:"is_read" bson:"is_read"`
 }
 
+// extract sort, limit, skip
+func ExtractStandardOptions(r *http.Request) (int, int, []string) {
+	queries := r.URL.Query()
+	_, skipOK := queries["skip"]
+	_, offsetOK := queries["offset"]
+	_, limitOk := queries["limit"]
+	var limit, skip int
+	if skipOK {
+		skip, _ = strconv.Atoi(queries["skip"][0])
+		delete(queries, "skip")
+	} else if offsetOK {
+		skip, _ = strconv.Atoi(queries["offset"][0])
+		delete(queries, "offset")
+	} else {
+		skip = DEFAULT_SKIP
+	}
+
+	if limitOk {
+		limit, _ = strconv.Atoi(queries["limit"][0])
+		delete(queries, "limit")
+	} else {
+		limit = DEFAULT_LIMIT
+	}
+
+	_, sortOk := queries["sort"]
+	sortStringArray := []string{} // contains ["field1", "-field2"]
+	if sortOk {
+		sortQuery := queries["sort"]
+		var sort map[string]interface{}
+		json.Unmarshal([]byte(sortQuery[0]), &sort)
+		for field, value := range sort {
+			sortString := field
+			if int(value.(float64)) == -1 {
+				sortString = "-" + sortString
+			}
+			sortStringArray = append(sortStringArray, sortString)
+		}
+		delete(queries, "sort")
+	}
+	return limit, skip, sortStringArray
+}
+
 func GetAllNotification(w http.ResponseWriter, r *http.Request) {
 	queries := r.URL.Query()
 	bsonQuery := bson.M{}

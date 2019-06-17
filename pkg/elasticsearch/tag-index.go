@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"log"
+	"notification-service/pkg/constants"
 	"notification-service/pkg/mongo"
 	"notification-service/pkg/utils"
 	"strings"
@@ -20,6 +21,7 @@ import (
 )
 
 var (
+	TAG_INDEX   = constants.IndexNames["TAGS"]
 	TrendingBgs = []string{
 		"https://manch-dev.s3.ap-south-1.amazonaws.com/app-banners/bg_trending_blue.jpg'",
 		"https://manch-dev.s3.ap-south-1.amazonaws.com/app-banners/bg_trending_green.jpg'",
@@ -143,7 +145,7 @@ func AddTagToIndex(tags []string, additionalScore int, tagsPositions []mongo.Tag
 			})
 			// create update request
 			req := esapi.UpdateRequest{
-				Index:      "tags",
+				Index:      TAG_INDEX,
 				DocumentID: hashTagData.ID,
 				Body:       body,
 				Refresh:    "true",
@@ -199,10 +201,9 @@ func SearchHashTags(query bson.M) (error, interface{}) {
 			},
 		},
 	})
-	index := "tags"
 	var r StringInterface
 	req := esapi.SearchRequest{
-		Index:          []string{index},
+		Index:          []string{TAG_INDEX},
 		Body:           body,
 		SourceIncludes: []string{"tagname"},
 	}
@@ -302,7 +303,7 @@ func UpdateTagWeight(tag string, additionScore int, isTrending bool) (error, map
 	fmt.Println("requesting", body)
 	// create update request
 	req := esapi.UpdateRequest{
-		Index:      "tags",
+		Index:      TAG_INDEX,
 		DocumentID: tag,
 		Body:       body,
 		Refresh:    "true",
@@ -351,7 +352,7 @@ func UpdateImageById(id, imageUrl string) (error, string) {
 	})
 	// create update request
 	req := esapi.UpdateRequest{
-		Index:      "tags",
+		Index:      TAG_INDEX,
 		DocumentID: id,
 		Body:       body,
 		Refresh:    "true",
