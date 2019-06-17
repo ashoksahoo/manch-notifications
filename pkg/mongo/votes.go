@@ -1,8 +1,8 @@
 package mongo
 
 import (
-	"notification-service/pkg/constants"
 	"fmt"
+	"notification-service/pkg/constants"
 
 	"github.com/globalsign/mgo/bson"
 )
@@ -57,4 +57,12 @@ func GetAllVoteByQuery(query bson.M) []VoteModelPost {
 	votes := []VoteModelPost{}
 	V.Find(query).All(&votes)
 	return votes
+}
+
+func CountVoteByQuery(query bson.M) int {
+	s := session.Clone()
+	defer s.Close()
+	V := s.DB("manch").C(VOTES_MODEL)
+	count, _ := V.Find(query).Count()
+	return count
 }

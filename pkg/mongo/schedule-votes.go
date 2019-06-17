@@ -1,8 +1,8 @@
 package mongo
 
 import (
-	"notification-service/pkg/constants"
 	"fmt"
+	"notification-service/pkg/constants"
 	"time"
 
 	"github.com/globalsign/mgo/bson"
@@ -26,7 +26,6 @@ type VoteScheduleModelPost struct {
 }
 
 func CreateVotesSchedulePost(scheduleTime time.Time, rId bson.ObjectId, userProfileId bson.ObjectId) VoteScheduleModelPost {
-
 	user := GetUserByProfileId(userProfileId.Hex())
 	currentTime := time.Now()
 	//creator
