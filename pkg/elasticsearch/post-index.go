@@ -70,7 +70,7 @@ type PostIndex struct {
 	IgnoreFromFeed    bool                  `json:"ignore_from_feed,omitempty"`
 	IgnoreReason      string                `json:"ignore_reason,omitempty"`
 	Tags              []string              `json:"tags,omitempty"`
-	TagPositions      mongo.TagPositions    `json:"tag_positions,omitempty"`
+	TagPositions      []mongo.TagPositions  `json:"tag_positions,omitempty"`
 	Moderation        mongo.Moderation      `json:"moderation,omitempty"`
 	PostLevel         string                `json:"post_level,omitempty"`
 	ContentSource     string                `json:"content_source,omitempty"`
