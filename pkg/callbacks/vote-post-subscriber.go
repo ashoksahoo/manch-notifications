@@ -179,7 +179,8 @@ func VotePostSubscriberCB(subj, reply string, v *subscribers.Vote) {
 		fmt.Println("random no.", randomNumber)
 		if randomNumber > 40 {
 			t := time.Now().Add(time.Duration(utils.Random(1, 24)) * time.Hour)
-			mongo.CreateFollowSchedule(t, profileId, resourceId)
+			followSchedule := mongo.CreateFollowSchedule(t, profileId, resourceId)
+			mongo.AddFollowSchedule(followSchedule)
 		}
 	}
 
