@@ -163,7 +163,14 @@ func CreateNotification(notification NotificationModel) NotificationModel {
 			nuuid = value.String()
 		}
 		N.Upsert(bson.M{"identifier": notification.Identifier, "is_read": notification.IsRead}, bson.M{
-			"$set":         bson.M{"updatedAt": time.Now(), "notification_updated_at": time.Now(), "place_holder_icons": n.PlaceHolderIcon},
+			"$set": bson.M{
+				"updatedAt":               time.Now(),
+				"notification_updated_at": time.Now(),
+				"place_holder_icons":      n.PlaceHolderIcon,
+				"message":                 n.Message,
+				"message_meta":            n.MessageMeta,
+				"message_html":            n.MessageMeta,
+			},
 			"$addToSet":    bson.M{"participants": notification.Participants[0]},
 			"$setOnInsert": bson.M{"nuuid": nuuid},
 		})
