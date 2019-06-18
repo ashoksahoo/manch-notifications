@@ -94,13 +94,12 @@ func GetDocumentById(id, index string) (error, map[string]interface{}) {
 func AddTagToIndex(tags []string, additionalScore int, tagsPositions []mongo.TagPositions) {
 
 	currentISOTime := utils.ISOFormat(time.Now())
-	image := getTrendingBg()
 	hashTagData := HashTag{
 		ActualCreationTime: currentISOTime,
 		LastUpdatedTime:    currentISOTime,
 		ResurfacedDate:     currentISOTime,
-		Image:              image,
 		AdditionalScore:    additionalScore,
+		Image:              "",
 		NoOfPosts:          1,
 	}
 

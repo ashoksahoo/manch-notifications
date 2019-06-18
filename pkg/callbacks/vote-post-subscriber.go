@@ -94,6 +94,7 @@ func VotePostSubscriberCB(subj, reply string, v *subscribers.Vote) {
 		},
 	}
 
+
 	// schedule vote for the user likes
 	if vote.Created.UserType != "bot" {
 		userNo := mongo.CountVoteByQuery(bson.M{
@@ -185,8 +186,7 @@ func VotePostSubscriberCB(subj, reply string, v *subscribers.Vote) {
 
 	}
 
-	fmt.Println("vote type", vote.Created.UserType)
-	fmt.Println("post created type", post.Created.UserType)
+
 	// schedule follow
 	if (vote.Created.UserType == "bot" && post.Created.UserType != "bot") ||
 		(vote.Created.UserType != "bot" && post.Created.UserType == "bot") {
@@ -200,7 +200,6 @@ func VotePostSubscriberCB(subj, reply string, v *subscribers.Vote) {
 			resourceId = vote.Created.ProfileId
 		}
 		randomNumber := utils.Random(0, 100)
-		fmt.Println("random no.", randomNumber)
 		if randomNumber > 40 {
 			t := time.Now().Add(time.Duration(utils.Random(1, 24)) * time.Hour)
 			followSchedule := mongo.CreateFollowSchedule(t, profileId, resourceId)
@@ -222,7 +221,6 @@ func VotePostSubscriberCB(subj, reply string, v *subscribers.Vote) {
 	}
 
 	count := post.UpVotes
-	fmt.Println("post upvotes:", count)
 
 	postTitle := utils.TruncateTitle(post.Title, 4)
 	data := i18n.DataModel{
@@ -272,9 +270,6 @@ func VotePostSubscriberCB(subj, reply string, v *subscribers.Vote) {
 
 	msgStr = i18n.GetString(postCreator.Language, templateName, data)
 	htmlMsgStr := i18n.GetHtmlString(postCreator.Language, templateName, data)
-	if count > 25 {
-		msgStr = "❤️ " + msgStr
-	}
 	msgStr = strings.Replace(msgStr, "\"\" ", "", 1)
 	title := i18n.GetAppTitle(postCreator.Language)
 
