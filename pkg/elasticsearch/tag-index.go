@@ -394,12 +394,9 @@ func UpdateTitleById(id, title string) (error, string, string) {
 	}
 
 	body := esutil.NewJSONReader(StringInterface{
-		"script": StringInterface{
-			"source": "ctx._source.title = params.title;ctx._source.tagname=params.title",
-			"lang":   "painless",
-			"params": StringInterface{
-				"title": title,
-			},
+		"doc": StringInterface{
+			"name":    title,
+			"tagname": title,
 		},
 	})
 	// create update request
