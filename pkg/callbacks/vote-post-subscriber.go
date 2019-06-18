@@ -115,6 +115,15 @@ func VotePostSubscriberCB(subj, reply string, v *subscribers.Vote) {
 		}
 	}
 
+	// increase post views for bot likes
+	if vote.Created.UserType == "bot" {
+		mongo.UpdateOnePostsByQuery(bson.M{
+			"_id": post.Id,
+		}, bson.M{
+			"$inc": bson.M{"no_of_views": utils.Random(5, 10)},
+		})
+	}
+
 	postCreator := mongo.GetProfileById(post.Created.ProfileId)
 
 	// notification for karma points
