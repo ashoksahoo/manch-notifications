@@ -97,7 +97,7 @@ func VotePostSubscriberCB(subj, reply string, v *subscribers.Vote) {
 
 	// update feed base time stamp feed_base_ts
 	if post.UpVotes == 100 {
-		mongo.UpdateOnePostsByQuery(bson.M{"_id": post.Id}, bson.M{"feed_base_ts": time.Now()})
+		mongo.UpdateOnePostsByQuery(bson.M{"_id": post.Id}, bson.M{"$set": bson.M{"feed_base_ts": time.Now()}})
 	}
 
 	userLikesNo := mongo.CountVoteByQuery(bson.M{
