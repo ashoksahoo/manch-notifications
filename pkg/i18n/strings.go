@@ -163,17 +163,25 @@ var Strings = map[string]map[string]string{
 		"500_milestone_text":              "{{.Name}}, you are a Manch Contributor ",
 		"500_milestone_image":             "https://manch-dev.s3.ap-south-1.amazonaws.com/notifications/badges/level_contributor-min.jpg",
 
+		"1000_milestone_title": "You Are Nailing It !!",
+		"1000_milestone_text":  "{{.Name}}, you are a Manch Contributor ",
+		"1000_milestone_image": "https://manch-dev.s3.ap-south-1.amazonaws.com/notifications/badges/level_contributor-min.jpg",
+
 		"2500_milestone_title": "Woah !! Force is Strong with You",
 		"2500_milestone_text":  "{{.Name}}, a Rising Star",
 		"2500_milestone_image": "https://manch-dev.s3.ap-south-1.amazonaws.com/notifications/badges/level_rising_star-min.jpg",
 
-		"10000_milestone_title": "Take A Bow !!",
-		"10000_milestone_text":  "SUPERSTAR {{.Name}}",
-		"10000_milestone_image": "https://manch-dev.s3.ap-south-1.amazonaws.com/notifications/badges/level_super_star-min.jpg",
+		"10000_milestone_title": "Woah !! Force is Strong with You",
+		"10000_milestone_text":  "{{.Name}}, a Rising Star",
+		"10000_milestone_image": "https://manch-dev.s3.ap-south-1.amazonaws.com/notifications/badges/level_rising_star-min.jpg",
 
-		"25000_milestone_title": "We all Bend the Knee to You !",
-		"25000_milestone_text":  "{{.Name}}, you are an Elite Member",
-		"25000_milestone_image": "https://manch-dev.s3.ap-south-1.amazonaws.com/notifications/badges/level_elite-min.jpg",
+		"25000_milestone_title": "Take A Bow !!",
+		"25000_milestone_text":  "SUPERSTAR {{.Name}}",
+		"25000_milestone_image": "https://manch-dev.s3.ap-south-1.amazonaws.com/notifications/badges/level_super_star-min.jpg",
+
+		"100000_milestone_title": "We all Bend the Knee to You !",
+		"100000_milestone_text":  "{{.Name}}, you are an Elite Member",
+		"100000_milestone_image": "https://manch-dev.s3.ap-south-1.amazonaws.com/notifications/badges/level_elite-min.jpg",
 	},
 
 	"te": {
@@ -280,22 +288,29 @@ var Strings = map[string]map[string]string{
 		"post_on_manch_one":   "{{.Name}} మీ మంచ్ లో పోస్ట్ చేసారు. {{.Community}}",
 		"post_on_manch_multi": "{{.Name}} మరియు {{.Count}} ఇతరులు మీ మంచ్ లో పోస్ట్ చేసారు. {{.Community}}",
 		"post_karma_points":   "Your post got over {{.Count}} points !",
-
 		"500_milestone_title": "You Are Nailing It !!",
 		"500_milestone_text":  "{{.Name}}, you are a Manch Contributor ",
 		"500_milestone_image": "https://manch-dev.s3.ap-south-1.amazonaws.com/notifications/badges/level_contributor-min.jpg",
+
+		"1000_milestone_title": "You Are Nailing It !!",
+		"1000_milestone_text":  "{{.Name}}, you are a Manch Contributor ",
+		"1000_milestone_image": "https://manch-dev.s3.ap-south-1.amazonaws.com/notifications/badges/level_contributor-min.jpg",
 
 		"2500_milestone_title": "Woah !! Force is Strong with You",
 		"2500_milestone_text":  "{{.Name}}, a Rising Star",
 		"2500_milestone_image": "https://manch-dev.s3.ap-south-1.amazonaws.com/notifications/badges/level_rising_star-min.jpg",
 
-		"10000_milestone_title": "Take A Bow !!",
-		"10000_milestone_text":  "SUPERSTAR {{.Name}}",
-		"10000_milestone_image": "https://manch-dev.s3.ap-south-1.amazonaws.com/notifications/badges/level_super_star-min.jpg",
+		"10000_milestone_title": "Woah !! Force is Strong with You",
+		"10000_milestone_text":  "{{.Name}}, a Rising Star",
+		"10000_milestone_image": "https://manch-dev.s3.ap-south-1.amazonaws.com/notifications/badges/level_rising_star-min.jpg",
 
-		"25000_milestone_title": "We all Bend the Knee to You !",
-		"25000_milestone_text":  "{{.Name}}, you are an Elite Member",
-		"25000_milestone_image": "https://manch-dev.s3.ap-south-1.amazonaws.com/notifications/badges/level_elite-min.jpg",
+		"25000_milestone_title": "Take A Bow !!",
+		"25000_milestone_text":  "SUPERSTAR {{.Name}}",
+		"25000_milestone_image": "https://manch-dev.s3.ap-south-1.amazonaws.com/notifications/badges/level_super_star-min.jpg",
+
+		"100000_milestone_title": "We all Bend the Knee to You !",
+		"100000_milestone_text":  "{{.Name}}, you are an Elite Member",
+		"100000_milestone_image": "https://manch-dev.s3.ap-south-1.amazonaws.com/notifications/badges/level_elite-min.jpg",
 	},
 }
 
@@ -463,10 +478,12 @@ var HtmlStrings = map[string]map[string]string{
 		"post_on_manch_multi":  "<b>{{.Name}}</b> और <b>{{.Count}}</b> अन्य लोगों ने आपके मंच <b>{{.Community}}</b> पर पोस्ट किया है 😃",
 		"post_karma_points":    "Your post got over <b>{{.Count}}</b> points !",
 
-		"500_milestone_title":   "You Are Nailing It !!",
-		"2500_milestone_title":  "Woah !! Force is Strong with You",
-		"10000_milestone_title": "Take A Bow !!",
-		"25000_milestone_title": "We all Bend the Knee to You !",
+		"500_milestone_title":    "You Are Nailing It !!",
+		"1000_milestone_title":   "You Are Nailing It !!",
+		"2500_milestone_title":   "Woah !! Force is Strong with You",
+		"10000_milestone_title":  "Woah !! Force is Strong with You",
+		"25000_milestone_title":  "Take A Bow !!",
+		"100000_milestone_title": "We all Bend the Knee to You !",
 	},
 
 	"te": {
@@ -554,9 +571,12 @@ var HtmlStrings = map[string]map[string]string{
 		"post_on_manch_one":          "<b>{{.Name}}</b> మీ మంచ్ లో పోస్ట్ చేసారు. <b>{{.Community}}</b>",
 		"post_on_manch_multi":        "<b>{{.Name}}</b> మరియు <b>{{.Count}}</b> ఇతరులు మీ మంచ్ లో పోస్ట్ చేసారు. <b>{{.Community}}</b>",
 		"post_karma_points":          "Your post got over <b>{{.Count}}</b> points !",
-		"500_milestone_title":        "You Are Nailing It !!",
-		"2500_milestone_title":       "Woah !! Force is Strong with You",
-		"10000_milestone_title":      "Take A Bow !!",
-		"25000_milestone_title":      "We all Bend the Knee to You !",
+
+		"500_milestone_title":    "You Are Nailing It !!",
+		"1000_milestone_title":   "You Are Nailing It !!",
+		"2500_milestone_title":   "Woah !! Force is Strong with You",
+		"10000_milestone_title":  "Woah !! Force is Strong with You",
+		"25000_milestone_title":  "Take A Bow !!",
+		"100000_milestone_title": "We all Bend the Knee to You !",
 	},
 }
