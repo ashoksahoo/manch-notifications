@@ -2,6 +2,7 @@ package callbacks
 
 import (
 	"fmt"
+	"math/rand"
 	"notification-service/pkg/constants"
 	"notification-service/pkg/firebase"
 	"notification-service/pkg/i18n"
@@ -94,14 +95,52 @@ func VotePostSubscriberCB(subj, reply string, v *subscribers.Vote) {
 		},
 	}
 
+	// update feed base time stamp feed_base_ts
+	if post.UpVotes == 100 {
+		mongo.UpdateOnePostsByQuery(bson.M{"_id": post.Id}, bson.M{"feed_base_ts": time.Now()})
+	}
+
+	userLikesNo := mongo.CountVoteByQuery(bson.M{
+		"resource":     post.Id,
+		"created.type": bson.M{"$ne": "bot"},
+	})
+
+	// schedule likes if it is good posts and liked by 10 users
+	if post.PostLevel == "1" && userLikesNo == 10 {
+		// count scheduled likes
+		totalScheduledLikes := mongo.CountScheduledVotesByQuery(bson.M{
+			"resource": post.Id,
+			"deleted":  bson.M{"$ne": true},
+		})
+
+		min := 101 - totalScheduledLikes - post.UpVotes
+		max := 120 - totalScheduledLikes - post.UpVotes
+
+		m, botProfilesHi := mongo.GetBotProfilesIds("hi")
+		n, botProfilesTe := mongo.GetBotProfilesIds("te")
+		n = m + n
+		botProfilesIds := append(botProfilesHi, botProfilesTe...)
+		// shuffle profiles
+		rand.Seed(time.Now().UnixNano())
+		rand.Shuffle(n, func(i, j int) { botProfilesIds[i], botProfilesIds[j] = botProfilesIds[j], botProfilesIds[i] })
+
+		voteCreatorsList := mongo.GetAllVotedUserIncludingScheduled(bson.M{"resource": post.Id})
+
+		botProfiles := utils.Difference(botProfilesIds, voteCreatorsList)
+		// get unique bot profiles
+
+		noOfVotes := utils.Random(min, max)
+		t := utils.SplitTimeInRange(1, 30, noOfVotes, time.Minute)
+		j := 0
+		for k := 0; j < noOfVotes; j, k = j+1, k+1 {
+			vote := mongo.CreateVotesSchedulePost(t[k], bson.ObjectIdHex(post.Id.Hex()), bson.ObjectIdHex(botProfiles[j]))
+			mongo.AddVoteSchedule(vote)
+		}
+	}
 
 	// schedule vote for the user likes
 	if vote.Created.UserType != "bot" {
-		userNo := mongo.CountVoteByQuery(bson.M{
-			"resource":     post.Id,
-			"created.type": bson.M{"$ne": "bot"},
-		})
-		botProfiles := mongo.GetBotProfileByBucketId(userNo - 1)
+		botProfiles := mongo.GetBotProfileByBucketId(userLikesNo - 1)
 		if len(botProfiles) != 0 {
 			// schedule two votes
 			randomIndexes := utils.GetNRandom(0, 50, 2)
@@ -185,7 +224,6 @@ func VotePostSubscriberCB(subj, reply string, v *subscribers.Vote) {
 		}
 
 	}
-
 
 	// schedule follow
 	if (vote.Created.UserType == "bot" && post.Created.UserType != "bot") ||
@@ -302,7 +340,7 @@ func VotePostSubscriberCB(subj, reply string, v *subscribers.Vote) {
 		Id:       notification.NId,
 	}
 
-	upvoteBucket := []int{1, 5, 25, 50, 75, 100}
+	upvoteBucket := []int{1, 10, 25, 50, 100}
 
 	if utils.Contains(upvoteBucket, count+1) || (((count + 1) % 50) == 0) {
 		tokens := mongo.GetTokensByProfiles([]bson.ObjectId{post.Created.ProfileId})

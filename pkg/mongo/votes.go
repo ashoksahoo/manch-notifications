@@ -8,7 +8,8 @@ import (
 )
 
 var (
-	VOTES_MODEL = constants.ModelNames["VOTES"]
+	VOTES_MODEL           = constants.ModelNames["VOTES"]
+	VOTES_SCHEDULED_MODEL = constants.ModelNames["VOTE_SCHEDULEDS"]
 )
 
 type VoteModelPost struct {
@@ -65,4 +66,37 @@ func CountVoteByQuery(query bson.M) int {
 	V := s.DB("manch").C(VOTES_MODEL)
 	count, _ := V.Find(query).Count()
 	return count
+}
+
+func CountScheduledVotesByQuery(query bson.M) int {
+	s := session.Clone()
+	defer s.Close()
+	V := s.DB("manch").C(VOTES_SCHEDULED_MODEL)
+	count, _ := V.Find(query).Count()
+	return count
+}
+
+func GetAllVotedUserIncludingScheduled(query bson.M) []string {
+	s := session.Clone()
+	defer s.Close()
+	VoteCollection := s.DB("manch").C(VOTES_MODEL)
+	VoteScheduledCollection := s.DB("manch").C(VOTES_SCHEDULED_MODEL)
+
+	votes := []VoteModelPost{}
+	scheduledVotes := []VoteScheduleModelPost{}
+
+	VoteCollection.Find(query).Select(bson.M{"created": 1}).All(&votes)
+	VoteScheduledCollection.Find(query).Select(bson.M{"created": 1}).All(&scheduledVotes)
+
+	votedUsersProfileIds := []string{}
+
+	for _, vote := range votes {
+		votedUsersProfileIds = append(votedUsersProfileIds, vote.Created.ProfileId.Hex())
+	}
+
+	for _, scheduledVote := range scheduledVotes {
+		votedUsersProfileIds = append(votedUsersProfileIds, scheduledVote.Created.ProfileId.Hex())
+	}
+
+	return votedUsersProfileIds
 }

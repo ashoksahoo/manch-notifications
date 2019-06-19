@@ -169,7 +169,7 @@ func CreateNotification(notification NotificationModel) NotificationModel {
 				"place_holder_icons":      n.PlaceHolderIcon,
 				"message":                 n.Message,
 				"message_meta":            n.MessageMeta,
-				"message_html":            n.MessageMeta,
+				"message_html":            n.MessageHtml,
 			},
 			"$addToSet":    bson.M{"participants": notification.Participants[0]},
 			"$setOnInsert": bson.M{"nuuid": nuuid},

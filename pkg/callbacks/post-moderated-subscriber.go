@@ -48,7 +48,6 @@ func PostModeratedSubscriberCB(subj, reply string, p *subscribers.Post) {
 	// create or update user hashtags
 	mongo.CreateUserTags(post)
 
-
 	m, botProfilesHi := mongo.GetBotProfilesIds("hi")
 	n, botProfilesTe := mongo.GetBotProfilesIds("te")
 	n = m + n
@@ -60,7 +59,7 @@ func PostModeratedSubscriberCB(subj, reply string, p *subscribers.Post) {
 	var noOfVotes, noOfShares int
 
 	if post.Created.UserType == "bot" {
-		noOfVotes = utils.Random(40, 45)
+		noOfVotes = utils.Random(100, 150)
 		noOfShares = int((noOfVotes * utils.Random(50, 80)) / 100)
 
 		// vote schedule
@@ -77,25 +76,7 @@ func PostModeratedSubscriberCB(subj, reply string, p *subscribers.Post) {
 			share := mongo.CreateShareSchedule(t[k], bson.ObjectIdHex(p.Id), bson.ObjectIdHex(botProfilesIds[shareIndex]))
 			mongo.AddShareSchedule(share)
 		}
-		if post.PostType != "VIDEO" {
-			randomVotes := utils.Random(20, 30)
-			noOfVotes += randomVotes
-			t = utils.SplitTimeInRange(31, 90, randomVotes, time.Minute)
-			for k := 0; voteIndex < noOfVotes; voteIndex, k = voteIndex+1, k+1 {
-				vote := mongo.CreateVotesSchedulePost(t[k], bson.ObjectIdHex(p.Id), bson.ObjectIdHex(botProfilesIds[voteIndex]))
-				mongo.AddVoteSchedule(vote)
-			}
-
-			// share schedule
-			randomShare := int((randomVotes * utils.Random(50, 80)) / 100)
-			noOfShares += randomShare
-			t = utils.SplitTimeInRange(31, 90, randomShare, time.Minute)
-			for k := 0; shareIndex < noOfShares; shareIndex, k = shareIndex+1, k+1 {
-				share := mongo.CreateShareSchedule(t[k], bson.ObjectIdHex(p.Id), bson.ObjectIdHex(botProfilesIds[shareIndex]))
-				mongo.AddShareSchedule(share)
-			}
-
-		} else {
+		if post.PostType == "VIDEO" {
 			randomVotes := utils.Random(25, 36)
 			noOfVotes += randomVotes
 			t = utils.SplitTimeInRange(31, 120, randomVotes, time.Minute)
@@ -112,10 +93,9 @@ func PostModeratedSubscriberCB(subj, reply string, p *subscribers.Post) {
 				share := mongo.CreateShareSchedule(t[k], bson.ObjectIdHex(p.Id), bson.ObjectIdHex(botProfilesIds[shareIndex]))
 				mongo.AddShareSchedule(share)
 			}
-
 		}
 	} else if post.PostLevel == "2" {
-		noOfVotes = utils.Random(40, 45)
+		noOfVotes = utils.Random(100, 150)
 		noOfShares = int((noOfVotes * utils.Random(50, 80)) / 100)
 
 		voteIndex := 0
@@ -132,25 +112,8 @@ func PostModeratedSubscriberCB(subj, reply string, p *subscribers.Post) {
 			mongo.AddShareSchedule(share)
 		}
 
-		if post.PostType != "VIDEO" {
-			randomVotes := utils.Random(20, 30)
-			noOfVotes += randomVotes
-			t = utils.SplitTimeInRange(91, 150, randomVotes, time.Minute)
-			for k := 0; voteIndex < noOfVotes; voteIndex, k = voteIndex+1, k+1 {
-				vote := mongo.CreateVotesSchedulePost(t[k], bson.ObjectIdHex(p.Id), bson.ObjectIdHex(botProfilesIds[voteIndex]))
-				mongo.AddVoteSchedule(vote)
-			}
-
-			// share schedule
-			randomShare := int((randomVotes * utils.Random(50, 80)) / 100)
-			noOfShares += randomShare
-			t = utils.SplitTimeInRange(91, 150, randomShare, time.Minute)
-			for k := 0; shareIndex < noOfShares; shareIndex, k = shareIndex+1, k+1 {
-				share := mongo.CreateShareSchedule(t[k], bson.ObjectIdHex(p.Id), bson.ObjectIdHex(botProfilesIds[shareIndex]))
-				mongo.AddShareSchedule(share)
-			}
-		} else {
-			randomVotes := utils.Random(30, 45)
+		if post.PostType == "VIDEO" {
+			randomVotes := utils.Random(25, 36)
 			noOfVotes += randomVotes
 			t = utils.SplitTimeInRange(91, 210, randomVotes, time.Minute)
 			for k := 0; voteIndex < noOfVotes; voteIndex, k = voteIndex+1, k+1 {
@@ -166,20 +129,36 @@ func PostModeratedSubscriberCB(subj, reply string, p *subscribers.Post) {
 			}
 		}
 	} else if post.PostLevel == "1" {
-		noOfVotes = utils.Random(5, 10)
+		noOfVotes = utils.Random(25, 50)
+		noOfShares = int((noOfVotes * utils.Random(50, 80)) / 100)
+
 		j := 0
 		t := utils.SplitTimeInRange(1, 90, noOfVotes, time.Minute)
 		for k := 0; j < noOfVotes; j, k = j+1, k+1 {
 			vote := mongo.CreateVotesSchedulePost(t[k], bson.ObjectIdHex(p.Id), bson.ObjectIdHex(botProfilesIds[j]))
 			mongo.AddVoteSchedule(vote)
 		}
+		shareIndex := 0
+		t = utils.SplitTimeInRange(1, 90, noOfShares, time.Minute)
+		for k := 0; shareIndex < noOfShares; shareIndex, k = shareIndex+1, k+1 {
+			share := mongo.CreateShareSchedule(t[k], bson.ObjectIdHex(p.Id), bson.ObjectIdHex(botProfilesIds[shareIndex]))
+			mongo.AddShareSchedule(share)
+		}
 	} else if post.PostLevel == "0" {
-		noOfVotes = utils.Random(0, 3)
+		noOfVotes = utils.Random(0, 5)
+		noOfShares = int((noOfVotes * utils.Random(50, 80)) / 100)
+
 		j := 0
 		t := utils.SplitTimeInRange(1, 90, noOfVotes, time.Minute)
 		for k := 0; j < noOfVotes; j, k = j+1, k+1 {
 			vote := mongo.CreateVotesSchedulePost(t[k], bson.ObjectIdHex(p.Id), bson.ObjectIdHex(botProfilesIds[j]))
 			mongo.AddVoteSchedule(vote)
+		}
+		shareIndex := 0
+		t = utils.SplitTimeInRange(1, 90, noOfShares, time.Minute)
+		for k := 0; shareIndex < noOfShares; shareIndex, k = shareIndex+1, k+1 {
+			share := mongo.CreateShareSchedule(t[k], bson.ObjectIdHex(p.Id), bson.ObjectIdHex(botProfilesIds[shareIndex]))
+			mongo.AddShareSchedule(share)
 		}
 	}
 
