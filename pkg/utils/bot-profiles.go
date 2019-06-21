@@ -177,7 +177,6 @@ var BotProfiles = map[string][]string{
 		"5c0e69a319f5a815552f4172",
 		"5c0e69db19f5a815552f4174",
 		"5c0e69f719f5a815552f4176",
-		"5c1c87e6eda9bd1771bceba1",
 		"5bc59abd4caa110a84bac0bb",
 		"5bc5b384db489c331c7afd14",
 		"5bd3ff905e941642c06249d7",
