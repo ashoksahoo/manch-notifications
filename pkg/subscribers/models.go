@@ -43,6 +43,8 @@ type Vote struct {
 	ResourceType string `json:"resource_type"`
 	Direction    string `json:"vote"`
 	New          bool   `json:"isNew"`
+	UpVotes      int    `json:"up_votes"`
+	DownVotes    int    `json:"down_votes"`
 }
 
 type Subscription struct {
