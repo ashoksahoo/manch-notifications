@@ -49,6 +49,8 @@ func VotePostSubscriberCB(subj, reply string, v *subscribers.Vote) {
 		return
 	}
 
+	fmt.Println("***VOTE COUNT**: ", v.UpVotes)
+
 	vote := post.GetVote(v.Id)
 
 	// create community stats
