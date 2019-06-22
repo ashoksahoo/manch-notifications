@@ -167,7 +167,7 @@ func VotePostSubscriberCB(subj, reply string, v *subscribers.Vote) {
 	postCreator := mongo.GetProfileById(post.Created.ProfileId)
 
 	// notification for karma points
-	if post.UpVotes != 0 && post.UpVotes%50 == 0 {
+	if post.UpVotes != 0 && post.UpVotes != 50 && post.UpVotes%50 == 0 {
 		templateName := "post_karma_points"
 		data := i18n.DataModel{
 			Count: post.UpVotes,
@@ -340,7 +340,7 @@ func VotePostSubscriberCB(subj, reply string, v *subscribers.Vote) {
 		Id:       notification.NId,
 	}
 
-	upvoteBucket := []int{1, 10, 25, 50, 100}
+	upvoteBucket := []int{5, 25, 50, 100}
 
 	if utils.Contains(upvoteBucket, count+1) || (((count + 1) % 50) == 0) {
 		tokens := mongo.GetTokensByProfiles([]bson.ObjectId{post.Created.ProfileId})
