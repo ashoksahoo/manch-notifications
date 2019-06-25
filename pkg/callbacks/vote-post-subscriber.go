@@ -170,7 +170,7 @@ func VotePostSubscriberCB(subj, reply string, v *subscribers.Vote) {
 	// notification for karma points
 	// karma notification
 	karmaBucket := []int{100}
-	karmaNextBucket := getNextBucket(post.NotifiedVoteBuckets, karmaBucket)
+	karmaNextBucket := getNextBucket(post.NotifiedKarmaBuckets, karmaBucket)
 	if isValidBucket(karmaNextBucket, count, post.NotifiedKarmaBuckets) {
 		bucketStr := strconv.Itoa(karmaNextBucket)
 		key := post.Id.Hex() + ":karma:" + bucketStr
