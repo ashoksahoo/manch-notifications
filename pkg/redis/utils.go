@@ -6,7 +6,7 @@ import (
 	"github.com/gomodule/redigo/redis"
 )
 
-func Setnx(key, value string) (interface{}, error) {
+func AcquireLock(key, value string) (interface{}, error) {
 	key = formatKey(key)
 	conn := Pool.Get()
 	defer conn.Close()
