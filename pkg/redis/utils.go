@@ -34,7 +34,7 @@ func Ping() error {
 }
 
 func Set(key string, value []byte) error {
-
+	key = formatKey(key)
 	conn := Pool.Get()
 	defer conn.Close()
 
@@ -50,7 +50,7 @@ func Set(key string, value []byte) error {
 }
 
 func Delete(key string) error {
-
+	key = formatKey(key)
 	conn := Pool.Get()
 	defer conn.Close()
 

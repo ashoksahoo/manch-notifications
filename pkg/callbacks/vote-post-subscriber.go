@@ -168,64 +168,77 @@ func VotePostSubscriberCB(subj, reply string, v *subscribers.Vote) {
 	}
 
 	postCreator := mongo.GetProfileById(post.Created.ProfileId)
-
+	count := post.UpVotes
 	// notification for karma points
-	if post.UpVotes != 0 && post.UpVotes != 50 && post.UpVotes%50 == 0 {
-		templateName := "post_karma_points"
-		data := i18n.DataModel{
-			Count: post.UpVotes,
-		}
-		msgStr := i18n.GetString(postCreator.Language, templateName, data)
-		htmlMsgStr := i18n.GetHtmlString(postCreator.Language, templateName, data)
-		title := i18n.GetAppTitle(postCreator.Language)
-
-		messageMeta := mongo.MessageMeta{
-			TemplateName: templateName,
-			Template:     i18n.Strings[postCreator.Language][templateName],
-			Data:         data,
-		}
-		// update notification message
-		deepLink := "manch://posts/" + post.Id.Hex()
-		notification := mongo.CreateNotification(mongo.NotificationModel{
-			Receiver:        postCreator.Id,
-			Identifier:      postCreator.Id.Hex() + "_karma_points",
-			Participants:    []bson.ObjectId{postCreator.Id},
-			DisplayTemplate: constants.NotificationTemplate["TRANSACTIONAL"],
-			EntityGroupId:   post.Id.Hex(),
-			ActionId:        post.Id,
-			ActionType:      "comment",
-			Purpose:         constants.NotificationPurpose["KARMA_POINTS"],
-			Entities:        entities,
-			Message:         msgStr,
-			MessageMeta:     messageMeta,
-			MessageHtml:     htmlMsgStr,
-			DeepLink:        deepLink,
-		})
-
-		icon := mongo.ExtractThumbNailFromPost(post)
-
-		if icon == "" {
-			icon = vote.Created.Avatar
-		}
-
-		msg := firebase.ManchMessage{
-			Title:    title,
-			Message:  msgStr,
-			Icon:     icon,
-			DeepLink: deepLink,
-			Id:       notification.NId,
-		}
-
-		tokens := mongo.GetTokensByProfiles([]bson.ObjectId{post.Created.ProfileId})
-		fmt.Printf("\nGCM Message %+v\n", msg)
-		if tokens != nil {
-			for _, token := range tokens {
-				go firebase.SendMessage(msg, token.Token, notification)
+	// karma notification
+	karmaBucket := []int{100}
+	karmaNextBucket := getNextBucket(post.NotifiedVoteBuckets, karmaBucket)
+	if isValidBucket(karmaNextBucket, count, post.NotifiedKarmaBuckets) {
+		bucketStr := strconv.Itoa(karmaNextBucket)
+		key := post.Id.Hex() + ":karma:" + bucketStr
+		result, err := redis.Setnx(key, bucketStr)
+		if err == nil || result == 1 {
+			templateName := "post_karma_points"
+			data := i18n.DataModel{
+				Count: post.UpVotes,
 			}
-		} else {
-			fmt.Printf("No token")
-		}
+			msgStr := i18n.GetString(postCreator.Language, templateName, data)
+			htmlMsgStr := i18n.GetHtmlString(postCreator.Language, templateName, data)
+			title := i18n.GetAppTitle(postCreator.Language)
 
+			messageMeta := mongo.MessageMeta{
+				TemplateName: templateName,
+				Template:     i18n.Strings[postCreator.Language][templateName],
+				Data:         data,
+			}
+			// update notification message
+			deepLink := "manch://posts/" + post.Id.Hex()
+			notification := mongo.CreateNotification(mongo.NotificationModel{
+				Receiver:        postCreator.Id,
+				Identifier:      postCreator.Id.Hex() + "_karma_points",
+				Participants:    []bson.ObjectId{postCreator.Id},
+				DisplayTemplate: constants.NotificationTemplate["TRANSACTIONAL"],
+				EntityGroupId:   post.Id.Hex(),
+				ActionId:        post.Id,
+				ActionType:      "comment",
+				Purpose:         constants.NotificationPurpose["KARMA_POINTS"],
+				Entities:        entities,
+				Message:         msgStr,
+				MessageMeta:     messageMeta,
+				MessageHtml:     htmlMsgStr,
+				DeepLink:        deepLink,
+			})
+
+			icon := mongo.ExtractThumbNailFromPost(post)
+
+			if icon == "" {
+				icon = vote.Created.Avatar
+			}
+
+			msg := firebase.ManchMessage{
+				Title:    title,
+				Message:  msgStr,
+				Icon:     icon,
+				DeepLink: deepLink,
+				Id:       notification.NId,
+			}
+
+			tokens := mongo.GetTokensByProfiles([]bson.ObjectId{post.Created.ProfileId})
+			fmt.Printf("\nGCM Message %+v\n", msg)
+			if tokens != nil {
+				for _, token := range tokens {
+					go firebase.SendMessage(msg, token.Token, notification)
+				}
+			} else {
+				fmt.Printf("No token")
+			}
+			// update post
+			mongo.UpdateOnePostsByQuery(bson.M{"_id": post.Id}, bson.M{
+				"$addToSet": bson.M{"notified_karma_buckets": karmaNextBucket},
+			})
+			// delete lock
+			redis.Delete(key)
+		}
 	}
 
 	// schedule follow
@@ -260,8 +273,6 @@ func VotePostSubscriberCB(subj, reply string, v *subscribers.Vote) {
 		Entities:        entities,
 		NUUID:           "",
 	}
-
-	count := post.UpVotes
 
 	postTitle := utils.TruncateTitle(post.Title, 4)
 	data := i18n.DataModel{
@@ -343,8 +354,9 @@ func VotePostSubscriberCB(subj, reply string, v *subscribers.Vote) {
 		Id:       notification.NId,
 	}
 
-
-	nextBucket := getNextBucket(post.NotifiedVoteBuckets)
+	// upvote notification
+	upvoteBucket := []int{5, 25, 50}
+	nextBucket := getNextBucket(post.NotifiedVoteBuckets, upvoteBucket)
 	if isValidBucket(nextBucket, count, post.NotifiedVoteBuckets) {
 		// send notification
 		bucketStr := strconv.Itoa(nextBucket)
@@ -375,8 +387,7 @@ func VotePostSubscriberCB(subj, reply string, v *subscribers.Vote) {
 
 }
 
-func getNextBucket(archivedBucket []int) int {
-	upvoteBucket := []int{5, 25, 50}
+func getNextBucket(archivedBucket []int, upvoteBucket []int) int {
 	n := len(archivedBucket)
 	if n == 0 {
 		return upvoteBucket[0]
