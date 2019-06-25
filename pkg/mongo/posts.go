@@ -55,44 +55,46 @@ type CommunityMeta struct {
 }
 
 type PostModel struct {
-	Id                bson.ObjectId   `json:"_id" bson:"_id"`
-	ShortId           string          `json:"short_id" bson:"short_id"`
-	Title             string          `json:"title" bson:"title"`
-	Details           string          `json:"details" bson:"details"`
-	Created           Creator         `json:"created" bson:"created"`
-	CommunityIds      []bson.ObjectId `json:"community_ids" bson:"community_ids"`
-	CommentCount      int             `json:"no_of_comments" bson:"no_of_comments"`
-	UpVotes           int             `json:"up_votes" bson:"up_votes"`
-	DownVotes         int             `json:"down_votes" bson:"down_votes"`
-	Views             int             `json:"no_of_views" bson:"no_of_views"`
-	Impressions       int             `json:"no_of_impressions" bson:"no_of_impressions"`
-	MediaUrls         []Media         `json:"media_urls" bson:"media_urls"`
-	IgnoreFromFeed    bool            `json:"ignore_from_feed" bson:"ignore_from_feed"`
-	IgnoreReason      string          `json:"ignore_reason" bson:"ignore_reason"`
-	PostLevel         string          `json:"post_level" bson:"post_level"`
-	Reason            BlockReason     `json:"reason" bson:"reason"`
-	Language          string          `json:"language" bson:"language"`
-	SourcedBy         string          `json:"sourced_by" bson:"sourced_by"`
-	RepostedPostId    bson.ObjectId   `json:"reposted_post_id" bson:"reposted_post_id"`
-	RepostCount       int             `json:"no_of_reposts" bson:"no_of_reposts"`
-	Tags              []string        `json:"tags" bson:"tags"`
-	TagsPosition      []TagPositions  `json:"tag_positions" bson:"tag_positions"`
-	Source            Source          `json:"source" bson:"source"`
-	Moderation        Moderation      `json:"moderation" bson:"moderation"`
-	Communities       []CommunityMeta `json:"communities" bson:"communities"`
-	Anonymous         bool            `json:"anonymous" bson:"anonymous"`
-	PostType          string          `json:"post_type" bson:"post_type"`
-	PostFormat        string          `json:"post_format" bson:"post_format"`
-	EngagementToday   int             `json:"engagement_today,omitempty" bson:"engagement_today"`
-	TrendingNotified  bool            `json:"trending_notified,omitempty"`
-	ContentSource     string          `json:"content_source,omitempty" bson:"content_source"`
-	Popularity        int             `json:"popularity,omitempty" bson:"popularity"`
-	FeedBaseTimeStamp time.Time       `json:"feed_base_ts,omitempty" bson:"feed_base_ts"`
-	CommentModerated  bool            `json:"comment_moderated,omitempty" bson:"comment_moderated"`
-	StoryTime         int             `json:"story_time,omitempty" bson:"story_time"`
-	CreatedAt         time.Time       `json:"createdAt,omitempty" bson:"createdAt"`
-	UpdatedAt         time.Time       `json:"updatedAt,omitempty" bson:"updatedAt"`
-	CoinsEarned       int             `json:"coins_earned" bson:"coins_earned"`
+	Id                   bson.ObjectId   `json:"_id" bson:"_id"`
+	ShortId              string          `json:"short_id" bson:"short_id"`
+	Title                string          `json:"title" bson:"title"`
+	Details              string          `json:"details" bson:"details"`
+	Created              Creator         `json:"created" bson:"created"`
+	CommunityIds         []bson.ObjectId `json:"community_ids" bson:"community_ids"`
+	CommentCount         int             `json:"no_of_comments" bson:"no_of_comments"`
+	UpVotes              int             `json:"up_votes" bson:"up_votes"`
+	DownVotes            int             `json:"down_votes" bson:"down_votes"`
+	Views                int             `json:"no_of_views" bson:"no_of_views"`
+	Impressions          int             `json:"no_of_impressions" bson:"no_of_impressions"`
+	MediaUrls            []Media         `json:"media_urls" bson:"media_urls"`
+	IgnoreFromFeed       bool            `json:"ignore_from_feed" bson:"ignore_from_feed"`
+	IgnoreReason         string          `json:"ignore_reason" bson:"ignore_reason"`
+	PostLevel            string          `json:"post_level" bson:"post_level"`
+	Reason               BlockReason     `json:"reason" bson:"reason"`
+	Language             string          `json:"language" bson:"language"`
+	SourcedBy            string          `json:"sourced_by" bson:"sourced_by"`
+	RepostedPostId       bson.ObjectId   `json:"reposted_post_id" bson:"reposted_post_id"`
+	RepostCount          int             `json:"no_of_reposts" bson:"no_of_reposts"`
+	Tags                 []string        `json:"tags" bson:"tags"`
+	TagsPosition         []TagPositions  `json:"tag_positions" bson:"tag_positions"`
+	Source               Source          `json:"source" bson:"source"`
+	Moderation           Moderation      `json:"moderation" bson:"moderation"`
+	Communities          []CommunityMeta `json:"communities" bson:"communities"`
+	Anonymous            bool            `json:"anonymous" bson:"anonymous"`
+	PostType             string          `json:"post_type" bson:"post_type"`
+	PostFormat           string          `json:"post_format" bson:"post_format"`
+	EngagementToday      int             `json:"engagement_today,omitempty" bson:"engagement_today"`
+	TrendingNotified     bool            `json:"trending_notified,omitempty"`
+	ContentSource        string          `json:"content_source,omitempty" bson:"content_source"`
+	Popularity           int             `json:"popularity,omitempty" bson:"popularity"`
+	FeedBaseTimeStamp    time.Time       `json:"feed_base_ts,omitempty" bson:"feed_base_ts"`
+	CommentModerated     bool            `json:"comment_moderated,omitempty" bson:"comment_moderated"`
+	StoryTime            int             `json:"story_time,omitempty" bson:"story_time"`
+	CreatedAt            time.Time       `json:"createdAt,omitempty" bson:"createdAt"`
+	UpdatedAt            time.Time       `json:"updatedAt,omitempty" bson:"updatedAt"`
+	CoinsEarned          int             `json:"coins_earned" bson:"coins_earned"`
+	NotifiedVoteBuckets  []int           `json:"notified_vote_buckets" bson:"notified_vote_buckets"`
+	NotifiedKarmaBuckets []int           `json:"notified_karma_buckets" bson:"notified_karma_buckets"`
 }
 
 func GetPost(Id bson.ObjectId) PostModel {
