@@ -7,6 +7,7 @@ import (
 	"notification-service/pkg/firebase"
 	"notification-service/pkg/i18n"
 	"notification-service/pkg/mongo"
+	"notification-service/pkg/redis"
 	"notification-service/pkg/subscribers"
 	"notification-service/pkg/utils"
 	"strconv"
@@ -342,9 +343,17 @@ func VotePostSubscriberCB(subj, reply string, v *subscribers.Vote) {
 		Id:       notification.NId,
 	}
 
-	upvoteBucket := []int{5, 25, 50, 100}
 
-	if utils.Contains(upvoteBucket, count+1) || (((count + 1) % 50) == 0) {
+	nextBucket := getNextBucket(post.NotifiedVoteBuckets)
+	if isValidBucket(nextBucket, count, post.NotifiedVoteBuckets) {
+		// send notification
+		bucketStr := strconv.Itoa(nextBucket)
+		key := post.Id.Hex() + ":" + bucketStr
+		result, err := redis.Setnx(key, bucketStr)
+		if err != nil || result == 0 {
+			return
+		}
+		// send notification
 		tokens := mongo.GetTokensByProfiles([]bson.ObjectId{post.Created.ProfileId})
 		fmt.Printf("\nGCM Message %+v\n", msg)
 		if tokens != nil {
@@ -354,8 +363,42 @@ func VotePostSubscriberCB(subj, reply string, v *subscribers.Vote) {
 		} else {
 			fmt.Printf("No token")
 		}
+		// update post
+		mongo.UpdateOnePostsByQuery(bson.M{"_id": post.Id}, bson.M{
+			"$addToSet": bson.M{"notified_vote_buckets": nextBucket},
+		})
+		// delete lock
+		redis.Delete(key)
 	}
 
 	fmt.Printf("Processed a vote on subject %s! with vote Id %s\n", subj, v.Id)
 
+}
+
+func getNextBucket(archivedBucket []int) int {
+	upvoteBucket := []int{5, 25, 50}
+	n := len(archivedBucket)
+	if n == 0 {
+		return upvoteBucket[0]
+	}
+	lastBucket := archivedBucket[len(archivedBucket)-1]
+	var nextBucket int
+	if lastBucket >= 50 {
+		nextBucket = lastBucket + 50
+		return nextBucket
+	}
+
+	for index, bucket := range upvoteBucket {
+		if bucket == lastBucket {
+			nextBucket = upvoteBucket[index+1]
+		}
+	}
+	return nextBucket
+}
+
+func isValidBucket(nextBucket, upVotes int, archivedBucket []int) bool {
+	if upVotes >= nextBucket && !utils.IncludesInt(archivedBucket, nextBucket) {
+		return true
+	}
+	return false
 }
