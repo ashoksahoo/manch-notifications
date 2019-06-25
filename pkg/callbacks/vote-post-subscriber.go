@@ -172,12 +172,12 @@ func VotePostSubscriberCB(subj, reply string, v *subscribers.Vote) {
 	// notification for karma points
 	// karma notification
 	karmaBucket := []int{100}
-	karmaNextBucket := getNextBucket(post.NotifiedVoteBuckets, karmaBucket)
+	karmaNextBucket := getNextBucket(post.NotifiedKarmaBuckets, karmaBucket)
 	if isValidBucket(karmaNextBucket, count, post.NotifiedKarmaBuckets) {
 		bucketStr := strconv.Itoa(karmaNextBucket)
 		key := post.Id.Hex() + ":karma:" + bucketStr
-		result, err := redis.Setnx(key, bucketStr)
-		if err == nil || result == 1 {
+		result, err := redis.AcquireLock(key, bucketStr, 3600)
+		if err == nil && result == 1 {
 			templateName := "post_karma_points"
 			data := i18n.DataModel{
 				Count: post.UpVotes,
@@ -237,7 +237,7 @@ func VotePostSubscriberCB(subj, reply string, v *subscribers.Vote) {
 				"$addToSet": bson.M{"notified_karma_buckets": karmaNextBucket},
 			})
 			// delete lock
-			redis.Delete(key)
+			redis.ReleaseLock(key)
 		}
 	}
 
@@ -361,7 +361,7 @@ func VotePostSubscriberCB(subj, reply string, v *subscribers.Vote) {
 		// send notification
 		bucketStr := strconv.Itoa(nextBucket)
 		key := post.Id.Hex() + ":" + bucketStr
-		result, err := redis.Setnx(key, bucketStr)
+		result, err := redis.AcquireLock(key, bucketStr, 3600)
 		if err != nil || result == 0 {
 			return
 		}
@@ -380,7 +380,7 @@ func VotePostSubscriberCB(subj, reply string, v *subscribers.Vote) {
 			"$addToSet": bson.M{"notified_vote_buckets": nextBucket},
 		})
 		// delete lock
-		redis.Delete(key)
+		redis.ReleaseLock(key)
 	}
 
 	fmt.Printf("Processed a vote on subject %s! with vote Id %s\n", subj, v.Id)
