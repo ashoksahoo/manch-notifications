@@ -176,7 +176,7 @@ func VotePostSubscriberCB(subj, reply string, v *subscribers.Vote) {
 	if isValidBucket(karmaNextBucket, count, post.NotifiedKarmaBuckets) {
 		bucketStr := strconv.Itoa(karmaNextBucket)
 		key := post.Id.Hex() + ":karma:" + bucketStr
-		result, err := redis.AcquireLock(key, bucketStr, 3600)
+		result, err := redis.AcquireLock(key, bucketStr, 60)
 		if err == nil && result == 1 {
 			templateName := "post_karma_points"
 			data := i18n.DataModel{
@@ -361,7 +361,7 @@ func VotePostSubscriberCB(subj, reply string, v *subscribers.Vote) {
 		// send notification
 		bucketStr := strconv.Itoa(nextBucket)
 		key := post.Id.Hex() + ":" + bucketStr
-		result, err := redis.AcquireLock(key, bucketStr, 3600)
+		result, err := redis.AcquireLock(key, bucketStr, 60)
 		if err != nil || result == 0 {
 			return
 		}
