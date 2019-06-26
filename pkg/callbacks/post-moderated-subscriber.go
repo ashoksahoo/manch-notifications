@@ -58,6 +58,11 @@ func PostModeratedSubscriberCB(subj, reply string, p *subscribers.Post) {
 
 	var noOfVotes, noOfShares int
 
+	scheduledVoteCount := mongo.CountScheduledVotesByQuery(bson.M{"resource": post.Id})
+	if scheduledVoteCount > 0 {
+		return
+	}
+
 	if post.Created.UserType == "bot" {
 		noOfVotes = utils.Random(100, 150)
 		noOfShares = int((noOfVotes * utils.Random(50, 80)) / 100)
