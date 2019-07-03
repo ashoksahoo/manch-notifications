@@ -142,6 +142,9 @@ func SendMessage(m ManchMessage, token string, notification mongo.NotificationMo
 		// Response is a message ID string.
 		fmt.Println("Successfully sent message:", response, token)
 		// update push info
+		if notification.Purpose == constants.NotificationPurpose["VOTE"] {
+			mongo.UpdateFCMTokenByQuery(bson.M{"profile_id": notification.Receiver}, bson.M{"$set": bson.M{"last_vote_notified_at": time.Now()}})
+		}
 		mongo.UpdateNotification(bson.M{"_id": notification.Id}, bson.M{
 			"push": mongo.PushMeta{
 				Status:    constants.NotificationStatus["SENT"],
