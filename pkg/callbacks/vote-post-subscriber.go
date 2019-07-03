@@ -367,9 +367,14 @@ func VotePostSubscriberCB(subj, reply string, v *subscribers.Vote) {
 		// send notification
 		tokens := mongo.GetTokensByProfiles([]bson.ObjectId{post.Created.ProfileId})
 		fmt.Printf("\nGCM Message %+v\n", msg)
+		currentTime := time.Now()
 		if tokens != nil {
 			for _, token := range tokens {
-				go firebase.SendMessage(msg, token.Token, notification)
+				diff := currentTime.Sub(token.LastVoteNotifiedAt).Seconds()
+				fmt.Println("**difference is **", diff)
+				if diff >= 3600 {
+					go firebase.SendMessage(msg, token.Token, notification)
+				}
 			}
 		} else {
 			fmt.Printf("No token")
