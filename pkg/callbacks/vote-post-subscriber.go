@@ -372,9 +372,7 @@ func VotePostSubscriberCB(subj, reply string, v *subscribers.Vote) {
 		currentTime := time.Now()
 		if tokens != nil {
 			for _, token := range tokens {
-				fmt.Println("last vote notified at", token.LastVoteNotifiedAt)
 				diff := currentTime.Sub(token.LastVoteNotifiedAt).Seconds()
-				fmt.Println("**difference is **", diff)
 				if diff >= 3600 || (time.Time{} == token.LastVoteNotifiedAt) {
 					go firebase.SendMessage(msg, token.Token, notification)
 				}
