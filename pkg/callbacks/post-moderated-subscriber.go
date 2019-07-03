@@ -58,9 +58,14 @@ func PostModeratedSubscriberCB(subj, reply string, p *subscribers.Post) {
 
 	var noOfVotes, noOfShares int
 
+	scheduledVoteCount := mongo.CountScheduledVotesByQuery(bson.M{"resource": post.Id})
+	if scheduledVoteCount > 0 {
+		return
+	}
+
 	if post.Created.UserType == "bot" {
 		noOfVotes = utils.Random(100, 150)
-		noOfShares = int((noOfVotes * utils.Random(50, 80)) / 100)
+		noOfShares = int((noOfVotes * utils.Random(30, 50)) / 100)
 
 		// vote schedule
 		voteIndex := 0
@@ -86,7 +91,7 @@ func PostModeratedSubscriberCB(subj, reply string, p *subscribers.Post) {
 			}
 
 			// share schedule
-			randomShare := int((randomVotes * utils.Random(50, 80)) / 100)
+			randomShare := int((randomVotes * utils.Random(30, 50)) / 100)
 			noOfShares += randomShare
 			t = utils.SplitTimeInRange(31, 120, randomShare, time.Minute)
 			for k := 0; shareIndex < noOfShares; shareIndex, k = shareIndex+1, k+1 {
@@ -96,7 +101,7 @@ func PostModeratedSubscriberCB(subj, reply string, p *subscribers.Post) {
 		}
 	} else if post.PostLevel == "2" {
 		noOfVotes = utils.Random(100, 150)
-		noOfShares = int((noOfVotes * utils.Random(50, 80)) / 100)
+		noOfShares = int((noOfVotes * utils.Random(30, 50)) / 100)
 
 		voteIndex := 0
 		t := utils.SplitTimeInRange(1, 90, noOfVotes, time.Minute)
@@ -120,7 +125,7 @@ func PostModeratedSubscriberCB(subj, reply string, p *subscribers.Post) {
 				vote := mongo.CreateVotesSchedulePost(t[k], bson.ObjectIdHex(p.Id), bson.ObjectIdHex(botProfilesIds[voteIndex]))
 				mongo.AddVoteSchedule(vote)
 			}
-			randomShare := int((randomVotes * utils.Random(50, 80)) / 100)
+			randomShare := int((randomVotes * utils.Random(30, 50)) / 100)
 			noOfShares += randomShare
 			t = utils.SplitTimeInRange(91, 210, randomShare, time.Minute)
 			for k := 0; shareIndex < noOfShares; shareIndex, k = shareIndex+1, k+1 {
@@ -130,7 +135,7 @@ func PostModeratedSubscriberCB(subj, reply string, p *subscribers.Post) {
 		}
 	} else if post.PostLevel == "1" {
 		noOfVotes = utils.Random(25, 50)
-		noOfShares = int((noOfVotes * utils.Random(50, 80)) / 100)
+		noOfShares = int((noOfVotes * utils.Random(30, 50)) / 100)
 
 		j := 0
 		t := utils.SplitTimeInRange(1, 90, noOfVotes, time.Minute)
@@ -146,7 +151,7 @@ func PostModeratedSubscriberCB(subj, reply string, p *subscribers.Post) {
 		}
 	} else if post.PostLevel == "0" {
 		noOfVotes = utils.Random(0, 5)
-		noOfShares = int((noOfVotes * utils.Random(50, 80)) / 100)
+		noOfShares = int((noOfVotes * utils.Random(30, 50)) / 100)
 
 		j := 0
 		t := utils.SplitTimeInRange(1, 90, noOfVotes, time.Minute)

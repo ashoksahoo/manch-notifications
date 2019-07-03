@@ -146,10 +146,10 @@ func VotePostSubscriberCB(subj, reply string, v *subscribers.Vote) {
 		botProfiles := mongo.GetBotProfileByBucketId(userLikesNo - 1)
 		if len(botProfiles) != 0 {
 			// schedule two votes
-			randomIndexes := utils.GetNRandom(0, 50, 2)
-			randomProfile := []string{botProfiles[randomIndexes[0]], botProfiles[randomIndexes[1]]}
+			randomIndexes := utils.GetNRandom(0, 50, 1)
+			randomProfile := []string{botProfiles[randomIndexes[0]]}
 			j := 0
-			noOfVotes := 2
+			noOfVotes := 1
 			t := utils.SplitTimeInRange(1, 15, noOfVotes, time.Minute)
 			for k := 0; j < noOfVotes; j, k = j+1, k+1 {
 				vote := mongo.CreateVotesSchedulePost(t[k], bson.ObjectIdHex(post.Id.Hex()), bson.ObjectIdHex(randomProfile[j]))
@@ -169,78 +169,79 @@ func VotePostSubscriberCB(subj, reply string, v *subscribers.Vote) {
 
 	postCreator := mongo.GetProfileById(post.Created.ProfileId)
 	count := post.UpVotes
-	// notification for karma points
-	// karma notification
-	karmaBucket := []int{100}
-	karmaNextBucket := getNextBucket(post.NotifiedKarmaBuckets, karmaBucket)
-	if isValidBucket(karmaNextBucket, count, post.NotifiedKarmaBuckets) {
-		bucketStr := strconv.Itoa(karmaNextBucket)
-		key := post.Id.Hex() + ":karma:" + bucketStr
-		result, err := redis.AcquireLock(key, bucketStr, 60)
-		if err == nil && result == 1 {
-			templateName := "post_karma_points"
-			data := i18n.DataModel{
-				Count: post.UpVotes,
-			}
-			msgStr := i18n.GetString(postCreator.Language, templateName, data)
-			htmlMsgStr := i18n.GetHtmlString(postCreator.Language, templateName, data)
-			title := i18n.GetAppTitle(postCreator.Language)
-
-			messageMeta := mongo.MessageMeta{
-				TemplateName: templateName,
-				Template:     i18n.Strings[postCreator.Language][templateName],
-				Data:         data,
-			}
-			// update notification message
-			deepLink := "manch://posts/" + post.Id.Hex()
-			notification := mongo.CreateNotification(mongo.NotificationModel{
-				Receiver:        postCreator.Id,
-				Identifier:      postCreator.Id.Hex() + "_karma_points",
-				Participants:    []bson.ObjectId{postCreator.Id},
-				DisplayTemplate: constants.NotificationTemplate["TRANSACTIONAL"],
-				EntityGroupId:   post.Id.Hex(),
-				ActionId:        post.Id,
-				ActionType:      "comment",
-				Purpose:         constants.NotificationPurpose["KARMA_POINTS"],
-				Entities:        entities,
-				Message:         msgStr,
-				MessageMeta:     messageMeta,
-				MessageHtml:     htmlMsgStr,
-				DeepLink:        deepLink,
-			})
-
-			icon := mongo.ExtractThumbNailFromPost(post)
-
-			if icon == "" {
-				icon = vote.Created.Avatar
-			}
-
-			msg := firebase.ManchMessage{
-				Title:    title,
-				Message:  msgStr,
-				Icon:     icon,
-				DeepLink: deepLink,
-				Id:       notification.NId,
-			}
-
-			tokens := mongo.GetTokensByProfiles([]bson.ObjectId{post.Created.ProfileId})
-			fmt.Printf("\nGCM Message %+v\n", msg)
-			if tokens != nil {
-				for _, token := range tokens {
-					go firebase.SendMessage(msg, token.Token, notification)
+	/*
+		// notification for karma points
+		// karma notification
+		karmaBucket := []int{100}
+		karmaNextBucket := getNextBucket(post.NotifiedKarmaBuckets, karmaBucket)
+		if isValidBucket(karmaNextBucket, count, post.NotifiedKarmaBuckets) {
+			bucketStr := strconv.Itoa(karmaNextBucket)
+			key := post.Id.Hex() + ":karma:" + bucketStr
+			result, err := redis.AcquireLock(key, bucketStr, 60)
+			if err == nil && result.(int64) == 1 {
+				templateName := "post_karma_points"
+				data := i18n.DataModel{
+					Count: post.UpVotes,
 				}
-			} else {
-				fmt.Printf("No token")
-			}
-			// update post
-			mongo.UpdateOnePostsByQuery(bson.M{"_id": post.Id}, bson.M{
-				"$addToSet": bson.M{"notified_karma_buckets": karmaNextBucket},
-			})
-			// delete lock
-			redis.ReleaseLock(key)
-		}
-	}
+				msgStr := i18n.GetString(postCreator.Language, templateName, data)
+				htmlMsgStr := i18n.GetHtmlString(postCreator.Language, templateName, data)
+				title := i18n.GetAppTitle(postCreator.Language)
 
+				messageMeta := mongo.MessageMeta{
+					TemplateName: templateName,
+					Template:     i18n.Strings[postCreator.Language][templateName],
+					Data:         data,
+				}
+				// update notification message
+				deepLink := "manch://posts/" + post.Id.Hex()
+				notification := mongo.CreateNotification(mongo.NotificationModel{
+					Receiver:        postCreator.Id,
+					Identifier:      postCreator.Id.Hex() + "_karma_points",
+					Participants:    []bson.ObjectId{postCreator.Id},
+					DisplayTemplate: constants.NotificationTemplate["TRANSACTIONAL"],
+					EntityGroupId:   post.Id.Hex(),
+					ActionId:        post.Id,
+					ActionType:      "comment",
+					Purpose:         constants.NotificationPurpose["KARMA_POINTS"],
+					Entities:        entities,
+					Message:         msgStr,
+					MessageMeta:     messageMeta,
+					MessageHtml:     htmlMsgStr,
+					DeepLink:        deepLink,
+				})
+
+				icon := mongo.ExtractThumbNailFromPost(post)
+
+				if icon == "" {
+					icon = vote.Created.Avatar
+				}
+
+				msg := firebase.ManchMessage{
+					Title:    title,
+					Message:  msgStr,
+					Icon:     icon,
+					DeepLink: deepLink,
+					Id:       notification.NId,
+				}
+
+				tokens := mongo.GetTokensByProfiles([]bson.ObjectId{post.Created.ProfileId})
+				fmt.Printf("\nGCM Message %+v\n", msg)
+				if tokens != nil {
+					for _, token := range tokens {
+						go firebase.SendMessage(msg, token.Token, notification)
+					}
+				} else {
+					fmt.Printf("No token")
+				}
+				// update post
+				mongo.UpdateOnePostsByQuery(bson.M{"_id": post.Id}, bson.M{
+					"$addToSet": bson.M{"notified_karma_buckets": karmaNextBucket},
+				})
+				// delete lock
+				redis.ReleaseLock(key)
+			}
+		}
+	*/
 	// schedule follow
 	if (vote.Created.UserType == "bot" && post.Created.UserType != "bot") ||
 		(vote.Created.UserType != "bot" && post.Created.UserType == "bot") {
@@ -362,15 +363,20 @@ func VotePostSubscriberCB(subj, reply string, v *subscribers.Vote) {
 		bucketStr := strconv.Itoa(nextBucket)
 		key := post.Id.Hex() + ":" + bucketStr
 		result, err := redis.AcquireLock(key, bucketStr, 60)
-		if err != nil || result == 0 {
+		if err != nil || result.(int64) == 0 {
 			return
 		}
 		// send notification
 		tokens := mongo.GetTokensByProfiles([]bson.ObjectId{post.Created.ProfileId})
 		fmt.Printf("\nGCM Message %+v\n", msg)
+		currentTime := time.Now()
 		if tokens != nil {
 			for _, token := range tokens {
-				go firebase.SendMessage(msg, token.Token, notification)
+				diff := currentTime.Sub(token.LastVoteNotifiedAt).Seconds()
+				fmt.Println("**difference is **", diff)
+				if diff >= 3600 {
+					go firebase.SendMessage(msg, token.Token, notification)
+				}
 			}
 		} else {
 			fmt.Printf("No token")
