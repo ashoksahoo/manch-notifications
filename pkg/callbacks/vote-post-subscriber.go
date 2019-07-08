@@ -158,6 +158,7 @@ func VotePostSubscriberCB(subj, reply string, v *subscribers.Vote) {
 
 	// increase post views for bot likes
 	if vote.Created.UserType == "bot" {
+		fmt.Println("updating views")
 		mongo.UpdateOnePostsByQuery(bson.M{
 			"_id": post.Id,
 		}, bson.M{

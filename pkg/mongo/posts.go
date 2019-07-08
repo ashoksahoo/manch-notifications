@@ -192,7 +192,7 @@ func IncrementViewsforNeighbours(post PostModel, viewsToInc int) {
 	query := bson.M{
 		"createdAt": bson.M{"$lt": post.CreatedAt},
 	}
-	err := P.Find(query).Sort("-createdAt").Select(bson.M{"_id": 1}).Limit(5).All(results)
+	err := P.Find(query).Sort("-createdAt").Select(bson.M{"_id": 1}).Limit(5).All(&results)
 	if err != nil {
 		fmt.Println("error occured while increment views", err)
 		return
@@ -213,7 +213,7 @@ func IncrementViewsforNeighbours(post PostModel, viewsToInc int) {
 	query = bson.M{
 		"createdAt": bson.M{"$gt": post.CreatedAt},
 	}
-	err = P.Find(query).Select(bson.M{"_id": 1}).Limit(5).All(results)
+	err = P.Find(query).Select(bson.M{"_id": 1}).Limit(5).All(&results)
 	if err != nil {
 		fmt.Println("error occured while increment views", err)
 		return
@@ -228,5 +228,4 @@ func IncrementViewsforNeighbours(post PostModel, viewsToInc int) {
 	}, bson.M{
 		"$inc": bson.M{"no_of_views": viewsToInc},
 	})
-
 }
