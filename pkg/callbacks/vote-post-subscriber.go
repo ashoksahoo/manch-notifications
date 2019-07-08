@@ -161,8 +161,10 @@ func VotePostSubscriberCB(subj, reply string, v *subscribers.Vote) {
 		mongo.UpdateOnePostsByQuery(bson.M{
 			"_id": post.Id,
 		}, bson.M{
-			"$inc": bson.M{"no_of_views": utils.Random(5, 10)},
+			"$inc": bson.M{"no_of_views": utils.Random(0, 5)},
 		})
+		noOfView := utils.Random(0, 3)
+		mongo.IncrementViewsforNeighbours(post, noOfView)
 	}
 
 	postCreator := mongo.GetProfileById(post.Created.ProfileId)
