@@ -66,8 +66,6 @@ func PostModeratedSubscriberCB(subj, reply string, p *subscribers.Post) {
 	if post.PostLevel == "2" {
 		noOfVotes = utils.Random(30, 60)
 		totalTimes := utils.Random(90, 120)
-		fmt.Println("random vote", noOfVotes)
-		fmt.Println("random Time", totalTimes)
 		voteIndex := 0
 		t := utils.SplitTimeInRange(1, totalTimes, noOfVotes, time.Minute)
 		for k := 0; voteIndex < noOfVotes; voteIndex, k = voteIndex+1, k+1 {
@@ -79,8 +77,6 @@ func PostModeratedSubscriberCB(subj, reply string, p *subscribers.Post) {
 		noOfVotes += randomVote
 
 		randomTime := utils.Random(totalTimes + 90, totalTimes + 120)
-		fmt.Println("random vote", randomVote)
-		fmt.Println("random Time", randomTime)
 		t = utils.SplitTimeInRange(totalTimes, randomTime, randomVote, time.Minute)
 		totalTimes = randomTime
 		for k := 0; voteIndex < noOfVotes; voteIndex, k = voteIndex+1, k+1 {
@@ -91,8 +87,6 @@ func PostModeratedSubscriberCB(subj, reply string, p *subscribers.Post) {
 		randomVote = utils.Random(40, 80)
 		noOfVotes += randomVote
 		randomTime = utils.Random(totalTimes + 160, totalTimes + 200)
-		fmt.Println("random vote", randomVote)
-		fmt.Println("random Time", randomTime)
 		t = utils.SplitTimeInRange(totalTimes, randomTime, randomVote, time.Minute)
 		totalTimes = randomTime
 		for k := 0; voteIndex < noOfVotes; voteIndex, k = voteIndex+1, k+1 {
@@ -103,8 +97,6 @@ func PostModeratedSubscriberCB(subj, reply string, p *subscribers.Post) {
 		randomVote = utils.Random(10, 20)
 		noOfVotes += randomVote
 		randomTime = utils.Random(totalTimes + 160, totalTimes + 200)
-		fmt.Println("random vote", randomVote)
-		fmt.Println("random Time", randomTime)
 		t = utils.SplitTimeInRange(totalTimes, randomTime, randomVote, time.Minute)
 		totalTimes = randomTime
 		for k := 0; voteIndex < noOfVotes; voteIndex, k = voteIndex+1, k+1 {
@@ -115,8 +107,6 @@ func PostModeratedSubscriberCB(subj, reply string, p *subscribers.Post) {
 		randomVote = utils.Random(0, 20)
 		noOfVotes += randomVote
 		randomTime = utils.Random(totalTimes + 250, totalTimes + 360)
-		fmt.Println("random vote", randomVote)
-		fmt.Println("random Time", randomTime)
 		t = utils.SplitTimeInRange(totalTimes, randomTime, randomVote, time.Minute)
 		totalTimes = randomTime
 		for k := 0; voteIndex < noOfVotes; voteIndex, k = voteIndex+1, k+1 {
