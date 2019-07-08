@@ -181,3 +181,51 @@ func GetUniquePostCreatorOnManch(communityId bson.ObjectId, adminIds []bson.Obje
 	P.Find(bson.M{"community_ids": communityId, "createdAt": bson.M{"$gte": startAt}, "created.profile_id": bson.M{"$nin": adminIds}}).Distinct("created.profile_id", &result)
 	return len(result)
 }
+
+func IncrementViewsforNeighbours(post PostModel, viewsToInc int) {
+	s := session.Clone()
+	defer s.Close()
+	P := s.DB("manch").C(POSTS_MODEL)
+
+	// increment before
+	results := []PostModel{}
+	query := bson.M{
+		"createdAt": bson.M{"$lt": post.CreatedAt},
+	}
+	err := P.Find(query).Sort("-createdAt").Select(bson.M{"_id": 1}).Limit(5).All(&results)
+	if err != nil {
+		fmt.Println("error occured while increment views", err)
+		return
+	}
+	postIds := []bson.ObjectId{}
+
+	for _, result := range results {
+		postIds = append(postIds, result.Id)
+	}
+	UpdateAllPostsByQuery(bson.M{
+		"_id": bson.M{"$in": postIds},
+	}, bson.M{
+		"$inc": bson.M{"no_of_views": viewsToInc},
+	})
+
+	// increment after
+	results = []PostModel{}
+	query = bson.M{
+		"createdAt": bson.M{"$gt": post.CreatedAt},
+	}
+	err = P.Find(query).Select(bson.M{"_id": 1}).Limit(5).All(&results)
+	if err != nil {
+		fmt.Println("error occured while increment views", err)
+		return
+	}
+	postIds = []bson.ObjectId{}
+
+	for _, result := range results {
+		postIds = append(postIds, result.Id)
+	}
+	UpdateAllPostsByQuery(bson.M{
+		"_id": bson.M{"$in": postIds},
+	}, bson.M{
+		"$inc": bson.M{"no_of_views": viewsToInc},
+	})
+}
