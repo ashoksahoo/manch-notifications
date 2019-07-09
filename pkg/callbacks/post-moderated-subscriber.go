@@ -70,7 +70,7 @@ func PostModeratedSubscriberCB(subj, reply string, p *subscribers.Post) {
 			noOfVotes = utils.Random(40, 60)
 			totalTimes = 30
 			voteIndex = 0
-			t := utils.SplitTimeInRange(1, 30, noOfVotes, time.Minute)
+			t := utils.SplitTimeInRange(1, totalTimes, noOfVotes, time.Minute)
 			for k := 0; voteIndex < noOfVotes; voteIndex, k = voteIndex+1, k+1 {
 				vote := mongo.CreateVotesSchedulePost(t[k], bson.ObjectIdHex(p.Id), bson.ObjectIdHex(botProfilesIds[voteIndex]))
 				mongo.AddVoteSchedule(vote)
