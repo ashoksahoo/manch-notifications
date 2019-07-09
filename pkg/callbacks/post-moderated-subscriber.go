@@ -63,38 +63,33 @@ func PostModeratedSubscriberCB(subj, reply string, p *subscribers.Post) {
 		return
 	}
 
-	if post.Created.UserType == "bot" {
-		noOfVotes = utils.Random(100, 150)
-		voteIndex := 0
-		t := utils.SplitTimeInRange(1, 30, noOfVotes, time.Minute)
-		for k := 0; voteIndex < noOfVotes; voteIndex, k = voteIndex+1, k+1 {
-			vote := mongo.CreateVotesSchedulePost(t[k], bson.ObjectIdHex(p.Id), bson.ObjectIdHex(botProfilesIds[voteIndex]))
-			mongo.AddVoteSchedule(vote)
-		}
-		if post.PostType == "VIDEO" {
-			randomVotes := utils.Random(25, 36)
-			noOfVotes += randomVotes
-			t = utils.SplitTimeInRange(31, 120, randomVotes, time.Minute)
+	if post.PostLevel == "2" {
+		var totalTimes int
+		var voteIndex int
+		if post.Created.UserType == "bot" {
+			noOfVotes = utils.Random(40, 60)
+			totalTimes = 30
+			voteIndex = 0
+			t := utils.SplitTimeInRange(1, 30, noOfVotes, time.Minute)
+			for k := 0; voteIndex < noOfVotes; voteIndex, k = voteIndex+1, k+1 {
+				vote := mongo.CreateVotesSchedulePost(t[k], bson.ObjectIdHex(p.Id), bson.ObjectIdHex(botProfilesIds[voteIndex]))
+				mongo.AddVoteSchedule(vote)
+			}
+		} else {
+			noOfVotes = utils.Random(30, 60)
+			totalTimes = utils.Random(90, 120)
+			voteIndex = 0
+			t := utils.SplitTimeInRange(1, totalTimes, noOfVotes, time.Minute)
 			for k := 0; voteIndex < noOfVotes; voteIndex, k = voteIndex+1, k+1 {
 				vote := mongo.CreateVotesSchedulePost(t[k], bson.ObjectIdHex(p.Id), bson.ObjectIdHex(botProfilesIds[voteIndex]))
 				mongo.AddVoteSchedule(vote)
 			}
 		}
-	} else if post.PostLevel == "2" {
-		noOfVotes = utils.Random(30, 60)
-		totalTimes := utils.Random(90, 120)
-		voteIndex := 0
-		t := utils.SplitTimeInRange(1, totalTimes, noOfVotes, time.Minute)
-		for k := 0; voteIndex < noOfVotes; voteIndex, k = voteIndex+1, k+1 {
-			vote := mongo.CreateVotesSchedulePost(t[k], bson.ObjectIdHex(p.Id), bson.ObjectIdHex(botProfilesIds[voteIndex]))
-			mongo.AddVoteSchedule(vote)
-		}
-
 		randomVote := utils.Random(40, 80)
 		noOfVotes += randomVote
 
 		randomTime := utils.Random(totalTimes+90, totalTimes+120)
-		t = utils.SplitTimeInRange(totalTimes, randomTime, randomVote, time.Minute)
+		t := utils.SplitTimeInRange(totalTimes, randomTime, randomVote, time.Minute)
 		totalTimes = randomTime
 		for k := 0; voteIndex < noOfVotes; voteIndex, k = voteIndex+1, k+1 {
 			vote := mongo.CreateVotesSchedulePost(t[k], bson.ObjectIdHex(p.Id), bson.ObjectIdHex(botProfilesIds[voteIndex]))
