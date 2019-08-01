@@ -63,7 +63,7 @@ func AddVoteSchedule(document VoteScheduleModelPost) {
 	F := s.DB("manch").C(VOTE_SCHEDULEDS_MODEL)
 	err := F.Insert(document)
 	if err == nil {
-		fmt.Printf("inserted vote schedule: %+v\n", document)
+		fmt.Printf("inserted vote schedule: %+v\n", document.Id)
 	} else {
 		fmt.Println(err)
 		fmt.Println("unable to add vote schedule:", document.Resource.Hex())
