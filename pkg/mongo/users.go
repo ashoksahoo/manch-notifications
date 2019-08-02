@@ -70,6 +70,7 @@ type Profile struct {
 	TotalManchCreated              int           `json:"total_manch_created" bson:"total_manch_created"`
 	BranchLink                     string        `json:"branch_link" bson:"branch_link"`
 	RatingNotified                 bool          `json:"rating_notified" bson:"rating_notified"`
+	RatingNotifiedAt               time.Time     `json:"rating_notified_at" bson:"rating_notified_at"`
 }
 
 type Creator struct {

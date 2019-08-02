@@ -6,26 +6,30 @@ import (
 	"notification-service/pkg/firebase"
 	"notification-service/pkg/mongo"
 	"notification-service/pkg/subscribers"
+	"time"
 
 	"github.com/globalsign/mgo/bson"
 )
 
 func UserActiveHourCB(subj, reply string, u *subscribers.UserActiveHour) {
-	fmt.Printf("Received a New User created on subject %s! with User %+v\n", subj, u)
+	fmt.Printf("Received a New User Active Hour subject %s! with User %+v\n", subj, u)
+	profile := mongo.GetProfileById(bson.ObjectIdHex(u.ProfileId))
 
-	n := mongo.CountUserActiveHour(bson.M{
-		"profile_id": bson.ObjectIdHex(u.ProfileId),
-	})
-	user := mongo.GetUserByProfileId(u.ProfileId)
-	profile := user.Profiles[0]
-	createdAt := user.CreatedAt
-	diff := u.LastActiveHour.Sub(createdAt)
-
-	fmt.Println("n", n)
 	fmt.Println("profile.ratingnotifed", profile.RatingNotified)
-	fmt.Println("diff", diff.Hours())
+	if profile.RatingNotified {
+		return
+	}
 
-	if n > 5 && !profile.RatingNotified && diff.Hours() >= 4*24 {
+	currentTime := time.Now()
+	threedaysAgo := currentTime.AddDate(0, 0, -3)
+	fmt.Println("currentTime", currentTime)
+	fmt.Println("three days ago", threedaysAgo)
+	noOfSessions := mongo.CountUserActiveHour(bson.M{
+		"profile_id": bson.ObjectIdHex(u.ProfileId),
+		"createdAt": bson.M{"$gte": threedaysAgo},
+	})
+	fmt.Println("n", noOfSessions)
+	if noOfSessions > 4 {
 		// notify profile
 		notification := mongo.CreateNotification(mongo.NotificationModel{
 			Receiver:        profile.Id,
@@ -50,12 +54,14 @@ func UserActiveHourCB(subj, reply string, u *subscribers.UserActiveHour) {
 				fmt.Println("successfully sent data message")
 				go firebase.SendMessage(msg, token.Token, notification)
 			}
-			mongo.UpdateProfileById(profile.Id, bson.M{"rating_notified": true})
+			mongo.UpdateProfileById(profile.Id, bson.M{
+				"$set": bson.M{"rating_notified": true, "rating_notified_at": currentTime},
+			})
 		} else {
 			fmt.Printf("No token")
 		}
 
 	}
 
-	fmt.Printf("Processed a New User created on subject %s! with User Id %s\n", subj, u.Id)
+	fmt.Printf("Processed a New User Active Hour subject %s! with User Id %s\n", subj, u.Id)
 }
