@@ -143,3 +143,9 @@ type Profile struct {
 	DisplayProfileChangedUpdated   bool      `json:"display_profile_changed_updated"`
 	DisplayProfileChangedUpdatedAt time.Time `json:"display_profile_changed_at"`
 }
+
+type UserActiveHour struct {
+	Id string `json:"_id"`
+	ProfileId string `json:"profile_id"`
+	LastActiveHour time.Time `json:"last_active_hour"`
+}

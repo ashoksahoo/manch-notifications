@@ -108,6 +108,9 @@ func main() {
 	// post title modified subscriber
 	subscribers.PostTitleModifiedSubscriber(callbacks.PostTitleModifiedCB)
 
+	// user's active hour changed
+	subscribers.UserActiveHourSubscriber(callbacks.UserActiveHourCB)
+
 	// received a new community
 	// subscribers.CommunitySubscriber(callbacks.CommunitySubscriberCB)
 	// listen on http server 5000

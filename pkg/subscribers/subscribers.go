@@ -140,6 +140,10 @@ func UserStreakMissingSubscriber(callback func(subj, reply string, m *UserStreak
 	go c.QueueSubscribe(subject("user.streak.missing"), queue(), callback)
 }
 
+func UserActiveHourSubscriber(callback func(subj, reply string, u *UserActiveHour)) {
+	go c.QueueSubscribe(subject("user.active-hour.changed"), queue(), callback)
+}
+
 func init() {
 	if url == "" {
 		url = nats.DefaultURL

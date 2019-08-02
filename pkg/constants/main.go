@@ -148,6 +148,7 @@ var ModelNames = map[string]string{
 	"COMMUNITIES_STATS_MODEL":   "community_stats",
 	"REFERRALS":                 "referrals",
 	"USER_TAGS":                 "user_tags",
+	"USER_ACTIVE_HOUR":          "user_active_hours",
 }
 
 var BlackListStatus = map[string]string{
