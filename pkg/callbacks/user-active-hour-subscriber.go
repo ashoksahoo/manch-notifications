@@ -25,7 +25,7 @@ func UserActiveHourCB(subj, reply string, u *subscribers.UserActiveHour) {
 	fmt.Println("profile.ratingnotifed", profile.RatingNotified)
 	fmt.Println("diff", diff.Hours())
 
-	if n > 5 && !profile.RatingNotified && diff.Hours() >= 4*24 {
+	if n > 2 && !profile.RatingNotified && diff.Hours() >= 0 {
 		// notify profile
 		notification := mongo.CreateNotification(mongo.NotificationModel{
 			Receiver:        profile.Id,
@@ -50,7 +50,7 @@ func UserActiveHourCB(subj, reply string, u *subscribers.UserActiveHour) {
 				fmt.Println("successfully sent data message")
 				go firebase.SendMessage(msg, token.Token, notification)
 			}
-			mongo.UpdateProfileById(profile.Id, bson.M{"rating_notified": true})
+			mongo.UpdateProfileById(profile.Id, bson.M{"$set": bson.M{"rating_notified": true}})
 		} else {
 			fmt.Printf("No token")
 		}
