@@ -15,20 +15,16 @@ func UserActiveHourCB(subj, reply string, u *subscribers.UserActiveHour) {
 	fmt.Printf("Received a New User Active Hour subject %s! with User %+v\n", subj, u)
 	profile := mongo.GetProfileById(bson.ObjectIdHex(u.ProfileId))
 
-	fmt.Println("profile.ratingnotifed", profile.RatingNotified)
 	if profile.RatingNotified {
 		return
 	}
 
 	currentTime := time.Now()
 	threedaysAgo := currentTime.AddDate(0, 0, -3)
-	fmt.Println("currentTime", currentTime)
-	fmt.Println("three days ago", threedaysAgo)
 	noOfSessions := mongo.CountUserActiveHour(bson.M{
 		"profile_id": bson.ObjectIdHex(u.ProfileId),
 		"createdAt": bson.M{"$gte": threedaysAgo},
 	})
-	fmt.Println("n", noOfSessions)
 	if noOfSessions > 4 {
 		// notify profile
 		notification := mongo.CreateNotification(mongo.NotificationModel{
@@ -51,7 +47,6 @@ func UserActiveHourCB(subj, reply string, u *subscribers.UserActiveHour) {
 		}
 		if tokens != nil {
 			for _, token := range tokens {
-				fmt.Println("successfully sent data message")
 				go firebase.SendMessage(msg, token.Token, notification)
 			}
 			mongo.UpdateProfileById(profile.Id, bson.M{
