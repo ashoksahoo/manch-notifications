@@ -6,6 +6,7 @@ import (
 	"notification-service/pkg/firebase"
 	"notification-service/pkg/mongo"
 	"notification-service/pkg/subscribers"
+	"notification-service/pkg/utils"
 	"time"
 
 	"github.com/globalsign/mgo/bson"
@@ -21,9 +22,10 @@ func UserActiveHourCB(subj, reply string, u *subscribers.UserActiveHour) {
 
 	currentTime := time.Now()
 	threedaysAgo := currentTime.AddDate(0, 0, -3)
+	threedaysAgo = utils.GetStartOfDay(threedaysAgo)
 	noOfSessions := mongo.CountUserActiveHour(bson.M{
 		"profile_id": bson.ObjectIdHex(u.ProfileId),
-		"createdAt": bson.M{"$gte": threedaysAgo},
+		"createdAt":  bson.M{"$gte": threedaysAgo},
 	})
 	if noOfSessions > 4 {
 		// notify profile
