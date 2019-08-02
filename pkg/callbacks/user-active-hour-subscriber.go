@@ -55,7 +55,7 @@ func UserActiveHourCB(subj, reply string, u *subscribers.UserActiveHour) {
 				go firebase.SendMessage(msg, token.Token, notification)
 			}
 			mongo.UpdateProfileById(profile.Id, bson.M{
-				"$set": bson.M{"profiles.$.rating_notified": true, "profile.$.rating_notified_at": currentTime},
+				"$set": bson.M{"profiles.$.rating_notified": true, "profiles.$.rating_notified_at": currentTime},
 			})
 		} else {
 			fmt.Printf("No token")
