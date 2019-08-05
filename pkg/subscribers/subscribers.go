@@ -144,6 +144,10 @@ func UserActiveHourSubscriber(callback func(subj, reply string, u *UserActiveHou
 	go c.QueueSubscribe(subject("user.active-hour.changed"), queue(), callback)
 }
 
+func ReferralSubscriber(callback func(subj, reply string, r * Referral)) {
+	go c.QueueSubscribe(subject("new.referral"), queue(), callback)
+}
+
 func init() {
 	if url == "" {
 		url = nats.DefaultURL
