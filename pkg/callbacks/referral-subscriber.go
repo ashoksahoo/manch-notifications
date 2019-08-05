@@ -11,7 +11,7 @@ import (
 )
 
 func ReferralSubscriberCB(subj, reply string, referralData *subscribers.Referral) {
-	fmt.Printf("Received a referral event on subject %s! with Post %+v\n", subj, referralData)
+	fmt.Printf("Received a referral event on subject %s! with Data %+v\n", subj, referralData)
 
 	if _, isErrorMessage := referralData.ReferringParams["error_message"]; isErrorMessage {
 		return
@@ -78,6 +78,6 @@ func ReferralSubscriberCB(subj, reply string, referralData *subscribers.Referral
 		fmt.Printf("No token")
 	}
 
-	fmt.Printf("Processed a referral event on subject %s! with Post Id %s\n", subj, referralData.Id)
+	fmt.Printf("Processed a referral event on subject %s! with event Id %s\n", subj, referralData.Id)
 
 }
