@@ -147,7 +147,15 @@ type Profile struct {
 }
 
 type UserActiveHour struct {
-	Id string `json:"_id"`
-	ProfileId string `json:"profile_id"`
+	Id             string    `json:"_id"`
+	ProfileId      string    `json:"profile_id"`
 	LastActiveHour time.Time `json:"last_active_hour"`
+}
+
+type Referral struct {
+	Id              string                 `json:"_id"`
+	ProfileId       string                 `json:"profile_id"`
+	Referrer        string                 `json:"referrer"`
+	Referree        string                 `json:"referree"`
+	ReferringParams map[string]interface{} `json:"referring_params"`
 }

@@ -111,6 +111,9 @@ func main() {
 	// user's active hour changed
 	subscribers.UserActiveHourSubscriber(callbacks.UserActiveHourCB)
 
+	// referral event received
+	subscribers.ReferralSubscriber(callbacks.ReferralSubscriberCB)
+
 	// received a new community
 	// subscribers.CommunitySubscriber(callbacks.CommunitySubscriberCB)
 	// listen on http server 5000
