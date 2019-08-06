@@ -145,7 +145,7 @@ var Strings = map[string]map[string]string{
 		"coin_milestone_image_10000": "https://s3.ap-south-1.amazonaws.com/manch-dev/notifications/badges/super_user.jpg",
 		"coin_milestone_image_25000": "https://s3.ap-south-1.amazonaws.com/manch-dev/notifications/badges/manch_creator.jpg",
 
-		"100_coin_referral_title": "Congratulations ! You have earned 100 Karma Points.",
+		"100_coin_referral_title": "You have earned 100 Karma Points.",
 		"100_coin_referral_text":  "{{.Name2}} has joined Manch !",
 		"100_coin_referral_image": "https://s3.ap-south-1.amazonaws.com/manch-dev/notifications/Referral_100_Coins.jpg",
 
@@ -253,7 +253,7 @@ var Strings = map[string]map[string]string{
 
 		"100_coin_milestone_title":   "Coins🤩 సెంచరీ",
 		"100_coin_milestone_text":    "అభినందనలు 100 mark🎉 కొట్టినందుకు",
-		"100_coin_referral_title":    "Congratulations ! You have earned 100 Karma Points.",
+		"100_coin_referral_title":    "You have earned 100 Karma Points.",
 		"100_coin_referral_text":     "{{.Name2}} has joined Manch !",
 		"100_coin_referral_image":    "https://s3.ap-south-1.amazonaws.com/manch-dev/notifications/Referral_100_Coins.jpg",
 		"100_coin_milestone_image":   "https://s3.ap-south-1.amazonaws.com/manch-dev/notifications/100_Coins-min.jpg",
@@ -459,7 +459,7 @@ var HtmlStrings = map[string]map[string]string{
 
 		"100_coin_milestone_title":   "Coins की Century 🤩",
 		"100_coin_milestone_text":    "100 Coins तक पहुचन की बधाई 🎉",
-		"100_coin_referral_title":    "Congratulations ! You have earned 100 Karma Points.",
+		"100_coin_referral_title":    "You have earned 100 Karma Points.",
 		"100_coin_referral_text":     "<b>{{.Name2}}</b> has joined Manch !",
 		"join_manch_request_private": "<b>{{.Name}}</b> आपके मंच <b>{{.Community}}</b> से जुड़ना चाहते है 🤩",
 		"join_manch_request_public":  "<b>{{.Name}}</b> जी आपके मंच <b>{{.Community}}</b> से जुड़ गए हैं",
@@ -554,7 +554,7 @@ var HtmlStrings = map[string]map[string]string{
 
 		"100_coin_milestone_title":   "Coins🤩 సెంచరీ",
 		"100_coin_milestone_text":    "అభినందనలు 100 mark🎉 కొట్టినందుకు",
-		"100_coin_referral_title":    "Congratulations ! You have earned 100 Karma Points.",
+		"100_coin_referral_title":    "You have earned 100 Karma Points.",
 		"100_coin_referral_text":     "<b>{{.Name2}}</b> has joined Manch !",
 		"join_manch_request_private": "<b>{{.Name}}</b> మీ <b>{{.Community}}</b> మంచ్ లో చేరాలనుకుంటున్నారు. 🤩",
 		"join_manch_request_public":  "<b>{{.Name}}</b> మీ మంచ్ లో చేరారు <b>{{.Community}}</b>",
