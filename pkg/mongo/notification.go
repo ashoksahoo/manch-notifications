@@ -65,6 +65,7 @@ type NotificationModel struct {
 	PurposeIcon           PurposeIcon     `json:"purpose_icon" bson:"purpose_icon"`
 	PushType              string          `json:"push_type" bson:"push_type"`
 	NotificationUpdatedAt time.Time       `json:"notification_updated_at" bson:"notification_updated_at"`
+	Seen                  bool            `json:"seen" bson:"seen"`
 }
 
 func GenerateIdentifier(Id bson.ObjectId, t string) string {
@@ -121,6 +122,7 @@ func CreateNotification(notification NotificationModel) NotificationModel {
 		UpdatedAt:             time.Now(),
 		Delivered:             false,
 		NotificationUpdatedAt: time.Now(),
+		Seen:                  false,
 	}
 
 	if notification.PushType == "" {
@@ -170,6 +172,7 @@ func CreateNotification(notification NotificationModel) NotificationModel {
 				"message":                 n.Message,
 				"message_meta":            n.MessageMeta,
 				"message_html":            n.MessageHtml,
+				"seen":                    n.Seen,
 			},
 			"$addToSet":    bson.M{"participants": notification.Participants[0]},
 			"$setOnInsert": bson.M{"nuuid": nuuid},
