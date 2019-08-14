@@ -144,6 +144,7 @@ type Profile struct {
 	Avatar                         string    `json:"avatar"`
 	DisplayProfileChangedUpdated   bool      `json:"display_profile_changed_updated"`
 	DisplayProfileChangedUpdatedAt time.Time `json:"display_profile_changed_at"`
+	Verified                       bool      `json:"verified"`
 }
 
 type UserActiveHour struct {
