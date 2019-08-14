@@ -53,6 +53,10 @@ func ProfileModifiedCB(subj, reply string, updatedProfile *subscribers.Profile) 
 			bson.M{"created.profile_id": bson.ObjectIdHex(updatedProfile.Id)},
 			bson.M{"$set": bson.M{"created.verified": true}},
 		)
+		mongo.UpdateAllCommentsByQuery(
+			bson.M{"created.profile_id": bson.ObjectIdHex(updatedProfile.Id)},
+			bson.M{"$set": bson.M{"created.verified": true}},
+		)
 	}
 
 	fmt.Printf("Processed a User Profile Update on subject %s! with User Id %s\n", subj, updatedProfile.Id)
