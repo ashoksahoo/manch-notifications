@@ -80,6 +80,7 @@ var NotificationPurposeResource = map[string]string{
 	"30_streak_milestone":   "ic_milestone_30_day_steak",
 	"100_streak_milestone":  "ic_milestone_100_day_steak",
 	"post_on_manch":         "ic_nc_my_manch",
+	"karma_points":          "ic_nc_karma",
 }
 
 var NotificationPurposeIcon = map[string]string{
