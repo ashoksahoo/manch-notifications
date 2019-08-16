@@ -79,6 +79,7 @@ type Creator struct {
 	Name      string        `json:"name" bson:"name"`
 	Avatar    string        `json:"avatar" bson:"avatar"`
 	UserType  string        `json:"type" bson:"type"`
+	Date      time.Time     `json:"date" bson:"date"`
 }
 
 type UserModel struct {

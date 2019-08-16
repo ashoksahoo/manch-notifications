@@ -114,6 +114,9 @@ func main() {
 	// referral event received
 	subscribers.ReferralSubscriber(callbacks.ReferralSubscriberCB)
 
+	// user inactive event received
+	subscribers.UserInactiveSubscriber(callbacks.UserInactiveSubscriberCB)
+
 	// received a new community
 	// subscribers.CommunitySubscriber(callbacks.CommunitySubscriberCB)
 	// listen on http server 5000
