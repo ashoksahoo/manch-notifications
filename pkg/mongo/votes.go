@@ -3,6 +3,7 @@ package mongo
 import (
 	"fmt"
 	"notification-service/pkg/constants"
+	"time"
 
 	"github.com/globalsign/mgo/bson"
 )
@@ -19,6 +20,9 @@ type VoteModelPost struct {
 	ResourceId   bson.ObjectId `json:"resource_id" bson:"resource_id"`
 	Created      Creator       `json:"created" bson:"created"`
 	Value        int           `json:"vote" bson:"vote"`
+	User         bson.ObjectId `json:"user" bson:"user"`
+	CreatedAt    time.Time     `json:"createdAt" bson:"createdAt"`
+	UpdatedAt    time.Time     `json:"updatedAt" bson:"updatedAt"`
 }
 
 type VoteModelComment struct {
@@ -48,6 +52,30 @@ func (p PostModel) GetVote(Id string) VoteModelPost {
 	V.Find(bson.M{"_id": bson.ObjectIdHex(Id)}).One(&vote)
 	fmt.Printf("\nVote from DB %+v\n\n", vote)
 	return vote
+}
+
+func AddVote(v VoteModelPost) error {
+	s := session.Clone()
+	defer s.Close()
+	V := s.DB("manch").C(VOTES_MODEL)
+	currentTime := time.Now()
+	Id := bson.NewObjectId()
+	voteData := bson.M{
+		"_id":           Id,
+		"resource":      v.Resource.Id,
+		"vote":          v.Value,
+		"user":          v.User,
+		"resource_type": v.ResourceType,
+		"created":       v.Created,
+		"updated":       v.Created,
+		"createdAt":     currentTime,
+		"updateAt":      currentTime,
+	}
+	err := V.Insert(voteData)
+	if err == nil {
+		fmt.Println("vote added with id", Id)
+	}
+	return err
 }
 
 func GetAllVoteByQuery(query bson.M) []VoteModelPost {

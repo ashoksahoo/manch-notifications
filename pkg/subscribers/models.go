@@ -160,3 +160,8 @@ type Referral struct {
 	Referree        string                 `json:"referree"`
 	ReferringParams map[string]interface{} `json:"referring_params"`
 }
+
+type UserInactive struct {
+	ProfileId string `json:"profile_id"`
+	Days      string `json:"days"`
+}

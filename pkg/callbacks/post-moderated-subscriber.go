@@ -134,6 +134,15 @@ func PostModeratedSubscriberCB(subj, reply string, p *subscribers.Post) {
 			vote := mongo.CreateVotesSchedulePost(t[k], bson.ObjectIdHex(p.Id), bson.ObjectIdHex(botProfilesIds[j]))
 			mongo.AddVoteSchedule(vote)
 		}
+	} else if post.PostLevel == "0" {
+		noOfVotes = utils.Random(3, 15)
+		randomTime := utils.Random(60, 120)
+		j := 0
+		t := utils.SplitTimeInRange(1, randomTime, noOfVotes, time.Minute)
+		for k := 0; j < noOfVotes; j, k = j+1, k+1 {
+			vote := mongo.CreateVotesSchedulePost(t[k], bson.ObjectIdHex(p.Id), bson.ObjectIdHex(botProfilesIds[j]))
+			mongo.AddVoteSchedule(vote)
+		}
 	}
 
 	fmt.Println("No. of Vote added", noOfVotes)
