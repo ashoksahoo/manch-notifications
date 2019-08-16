@@ -148,6 +148,10 @@ func ReferralSubscriber(callback func(subj, reply string, r * Referral)) {
 	go c.QueueSubscribe(subject("new.referral"), queue(), callback)
 }
 
+func UserInactiveSubscriber(callback func(subj, reply string, u * UserInactive)) {
+	go c.QueueSubscribe(subject("user.inactive"), queue(), callback)
+}
+
 func init() {
 	if url == "" {
 		url = nats.DefaultURL

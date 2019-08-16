@@ -135,6 +135,20 @@ func GetPostByQuery(query bson.M) (error, PostModel) {
 	return err, post
 }
 
+func GetAllPostsByQuery(query bson.M, limit int) (error, []PostModel) {
+	s := session.Clone()
+	defer s.Close()
+	posts := []PostModel{}
+	P := s.DB("manch").C(POSTS_MODEL)
+	var err error
+	if limit == -1 {
+		err = P.Find(query).All(&posts)
+	} else {
+		err = P.Find(query).Limit(limit).All(&posts)
+	}
+	return err, posts
+}
+
 func GetPostCountByQuery(query bson.M) int {
 	s := session.Clone()
 	defer s.Close()
