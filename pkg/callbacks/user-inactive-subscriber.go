@@ -29,17 +29,12 @@ func UserInactiveSubscriberCB(subj, reply string, u *subscribers.UserInactive) {
 		"created.profile_id": bson.ObjectIdHex(profileId),
 	}, 5)
 
-	fmt.Println("posts are", posts)
 	if err != nil {
 		return
 	}
 	postLength := len(posts)
 	randomIndex := utils.Random(0, postLength)
-	fmt.Println("random index", randomIndex)
 	post := posts[randomIndex]
-
-	fmt.Println("random posts", post)
-
 	// get unique bot profiles
 	m, botProfilesHi := mongo.GetBotProfilesIds("hi")
 	n, botProfilesTe := mongo.GetBotProfilesIds("te")
@@ -56,8 +51,6 @@ func UserInactiveSubscriberCB(subj, reply string, u *subscribers.UserInactive) {
 	// add 1 like
 	botProfile := mongo.GetProfileById(bson.ObjectIdHex(botProfiles[0]))
 
-	fmt.Println("bot profiles selected", botProfile)
-
 	err = mongo.AddVote(mongo.VoteModelPost{
 		Resource:     mongo.PostModel{Id: post.Id},
 		Value:        1,
@@ -68,12 +61,10 @@ func UserInactiveSubscriberCB(subj, reply string, u *subscribers.UserInactive) {
 			ProfileId: botProfile.Id,
 			Name:      botProfile.Name,
 			Avatar:    botProfile.Avatar,
-			UserType:  botProfile.Avatar,
+			UserType:  botProfile.Type,
 			Date:      time.Now(),
 		},
 	})
-
-	fmt.Println("added vote with")
 
 	if err != nil {
 		return
@@ -88,8 +79,6 @@ func UserInactiveSubscriberCB(subj, reply string, u *subscribers.UserInactive) {
 	msgStr := i18n.GetString(language, templateName, data)
 	htmlMsgStr := i18n.GetHtmlString(language, templateName, data)
 	title := i18n.GetAppTitle(language)
-
-	fmt.Println("message are", msgStr)
 
 	messageMeta := mongo.MessageMeta{
 		TemplateName: templateName,
@@ -134,7 +123,6 @@ func UserInactiveSubscriberCB(subj, reply string, u *subscribers.UserInactive) {
 	tokens := mongo.GetTokensByProfiles([]bson.ObjectId{bson.ObjectIdHex(profileId)})
 	if tokens != nil {
 		for _, token := range tokens {
-			fmt.Println("sending notification")
 			go firebase.SendMessage(msg, token.Token, notification)
 		}
 	} else {
