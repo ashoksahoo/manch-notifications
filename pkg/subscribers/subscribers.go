@@ -154,7 +154,7 @@ func UserInactiveSubscriber(callback func(subj, reply string, u * UserInactive))
 
 func init() {
 	if url == "" {
-		url = nats.DefaultURL
+		url = "nats://nats:4222"
 	}
 	if nc, err = nats.Connect(url); err != nil {
 		log.Fatal(err)

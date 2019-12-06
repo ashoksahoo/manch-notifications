@@ -16,7 +16,7 @@ var (
 func init() {
 	redisHost := os.Getenv("REDIS_HOST")
 	if redisHost == "" {
-		redisHost = ":6379"
+		redisHost = "redis:6379"
 	}
 	Pool = newPool(redisHost)
 	cleanupHook()

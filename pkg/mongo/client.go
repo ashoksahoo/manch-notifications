@@ -14,7 +14,7 @@ var session *mgo.Session
 func init() {
 	var err error
 	if url == "" {
-		url = "mongodb://localhost:27017/"
+		url = "mongodb://mongo:27017/"
 	}
 	if session, err = mgo.Dial(url); err != nil {
 		log.Fatal("Mongo Error:", err)

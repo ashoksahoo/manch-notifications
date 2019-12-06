@@ -44,7 +44,7 @@ func newPool(server string) *redis.Pool {
 
 func init() {
 	if url == "" {
-		url = "redis://localhost/"
+		url = "redis://redis/"
 	}
 	Pool = newPool(url)
 	Ping()

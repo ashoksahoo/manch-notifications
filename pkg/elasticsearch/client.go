@@ -13,7 +13,7 @@ var es *elasticsearch.Client
 func init() {
 	var err error
 	if url == "" {
-		url = "http://localhost:9200/"
+		url = "http://elastic_search:9200/"
 	}
 	es, err = elasticsearch.NewDefaultClient()
 	if err != nil {
